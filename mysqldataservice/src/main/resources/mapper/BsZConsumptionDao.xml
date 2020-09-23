@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsZConsumptionDao">
+<!-- 2020/9/6修改 -->
+
+    <resultMap id="getMPWResultMap" type="com.wiseq.cn.entity.ykAi.ZConsumption">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="task_id" jdbcType="BIGINT" property="taskId" />
+        <result column="task_state_id" jdbcType="BIGINT" property="taskStateId" />
+        <result column="glue_a_material" jdbcType="DOUBLE" property="glueAMaterial" />
+        <result column="glue_b_material" jdbcType="DOUBLE" property="glueBMaterial" />
+        <result column="anti_starch_material" jdbcType="DOUBLE" property="antiStarchMaterial" />
+        <result column="diffusion_powder_material" jdbcType="DOUBLE" property="diffusionPowderMaterial" />
+        <result column="t_phosphors0" jdbcType="DOUBLE" property="tphosphors0" />
+        <result column="t_phosphors1" jdbcType="DOUBLE" property="tphosphors1" />
+        <result column="t_phosphors2" jdbcType="DOUBLE" property="tphosphors2" />
+        <result column="t_phosphors3" jdbcType="DOUBLE" property="tphosphors3" />
+        <result column="t_phosphors4" jdbcType="DOUBLE" property="tphosphors4" />
+    </resultMap>
+
+
+    <select id="getMixPowderWeightBYtIdAndtsId" resultMap="getMPWResultMap">
+        select id,task_id, task_state_id, glue_a_material, glue_b_material, anti_starch_material, diffusion_powder_material,
+                t_phosphors0,t_phosphors1,t_phosphors2,t_phosphors3,t_phosphors4
+        from bs_z_consumption
+        WHERE task_id = #{taskId,jdbcType=BIGINT}
+    </select>
+
+    <update id="updateMixPowderWeight" parameterType="com.wiseq.cn.entity.ykAi.ZConsumption">
+        update bs_z_consumption set
+        task_id = #{taskId,jdbcType=BIGINT},
+        task_state_id = #{taskStateId,jdbcType=BIGINT},
+        glue_a_material = #{glueAMaterial,jdbcType=DOUBLE},
+        glue_b_material = #{glueBMaterial,jdbcType=DOUBLE},
+        anti_starch_material = #{antiStarchMaterial,jdbcType=DOUBLE},
+        diffusion_powder_material = #{diffusionPowderMaterial,jdbcType=DOUBLE},
+        t_phosphors0 = #{tphosphors0,jdbcType=DOUBLE},
+        t_phosphors1 = #{tphosphors1,jdbcType=DOUBLE},
+        t_phosphors2 = #{tphosphors2,jdbcType=DOUBLE},
+        t_phosphors3 = #{tphosphors3,jdbcType=DOUBLE},
+        t_phosphors4 = #{tphosphors4,jdbcType=DOUBLE}
+        where task_id = #{taskId,jdbcType=BIGINT}
+    </update>
+
+
+
+    <insert id="saveMixPowderWeight" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.ZConsumption" useGeneratedKeys="true">
+
+        insert into bs_z_consumption
+        (task_id, task_state_id, glue_a_material, glue_b_material, anti_starch_material, diffusion_powder_material,
+        t_phosphors0,t_phosphors1,t_phosphors2,t_phosphors3,t_phosphors4
+        )
+        values
+        (#{taskId,jdbcType=BIGINT},
+        #{taskStateId,jdbcType=BIGINT},
+        #{glueAMaterial,jdbcType=DOUBLE},
+        #{glueBMaterial,jdbcType=DOUBLE},
+        #{antiStarchMaterial,jdbcType=DOUBLE},
+        #{diffusionPowderMaterial,jdbcType=DOUBLE},
+        #{tphosphors0,jdbcType=DOUBLE},
+        #{tphosphors1,jdbcType=DOUBLE},
+        #{tphosphors2,jdbcType=DOUBLE},
+        #{tphosphors3,jdbcType=DOUBLE},
+        #{tphosphors4,jdbcType=DOUBLE})
+    </insert>
+    
+
+
+</mapper>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TTypeMachineGuleHighDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId" />
+    <result column="gule_hight_usl" jdbcType="DOUBLE" property="guleHightUsl" />
+    <result column="gule_hight_lsl" jdbcType="DOUBLE" property="guleHightLsl" />
+    <result column="process_type" jdbcType="TINYINT" property="processType" />
+    <result column="layer" jdbcType="TINYINT" property="layer" />
+  </resultMap>
+
+
+
+
+  <sql id="Base_Column_List">
+    id, type_machine_id, gule_hight_usl, gule_hight_lsl, process_type, layer
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_type_machine_gule_high
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="selectAllByTypeMachineId" resultType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+    select
+    <include refid="Base_Column_List"/>
+    from t_type_machine_gule_high
+    where type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_type_machine_gule_high
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh" useGeneratedKeys="true">
+    insert into t_type_machine_gule_high (type_machine_id, gule_hight_usl, gule_hight_lsl, 
+      process_type, layer)
+    values (#{typeMachineId,jdbcType=BIGINT}, #{guleHightUsl,jdbcType=DOUBLE}, #{guleHightLsl,jdbcType=DOUBLE}, 
+      #{processType,jdbcType=TINYINT}, #{layer,jdbcType=TINYINT})
+  </insert>
+
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh" useGeneratedKeys="true">
+    insert into t_type_machine_gule_high
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        type_machine_id,
+      </if>
+      <if test="guleHightUsl != null">
+        gule_hight_usl,
+      </if>
+      <if test="guleHightLsl != null">
+        gule_hight_lsl,
+      </if>
+      <if test="processType != null">
+        process_type,
+      </if>
+      <if test="layer != null">
+        layer,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="guleHightUsl != null">
+        #{guleHightUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="guleHightLsl != null">
+        #{guleHightLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="processType != null">
+        #{processType,jdbcType=TINYINT},
+      </if>
+      <if test="layer != null">
+        #{layer,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+    update t_type_machine_gule_high
+    <set>
+      <if test="typeMachineId != null">
+        type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="guleHightUsl != null">
+        gule_hight_usl = #{guleHightUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="guleHightLsl != null">
+        gule_hight_lsl = #{guleHightLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="processType != null">
+        process_type = #{processType,jdbcType=TINYINT},
+      </if>
+      <if test="layer != null">
+        layer = #{layer,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+    update t_type_machine_gule_high
+    set type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+      gule_hight_usl = #{guleHightUsl,jdbcType=DOUBLE},
+      gule_hight_lsl = #{guleHightLsl,jdbcType=DOUBLE},
+      process_type = #{processType,jdbcType=TINYINT},
+      layer = #{layer,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

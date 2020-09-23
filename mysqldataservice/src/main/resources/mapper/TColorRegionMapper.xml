@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TColorRegionMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TColorRegion">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="color_region_type" jdbcType="TINYINT" property="colorRegionType"/>
+        <result column="xrows" jdbcType="INTEGER" property="xrows"/>
+        <result column="xcolumns" jdbcType="INTEGER" property="xcolumns"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, type_machine_id, `name`, color_region_type, xrows, xcolumns, create_time, is_delete,
+        disabled
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_color_region
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TColorRegion"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_color_region
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeMachineId != null">
+                type_machine_id,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="colorRegionType != null">
+                color_region_type,
+            </if>
+            <if test="xrows != null">
+                xrows,
+            </if>
+            <if test="xcolumns != null">
+                xcolumns,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="disabled != null">
+                disabled,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeMachineId != null">
+                #{typeMachineId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="colorRegionType != null">
+                #{colorRegionType,jdbcType=TINYINT},
+            </if>
+            <if test="xrows != null">
+                #{xrows,jdbcType=INTEGER},
+            </if>
+            <if test="xcolumns != null">
+                #{xcolumns,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="disabled != null">
+                #{disabled,jdbcType=BOOLEAN},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TColorRegion">
+        <!--@mbg.generated-->
+        update t_color_region
+        set  is_delete = true
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findList" resultType="com.wiseq.cn.entity.ykAi.TColorRegionMix">
+        select
+        a.id,a.code,a.spec,a.ct,
+        b.type_machine_id, b.`name`, b.color_region_type,b.xrows, b.xcolumns, b.create_time, b.is_delete,
+        c.process_type
+        from t_type_machine a
+        left join
+        (select
+        id, `name`, type_machine_id,color_region_type, xrows, xcolumns, create_time, is_delete
+        from t_color_region) b on a.id = b.type_machine_id
+        LEFT JOIN
+        (select type_machine_id,process_type from t_type_machine_gule_high) c
+        on a.id = c.type_machine_id
+        where a.is_delete = false AND b.is_delete = false
+        <if test="spec != null and spec != ''">
+        and a.spec LIKE CONCAT('%',#{spec},'%')
+      </if>
+      <if test="processType != null">
+        and c.process_type = #{processType}
+      </if>
+    </select>
+
+    <select id="findExist" resultMap="BaseResultMap">
+        select * from t_color_region where `name` = #{name} and is_delete = false
+        and color_region_type = #{colorRegionType,jdbcType=TINYINT}
+        and type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 色容差类型重复验证 椭圆 -->
+    <select id="findExistColorRegionEllipse" resultType="java.lang.Integer">
+        select
+        count(1)
+        FROM t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+        and tcr.is_delete = false
+        and color_region_type = 0
+        and tcrd.shape = 0
+        and tcr.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+        and tcrd.a = #{a,jdbcType=DOUBLE}
+        and tcrd.b = #{b,jdbcType=DOUBLE}
+        and tcrd.x = #{x,jdbcType=DOUBLE}
+        and tcrd.y = #{y,jdbcType=DOUBLE}
+        and tcrd.angle = #{angle,jdbcType=DOUBLE}
+    </select>
+
+
+    <resultMap id="QuadrilateralMap" type="com.wiseq.cn.entity.ykAi.QuadrilateralDTO">
+        <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId"/>
+        <collection property="xydtoList" ofType="com.wiseq.cn.entity.ykAi.XYDTO" javaType="java.util.List"
+                    column="color_region_id"
+        select="findExistColorRegionQuadrilateralXY"/>
+    </resultMap>
+    
+    
+    <select id="findExistColorRegionQuadrilateral" resultMap="QuadrilateralMap">
+        select tcr.type_machine_id,tcrd.color_region_id
+        from t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+          and tcr.is_delete = false
+          and color_region_type = 0
+          and tcrd.shape = 1
+          and tcr.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+        group by tcr.type_machine_id,tcrd.color_region_id
+    </select>
+
+    <!-- 色容差类型重复验证 四边形 -->
+    <select id="findExistColorRegionQuadrilateralXY" resultType="com.wiseq.cn.entity.ykAi.XYDTO">
+       select a.x, y, type_machine_id, color_region_id FROM (
+        select  tcrd.x1 as x , tcrd.y1 as y,
+                tcr.type_machine_id,
+                tcrd.color_region_id
+        FROM t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+          and tcr.is_delete = false
+          and color_region_type = 0
+          and tcrd.shape = 1
+        union all
+        select
+                tcrd.x2 as x, tcrd.y2 as y,
+                tcr.type_machine_id,
+                tcrd.color_region_id
+        FROM t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+          and tcr.is_delete = false
+          and color_region_type = 0
+          and tcrd.shape = 1
+          and tcr.type_machine_id
+        union all
+        select  tcrd.x3 as x, tcrd.y3 as y,
+                tcr.type_machine_id,
+                tcrd.color_region_id
+        FROM t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+          and tcr.is_delete = false
+          and color_region_type = 0
+          and tcrd.shape = 1
+        union all
+        select  tcrd.x4 as x, tcrd.y4 as y,
+                tcr.type_machine_id,
+                tcrd.color_region_id
+        FROM t_color_region_dtl tcrd,t_color_region tcr
+        where tcr.id = tcrd.color_region_id
+          and tcr.is_delete = false
+          and color_region_type = 0
+          and tcrd.shape = 1
+        ) a
+        where  a.color_region_id =#{colorRegionId,jdbcType=BIGINT}
+    </select>
+
+</mapper>

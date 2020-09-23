@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: consul #使用开发环境
+    include:
+      # 这里写你的include
+  # 文件上传大小设置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1024MB #  设置单个文件最大内存 -1为不限制
+      max-request-size: 1024MB # 设置所有文件最大内存 -1为不限制
+profiles: C://uploadDll/  # 文件上传目录
+logging.level.org.springframework.boot.autoconfigure: ERROR

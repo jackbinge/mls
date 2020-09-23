@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsTaskRecordDao">
+
+    <select id="getOutPutRequirementParameters" resultType="java.util.Map">
+        select  output_require_id as outputRequireId,
+                outputparams as outputparams,
+                output_kind as outputKind,
+                outputKindNum,
+                output_require_code as outputRequireCode
+            FROM
+            (
+                SELECT
+                    a.output_require_id,
+                    concat(skxlname,' ',group_concat(concat(a.name,a.ratio_type,ratio_value))) outputparams,
+                    '出货比例' output_kind,
+                    1 as outputKindNum,
+                    output_require_code
+                FROM (
+                         select
+                             tord.output_require_id,
+                             tor2.code as output_require_code,
+                             case when tord.ratio_type = 0 then '='
+                                  when tord.ratio_type = 1 then <![CDATA[ '<' ]]>
+                when tord.ratio_type = 2  then <![CDATA[ '<=' ]]>
+                when
+                                      tord.ratio_type = 3 then <![CDATA[ '>' ]]>
+                when tord.ratio_type = 4 then <![CDATA[ '>=' ]]>
+                end as ratio_type,
+                             tord.ratio_value,
+                             tcrd.name,
+                             tcr.name as skxlname
+                         from t_output_requirements tor2
+                                  LEFT JOIN t_output_requirements_dtl tord on tor2.id = tord.output_require_id
+                                  LEFT JOIN t_color_region_dtl tcrd on tord.color_region_dtl_id = tcrd.id
+                                  LEFT JOIN t_color_region tcr on tcrd.color_region_id = tcr.id
+                         where tor2.output_kind = 1
+                     ) a group by a.output_require_id,skxlname,output_require_code
+                union all
+                select
+                    t.output_require_id,
+                    case when output_kind = 0 THEN tcr2.name
+                         when output_kind = 2 THEN concat(tcr2.name,' 中心点','(',t.cp_x,t.cp_y,')')
+                        end as outputparams,
+                    case when output_kind = 0 THEN '色容差'
+                         when output_kind = 2 THEN '中心点'
+                        end as output_kind,
+                       output_kind as outputKindNum,
+                    tor.code as output_require_code
+                from t_output_requirements tor
+                         left join t_output_requirements_dtl t on tor.id = t.output_require_id
+                         left join t_color_region tcr2 on tcr2.id = t.color_region_id
+                where tor.output_kind != 1
+            ) a
+        where a.output_require_id = #{outputRequireId}
+    </select>
+
+
+    <select id="getMainProcessTaskBaseInfo" resultType="java.util.Map">
+        select
+            bts.id as taskStateId,
+            bts.task_id as taskId,
+            bt.task_code as taskCode,
+            tam.output_require_machine_id as outputRequireId,
+            tam.type_machine_id as typeMachineId,
+            ttm.spec as typeMachineSpec,
+            ttm.crystal_number as crystalNumber,
+            ttm.process_type as processType,
+            DATE_FORMAT(bt.create_time,'%Y-%m-%d %T') as createTime,
+            ttm.remark,
+            ttm.ct,
+            ttm.ra_target as raTarget,
+            ttm.ra_max raMax,
+            ttm.ra_min raMin,
+            ttm.r9 as r9,
+            ttm.wl_lsl as wlLsl,
+            ttm.wl_usl as wlUsl,
+            ttm.lumen_lsl as lumenLsl,
+            ttm.lumen_usl as lumenUsl,
+            bts.task_df_id AS stateFlag,
+            case when task_df_id = 1 then '待生产'
+            when task_df_id = 2 then '试样前测中'
+            when task_df_id = 3 then '试样前测NG'
+            when task_df_id = 4 then '试样前测通过'
+            when task_df_id = 5 then '试样品质测试NG'
+            when task_df_id = 6 then '批量生产'
+            when task_df_id = 7 then '批量生产中有阀体NG'
+            when task_df_id = 8 then '工单关闭'
+            end as stateName
+        from bs_task_state bts
+        LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+        LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+        LEFT JOIN t_output_requirements tor on tam.output_require_machine_id = tor.id
+        left join bs_task bt on bts.task_id = bt.id
+        where bts.process_type = 0 and   bts.id = #{taskStateId}
+    </select>
+
+    <select id="getFormulaList" resultType="java.util.Map">
+        select distinct
+               bts.model_version modelVersion,
+               bts.model_id modelId,
+               DATE_FORMAT(bts.model_create_time ,'%Y-%m-%d %T') as modelCreateTime,
+               tb.bom_source bomSource,
+               tb.bom_code bomCode,
+               tb.bom_type bomType,
+               tmb.bom_id bomId,
+               ts.scaffold_spec as scaffoldSpec,
+               tu.username
+        from
+            bs_task_state bts
+            LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+            LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+            LEFT JOIN t_bom tb on tmb.bom_id = tb.id
+            LEFT JOIN t_scaffold ts on tb.scaffold_id = ts.id
+            LEFT JOIN t_user tu on bts.model_creator = tu.id
+        where
+            bts.process_type = #{processType}
+          and bts.process_version = #{processVersion}
+          and bts.task_id = #{taskId}
+        ORDER BY modelCreateTime desc
+    </select>
+
+
+    <select id="getTaskStateRatioInfo" resultType="java.util.Map">
+        select ratioVersion,
+               ratioSource,
+               DATE_FORMAT(ratioCreateTime,'%Y-%m-%d %T')  as ratioCreateTime,
+               taskFormulaId,
+               tu.username as ratioCreator
+        FROM (
+                 SELECT
+                        a.ratioVersion,
+                        a.ratioSource,
+                        a.ratioCreateTime,
+                        a.ratioCreator,
+                        Max(taskFormulaId) as taskFormulaId
+                 FROM (
+                          select
+                                 bts.ratio_version     ratioVersion,
+                                 case when bts.ratio_source = 0 THEN '配比数据库'
+                                      when bts.ratio_source = 1 THEN '系统推荐'
+                                      when bts.ratio_source = 2 THEN '用户编辑'
+                                      when bts.ratio_source = 3 THEN '打点推荐'
+                                          END as ratioSource,
+                                 bts.ratio_create_time ratioCreateTime,
+                                 bts.ratio_creator     ratioCreator,
+                                 btfd.task_formula_id  taskFormulaId
+
+                          from bs_task_state bts,bs_task_formula btf ,bs_task_formula_dtl btfd
+                          where
+                              bts.id = btf.task_state_id and  btf.id = btfd.task_formula_id
+                            and bts.process_type = #{processType}
+                            and bts.process_version = #{processVersion}
+                            and bts.task_id = #{taskId}
+                            and bts.model_version = #{modelVersion}
+                      ) a
+                 group by  a.ratioVersion, a.ratioSource, a.ratioCreator,a.ratioCreateTime
+             )  b
+        LEFT JOIN t_user tu ON tu.id = b.ratioCreator
+        order by ratioVersion DESC
+    </select>
+
+
+    <select id="getTaskFormulaMaterialRatio" resultType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl">
+        SELECT a.id, task_formula_id as taskFormulaId, material_id as materialId, ratio, material_class as materialClass, spec
+        FROM (
+        select btfd.id,
+        task_formula_id,
+        material_id,
+        ratio,
+        material_class,
+        glue_spec as spec
+        from bs_task_formula_dtl btfd
+        LEFT JOIN (select glue_spec, id from t_glue_dtl where glue_type = 'A') guleA
+        ON btfd.material_id = guleA.id
+        where btfd.material_class = 0
+        union all
+        select btfd.id,
+        task_formula_id,
+        material_id,
+        ratio,
+        material_class,
+        glue_spec as spec
+        from bs_task_formula_dtl btfd
+        LEFT JOIN (select glue_spec, id from t_glue_dtl where glue_type = 'B') guleB
+        ON btfd.material_id = guleB.id
+        where btfd.material_class = 1
+        union all
+        select btfd.id,
+        task_formula_id,
+        material_id,
+        ratio,
+        material_class,
+        tp.phosphor_spec as spec
+        from bs_task_formula_dtl btfd
+        LEFT JOIN t_phosphor tp ON btfd.material_id = tp.id
+        where btfd.material_class = 2
+        union all
+        select btfd.id,
+        task_formula_id,
+        material_id,
+        ratio,
+        material_class,
+        tas.anti_starch_spec as spec
+        from bs_task_formula_dtl btfd
+        LEFT JOIN t_anti_starch tas ON btfd.material_id = tas.id
+        where btfd.material_class = 3
+        union all
+        select btfd.id,
+        task_formula_id,
+        material_id,
+        ratio,
+        material_class,
+        tdp.diffusion_powder_spec as spec
+        from bs_task_formula_dtl btfd
+        LEFT JOIN t_diffusion_powder tdp ON btfd.material_id = tdp.id
+        where btfd.material_class = 4
+        ) a
+        where task_formula_id = #{taskFormulaId}
+    </select>
+
+
+    <!-- 获取荧光粉波长密度 -->
+    <select id="getTphosphorLenDen" resultType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl">
+        SELECT btfd.id ,btfd.task_formula_id as taskFormulaId , tp.peak_wavelength,tp.density ,tp.phosphor_spec as spec
+        FROM t_phosphor tp
+        LEFT JOIN bs_task_formula_dtl btfd ON tp.id = btfd.material_id
+        where btfd.task_formula_id = #{taskFormulaId}
+    </select>
+
+    <select id="getFileList" resultType="java.lang.String">
+        select IFNULL(fileid_list,'') from bs_task_state bts
+        where bts.task_id = #{taskId}
+        and bts.process_type = #{processType}
+        and bts.process_version = #{processVersion}
+        and bts.model_version = #{modelVersion}
+        and bts.ratio_version = #{ratioVersion}
+        <if test="stateType != null and stateType == 0">
+            and task_df_id IN (1,2,3,4,5,9,10)
+        </if>
+        <if test="stateType != null and stateType == 1">
+            and task_df_id IN (6,7,8)
+        </if>
+    </select>
+
+
+
+    <select id="getEqptValveWithFileList" resultType="com.wiseq.cn.entity.ykAi.EqptValveWithFile">
+        <!-- 分光文件的查询 -->
+        SELECT
+        tg.name as groupName,
+        te.group_id as groupId,
+        te.positon ,
+        tev.name as eqptValveName,
+        a.eqpt_valve_id as eqptValveId,
+        task_state_id as taskStateId,
+        DATE_FORMAT(a.create_time,"%Y-%m-%d %H:%i") as createTime,
+        IFNULL(qcFileList,"") qcFileList,
+        IFNULL(qcNum,0) qcNum,
+        IFNULL(fzckFileIdList,"") fzckFileIdList,
+        IFNULL(fzckNum,0) fzckNum,
+        IFNULL(zckFileIdList,"") zckFileIdList,
+        IFNULL(zckNum,0) zckNum,
+        IFNULL(teskOkFileIdList,"") teskOkFileIdList,
+        IFNULL(testOkNum,0) testOkNum,
+        IFNULL(testNgFileList,"") testNgFileList,
+        IFNULL(testNgNum,0) testNgNum
+        FROM (
+            SELECT
+            ft.eqpt_valve_id,ft.task_state_id,ft.create_time,
+            qc.fileIdList as qcFileList,qc.num as qcNum,
+            fzck.fileIdList as fzckFileIdList,fzck.num as fzckNum,
+            zck.fileIdList as zckFileIdList,zck.num as zckNum,
+            testok.fileIdList as teskOkFileIdList,
+            testok.num as testOkNum,
+            testng.fileIdList as testNgFileList,
+            testng.num as testNgNum
+            FROM
+            (
+            <!-- 获取阀体 -->
+            SELECT
+            task_state_id,
+            eqpt_valve_id,
+            MIN(create_time) create_time FROM
+            (select bevs.task_state_id,bevs.eqpt_valve_id,bevs.create_time from bs_eqpt_valve_state bevs, d_upload_file duf
+            WHERE bevs.eqpt_valve_id = duf.eqpt_valve_id and duf.task_state_id = bevs.task_state_id
+            and duf.is_delete = false
+            and duf.id IN
+            <foreach
+                    collection="fileIdList" separator="," item="item" open="(" close=")">
+                    #{item}
+            </foreach>
+            order by create_time) a
+            GROUP BY task_state_id,eqpt_valve_id
+            ) ft
+
+            LEFT JOIN
+            (
+            select eqpt_valve_id,task_state_id,GROUP_CONCAT(id) as fileIdList,count(*) num from d_upload_file
+            where
+            <!-- 正常烤 -->
+           classType = 0
+            and is_delete = false
+            and id IN
+            <foreach
+                    collection="fileIdList" separator="," item="item" open="(" close=")">
+                #{item}
+            </foreach>
+            group by
+            eqpt_valve_id,task_state_id
+            ) zck ON ft.task_state_id = zck.task_state_id and ft.eqpt_valve_id = zck.eqpt_valve_id
+
+            LEFT JOIN
+            (
+            select eqpt_valve_id,task_state_id,GROUP_CONCAT(id) as fileIdList,count(*) num from d_upload_file
+            where
+            <!-- 非正常烤 -->
+           classType = 1
+            and is_delete = false
+            and id IN
+            <foreach
+                    collection="fileIdList" separator="," item="item" open="(" close=")">#{item}
+            </foreach>
+            group by eqpt_valve_id,task_state_id
+            ) fzck ON ft.task_state_id = fzck.task_state_id and ft.eqpt_valve_id = fzck.eqpt_valve_id
+
+            LEFT JOIN
+            (
+            select
+            eqpt_valve_id,task_state_id,GROUP_CONCAT(id) as fileIdList,count(*) num from d_upload_file
+            where
+            <!-- 前测 -->
+            classType = 2
+            and is_delete = false
+            and id IN
+            <foreach
+                    collection="fileIdList" separator="," item="item" open="(" close=")">
+                    #{item}
+                </foreach>
+            group by eqpt_valve_id,task_state_id
+            ) qc ON ft.task_state_id = qc.task_state_id and ft.eqpt_valve_id = qc.eqpt_valve_id
+
+            LEFT JOIN
+            (
+                select eqpt_valve_id,task_state_id,GROUP_CONCAT(id) as fileIdList,count(*) num from d_upload_file
+                where
+
+                file_state = 0
+            and is_delete = false
+            and id IN
+                <foreach collection="fileIdList" separator="," item="item" open="(" close=")">
+                    #{item}
+                </foreach>
+            group by eqpt_valve_id,task_state_id
+            ) testok ON ft.task_state_id = testok.task_state_id and ft.eqpt_valve_id = testok.eqpt_valve_id
+
+            LEFT JOIN
+            (
+            select eqpt_valve_id,task_state_id,GROUP_CONCAT(id) as fileIdList,count(*) num from d_upload_file
+            where
+            file_state = 1
+            and is_delete = false
+            and id IN
+            <foreach collection="fileIdList" separator="," item="item" open="(" close=")">
+                #{item}
+            </foreach>
+            group by eqpt_valve_id,task_state_id
+            ) testng ON ft.task_state_id = testng.task_state_id and ft.eqpt_valve_id = testng.eqpt_valve_id
+        ) a , t_eqpt_valve tev ,t_eqpt te, t_group tg
+        where
+            a.eqpt_valve_id = tev.id
+            and tev.eqpt_id = te.id
+            and te.group_id = tg.id
+        order by  te.group_id,te.positon,a.create_time
+    </select>
+
+    <select id="getJudgeNum" resultType="java.lang.Integer">
+        SELECT IFNULL(COUNT(*),0) as num FROM (
+            select judgeUser, judgeTime
+            from d_upload_file where id IN
+            <foreach collection="fileIdList" open="(" separator="," item="item" close=")">
+                #{item}
+            </foreach>
+            group by judgeUser, judgeTime
+        ) a
+    </select>
+
+
+    <select id="getFileTestResult" resultType="com.wiseq.cn.entity.dataCollection.FileTestResult">
+        SELECT
+        d.id,
+        DATE_FORMAT(d.createTime,"%Y-%m-%d %H:%i")createTime,
+        d.userName,
+        d.classType,
+        h.ratio,
+        d.task_state_id taskStateId,
+        d.eqpt_valve_id eqptValueId
+        FROM
+        (
+            SELECT
+            a.id,
+            a.create_time createTime,
+            f.username userName,
+            a.classType,
+            c.id formId,
+            a.task_state_id,
+            a.eqpt_valve_id
+            FROM
+            d_upload_file a,
+            bs_task_formula c,
+            t_user f
+            WHERE
+            a.id IN
+            <foreach collection="fileIdList" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+            AND a.is_delete = 0
+            AND a.task_state_id = c.task_state_id
+            AND a.user_id = f.id
+        ) d,
+        (
+            SELECT
+            GROUP_CONCAT(ratio)ratio,
+            o.task_formula_id
+            FROM
+            (
+                SELECT
+                GROUP_CONCAT(r.ratio ORDER BY ratio)ratio,
+                r.task_formula_id,
+                r.material_class
+                FROM
+                bs_task_formula_dtl r
+                GROUP BY
+                r.task_formula_id,
+                r.material_class
+            )o GROUP BY o.task_formula_id
+        ) h
+        WHERE
+        d.formId = h.task_formula_id
+        order by createTime desc
+    </select>
+
+
+    <select id="getFileJudgeResult" resultType="com.wiseq.cn.entity.ykAi.FileJudgeResult">
+        SELECT
+        d.id,
+        DATE_FORMAT(d.createTime,"%Y-%m-%d %H:%i") createTime,
+        d.judgeUser,
+        d.userName,
+        d.classType,
+        h.ratio,
+        d.task_state_id taskStateId,
+        d.eqpt_valve_id eqptValueId,
+        d.judgeResult,
+        d.file_state fileState,
+        d.judge_type judgeType,
+        d.dosage as dosageNum
+        FROM
+        (
+            SELECT
+            a.id,
+            a.create_time createTime,
+            e.username as judgeUser,
+            g.judgeResult,
+            f.username userName,
+            a.classType,
+            c.id formId,
+            a.task_state_id,
+            a.eqpt_valve_id,
+            a.file_state,
+            a.judge_type,
+            begd.dosage
+            FROM
+            d_upload_file a,
+            bs_task_formula c,
+            t_user e,
+            t_user f,
+            bs_eqpt_gule_dosage begd,
+            (SELECT file_id,
+                    CONCAT(IFNULL(color_coordinates,-1),',',IFNULL(lightness,-1),',',IFNULL( ra,-1),',', IFNULL(r9,-1)) as judgeResult
+                FROM d_upload_file_judgement_result) g
+            WHERE
+            a.id IN
+            <foreach collection="fileIdList" item="item" index="index" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+            AND a.is_delete = 0
+            AND a.task_state_id = c.task_state_id
+            AND begd.task_state_id = a.task_state_id
+            AND begd.eqpt_valve_id = a.eqpt_valve_id
+            AND a.user_id = f.id
+            AND e.id = a.judgeUser
+            AND a.id = g.file_id
+        ) d,
+        (
+            SELECT
+            GROUP_CONCAT(ratio)ratio,
+            o.task_formula_id
+            FROM
+            (
+                SELECT
+                GROUP_CONCAT(r.ratio ORDER BY ratio)ratio,
+                r.task_formula_id,
+                r.material_class
+                FROM
+                bs_task_formula_dtl r
+                GROUP BY
+                r.task_formula_id,
+                r.material_class
+            )o GROUP BY o.task_formula_id
+        ) h
+        WHERE
+        d.formId = h.task_formula_id
+        order by createTime desc
+    </select>
+
+
+    <select id="getFileJudgeRecord" resultType="com.wiseq.cn.entity.ykAi.FileJudgeRecord">
+        SELECT b.judgeUser, DATE_FORMAT(judgeTime,"%Y-%m-%d %H:%i") judgeTime, fileState, judgeType, fileIdList FROM(
+            SELECT a.judgeUser, judgeTime, fileState, judgeType,group_concat(id order by a.id) as fileIdList FROM (
+            select t.username as judgeUser,
+            duf.judgeTime,
+            duf.file_state as fileState,
+            duf.judge_type as judgeType,
+            duf.id
+            FROM d_upload_file duf,
+            t_user t
+            where duf.judgeUser = t.id
+            and duf.id IN
+            <foreach collection="fileIdList" open="(" separator="," close=")" item="item">
+            #{item}
+             </foreach>
+            ) a group by a.judgeUser,a.judgeTime,a.fileState,a.judgeType
+        ) b order by judgeTime
+    </select>
+
+    <select id="getTestResult" resultType="java.util.Map">
+        SELECT
+        DATE_FORMAT(duf.create_time,"%Y-%m-%d %H:%i") as testTime,
+        tu.username as testUser
+        FROM d_upload_file duf,
+            t_user tu
+        WHERE tu.id = duf.user_id
+        and duf.id IN
+        <foreach collection="fileIdList" item="item" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+    </select>
+
+
+    <select id="getSampleProcessTaskBaseInfo" resultType="java.util.Map">
+        select
+            bts.id as taskStateId,
+            bts.task_id as taskId,
+            bt.task_code as taskCode,
+            bts.process_version as processVersion,
+            tam.output_require_machine_id as outputRequireId,
+            tam.type_machine_id as typeMachineId,
+            ttm.spec as typeMachineSpec,
+            ttm.crystal_number as crystalNumber,
+            ttm.process_type as processType,
+            ttm.remark,
+            ttm.ct,
+            ttm.ra_target as raTarget,
+            ttm.ra_min as raMin,
+            ttm.ra_max as raMax,
+            ttm.r9 as r9,
+            ttm.wl_lsl as wlLsl,
+            ttm.wl_usl as wlUsl,
+            ttm.lumen_lsl as lumenLsl,
+            ttm.lumen_usl as lumenUsl,
+            bts.task_df_id AS stateFlag,
+            case when task_df_id = 1 then '待生产'
+                 when task_df_id = 2 then '前测中'
+                 when task_df_id = 3 then '前测NG'
+                 when task_df_id = 4 then '前测通过'
+                 when task_df_id = 5 then '品质测试NG'
+                 when task_df_id = 9 then '打样通过'
+                 when task_df_id = 10 then '打样失败'
+                end as stateName,
+            bts.initiate_reason as reason,
+            bts.process_create_time as initiateTime,
+            bts.model_id as modelId
+        from bs_task_state bts
+                 LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+                 LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+                 LEFT JOIN t_output_requirements tor on tam.output_require_machine_id = tor.id
+                 left join bs_task bt on bts.task_id = bt.id
+        where bts.id = #{taskStateId}
+        and bts.process_type = 1
+    </select>
+
+    <select id="getIsRestSY" resultType="java.lang.Integer">
+        SELECT IFNULL(count(*),0) FROM bs_task_state a,
+        (select task_id,process_version,process_type from bs_task_state where id = #{taskStateId}) b
+        where a.task_id = b.task_id
+        and a.process_version = b.process_version
+        and a.process_type = b.process_type
+        and a.task_df_id != 1;
+    </select>
+
+    <select id="getStateName" resultType="java.lang.String">
+        SELECT
+            b.state_name
+        FROM
+            (
+                SELECT
+                    eqpt_valve_df_id
+                FROM
+                    bs_eqpt_valve_state
+                WHERE
+                    task_state_id = #{taskStateId}
+                  AND eqpt_valve_id = #{eqptValueId}
+                ORDER BY
+                    id DESC
+                LIMIT 1
+            )a,t_eqpt_valve_state_df b WHERE a.eqpt_valve_df_id = b.id
+    </select>
+
+    <select id="getDosage" resultType="java.lang.Double">
+        SELECT
+            dosage
+        FROM
+            bs_eqpt_gule_dosage
+        WHERE
+            task_state_id = #{taskStateId}
+          AND eqpt_valve_id = #{eqptValueId}
+        ORDER BY
+            id DESC
+        LIMIT 1
+    </select>
+
+</mapper>

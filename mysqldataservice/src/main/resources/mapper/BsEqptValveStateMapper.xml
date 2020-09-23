@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsEqptValveStateDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.BsEqptValveState">
+    <!--@mbg.generated generated on Thu Nov 21 17:46:59 CST 2019.-->
+    <!--@Table bs_eqpt_valve_state-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_state_id" jdbcType="BIGINT" property="taskStateId" />
+    <result column="eqpt_valve_id" jdbcType="BIGINT" property="eqptValveId" />
+    <result column="eqpt_valve_df_id" jdbcType="BIGINT" property="eqptValveDfId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Thu Nov 21 17:46:59 CST 2019.-->
+    id, task_state_id, eqpt_valve_id, eqpt_valve_df_id, create_time
+  </sql>
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Thu Nov 21 17:46:59 CST 2019.-->
+    insert into bs_eqpt_valve_state
+    (task_state_id, eqpt_valve_id, eqpt_valve_df_id, create_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskStateId,jdbcType=BIGINT}, #{item.eqptValveId,jdbcType=BIGINT}, #{item.eqptValveDfId,jdbcType=BIGINT},
+      <choose>
+        <when test="item.createTime != null and item.createTime !=''">
+          #{item.createTime}
+        </when>
+        <otherwise>
+          NOW()
+        </otherwise>
+      </choose>
+      )
+    </foreach>
+  </insert>
+
+
+
+  <resultMap id="TaskStateEqptValveMap" type="com.wiseq.cn.entity.ykAi.BSTaskEqptValve">
+    <!--@mbg.generated generated on Thu Nov 21 17:46:59 CST 2019.-->
+    <!--@Table bs_eqpt_valve_state-->
+    <result column="groupName" jdbcType="BIGINT" property="groupName" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="eqpt_id" jdbcType="BIGINT" property="eqptId" />
+    <result column="assets_code" jdbcType="TIMESTAMP" property="assetsCode" />
+    <result column="positon" jdbcType="INTEGER" property="positon"/>
+    <collection property="eqptValveDosageList" ofType="com.wiseq.cn.entity.ykAi.EqptValveDosage"
+    column="{taskStateId= task_state_id,eqptId = eqpt_id}" select="findTaskEqptValueList">
+    </collection>
+  </resultMap>
+
+
+  <select id="findTaskStateEqptValve" resultMap="TaskStateEqptValveMap">
+    select
+      tg.name as groupName,te.group_id,tev.eqpt_id,te.assets_code,te.positon,
+    bevs.task_state_id
+    FROM bs_eqpt_valve_state bevs
+    LEFT JOIN t_eqpt_valve tev on bevs.eqpt_valve_id = tev.id
+    LEFT JOIN t_eqpt te ON te.id = tev.eqpt_id
+    LEFT JOIN t_group tg ON te.group_id = tg.id
+    LEFT JOIN bs_task_state bts on bevs.task_state_id = bts.id
+    where bevs.task_state_id = #{taskStateId,jdbcType=BIGINT}
+    and eqpt_valve_df_id != 4
+    and bts.is_active = true
+    group by tev.eqpt_id,bevs.task_state_id
+  </select>
+
+
+  <!-- 单个阀体对应的点胶设定参数 -->
+  <select id="findTaskEqptValueList" resultType="com.wiseq.cn.entity.ykAi.EqptValveDosage">
+    SELECT
+      bevs.id,
+      bevs.task_state_id,
+      bevs.eqpt_valve_id,
+      bevs.eqpt_valve_df_id,
+      tevsd.state_name,
+      tevsd.state_flag,
+      bevs.create_time,
+      tev.name as eqptValveName
+      ,a.dosage
+    FROM
+    bs_eqpt_valve_state bevs
+    LEFT JOIN t_eqpt_valve tev ON bevs.eqpt_valve_id = tev.id
+    LEFT JOIN t_eqpt_valve_state_df tevsd on bevs.eqpt_valve_df_id = tevsd.id
+    LEFT JOIN(
+    SELECT * FROM  bs_eqpt_gule_dosage begd where id IN
+    (SELECT MAX(id) FROM bs_eqpt_gule_dosage
+    group by eqpt_valve_id,task_state_id))a ON a.task_state_id = bevs.task_state_id
+    and a.eqpt_valve_id = bevs.eqpt_valve_id
+    where
+    bevs.task_state_id = a.task_state_id
+    AND bevs.task_state_id = #{taskStateId,jdbcType=BIGINT}
+    and tev.eqpt_id = #{eqptId,jdbcType=BIGINT}
+    and bevs.eqpt_valve_df_id != 4;
+  </select>
+
+
+
+  <!-- 获取阀体状态表 -->
+  <select id="getTaskStateEqptValve" resultType="com.wiseq.cn.entity.ykAi.BsEqptValveState">
+    select id, task_state_id, eqpt_valve_id, eqpt_valve_df_id, create_time
+    FROM bs_eqpt_valve_state
+    where  task_state_id = #{taskStateId,jdbcType=BIGINT}
+    and eqpt_valve_df_id != 4
+  </select>
+
+  <!-- 获取阀体状态为生产中的阀体 -->
+  <select id="getTaskStateProductEqptValve" resultType="com.wiseq.cn.entity.ykAi.BsEqptValveState">
+    select id, task_state_id, eqpt_valve_id, eqpt_valve_df_id, create_time
+    FROM bs_eqpt_valve_state
+    where  task_state_id = #{taskStateId,jdbcType=BIGINT}
+    and eqpt_valve_df_id = 2
+  </select>
+
+  <!-- 获取阀体点胶参数 -->
+  <select id="getTaskEqptValueDosageList" resultType="com.wiseq.cn.entity.ykAi.BsEqptGuleDosage">
+    select id, task_state_id, eqpt_valve_id, dosage, create_time FROM bs_eqpt_gule_dosage WHERE id IN
+    (SELECT MAX(id) as id FROM bs_eqpt_gule_dosage GROUP BY task_state_id,eqpt_valve_id)
+     AND task_state_id = #{taskStateId,jdbcType=BIGINT}
+     <!--AND eqpt_valve_id in (SELECT eqpt_valve_id from bs_eqpt_task_runtime)-->
+  </select>
+
+  <!-- 新增阀体点胶设定参数-->
+  <insert id="batchInsertTaskEqptValueDosage" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Sat Nov 23 13:12:45 CST 2019.-->
+    insert into bs_eqpt_gule_dosage
+    (task_state_id, eqpt_valve_id, dosage, create_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskStateId,jdbcType=BIGINT}, #{item.eqptValveId,jdbcType=BIGINT}, #{item.dosage,jdbcType=DOUBLE},
+      NOW())
+    </foreach>
+  </insert>
+
+  <insert id="InsertBsEqptTaskRuntime" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    insert into bs_eqpt_task_runtime
+    (task_id, eqpt_valve_id, create_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskId,jdbcType=BIGINT}, #{item.eqptValveId,jdbcType=BIGINT},
+      NOW())
+    </foreach>
+  </insert>
+
+  <delete id="deleteBsEqptTaskRuntime" >
+    delete from bs_eqpt_task_runtime
+    where task_id =#{taskId,jdbcType=BIGINT}
+    and eqpt_valve_id in
+    <foreach item="item" collection="eqptValveListDelte" open="(" separator="," close=")">
+      #{item,jdbcType=BIGINT}
+    </foreach>
+  </delete>
+
+  <update id="updateBsTaskStateEqptValve">
+  update bs_eqpt_valve_state set
+  eqpt_valve_df_id = #{eqptValveDfId,jdbcType=BIGINT}
+  where task_state_id = #{taskStateId,jdbcType=BIGINT}
+  and eqpt_valve_id in
+  <foreach item="item" collection="eqptValveList" open="(" separator="," close=")">
+    #{item,jdbcType=BIGINT}
+  </foreach>
+  and eqpt_valve_df_id != 4
+</update>
+
+
+
+  <update id="updateBsTaskStateEqptValveDsoge" parameterType="java.util.List">
+    <!--@mbg.generated generated on Mon Nov 25 10:42:22 CST 2019.-->
+    <foreach collection="bsEqptGuleDosageList" item="item" index="index" open="" close="" separator=";">
+    update bs_eqpt_gule_dosage
+    <set>
+        dosage = #{item.dosage,jdbcType=DOUBLE}
+    </set>
+    <where>
+        task_state_id = #{taskStateId,jdbcType=BIGINT}
+        and
+        eqpt_valve_id = #{item.eqptValveId,jdbcType=BIGINT}
+    </where>
+    </foreach>
+  </update>
+
+
+
+
+
+
+    <select id="getEqptIdByEqptValve" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select eqpt_id
+        FROM t_eqpt_valve where id = #{eqptValveId,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="eqptValveDosgeRecommend" resultType="java.lang.Double">
+        select dosage FROM  bs_eqpt_gule_dosage begd
+        LEFT JOIN bs_task_state bts on begd.task_state_id = bts.id
+        LEFT JOIN d_upload_file duf on bts.id = duf.task_state_id
+        LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+        LEFT JOIN t_eqpt_valve tev on begd.eqpt_valve_id = tev.id
+        where begd.eqpt_valve_id = duf.eqpt_valve_id
+        and bts.task_df_id in (6,7)
+            <if test="typeMachineId != null ">
+            and type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+            </if>
+            <if test="eqptValveId != null ">
+            and duf.eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+            </if>
+            <if test="fileState != null">
+            and duf.file_state = #{fileState,jdbcType=TINYINT}
+            </if>
+            <if test="eqptId !=null">
+            and tev.eqpt_id = #{eqptId,jdbcType=BIGINT}
+            </if>
+        ORDER BY begd.id DESC
+    </select>
+
+
+
+  <select id="getTaskStateNGEqptValveListNum" resultType="java.lang.Integer">
+    select  IFNULL(count(1),0) FROM bs_task_state bts
+    LEFT JOIN bs_eqpt_valve_state bevs on bts.id = bevs.task_state_id
+    where task_state_id = #{taskStateId,jdbcType=BIGINT}
+    and bevs.eqpt_valve_df_id = 3
+  </select>
+  
+  
+  <insert id="insetEqptValveList" parameterType="java.util.List">
+    INSERT INTO  bs_eqpt_valve_state(task_state_id, eqpt_valve_id, eqpt_valve_df_id)
+    values
+    <foreach collection="eqptValveIdList" item="item" index="index" separator=",">
+      (#{taskStateId,jdbcType=BIGINT},#{item,jdbcType=BIGINT},#{eqptValveState,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+</mapper>

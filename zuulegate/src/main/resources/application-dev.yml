@@ -1,0 +1,79 @@
+debug: true
+server:
+  port: 90
+
+spring:
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      discovery:
+        register: true
+        hostname: localhost
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        tags: urlprefix-/${spring.application.name}
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+#通过网关避免跨域问题
+zuul:
+  ignored-services: "*"
+  sensitive-headers:
+  routes:
+    api:  # 该配置方式中，hello1只是给路由一个名称，可以任意起名。
+      path: /api/**
+      service-id: zuulgate-service  # service-id对应服务在注册中心的名称
+      sensitiveHeaders: "*"
+    hiveservice:
+      path: /hiveservice/**
+      serviceId: hive-service #hive服务
+      sensitiveHeaders: "*"
+    mysqldataservice:
+      path: /mysqldataservice/**
+      serviceId: mysqldata-service #mysqldata服务
+      sensitiveHeaders: "*"
+    webviewserver:
+      path: /webviewserver/**
+      serviceId: webview-server #web展示服务
+      sensitiveHeaders: "*"
+    flowservice:
+      path: /flowservice/**
+      serviceId: flow-service   #流程服务
+      sensitiveHeaders: "*"
+    htmlserver:
+      path: /htmlserver/**
+      url: http://www.wiseq.cn #静态页面
+
+    jsonserver:
+      path: /json/**
+      url: http://192.168.2.54:8082/swagger-ui.html
+  host:
+    connect-timeout-millis: 300000
+    socket-timeout-millis: 300000
+  servlet-path: /
+
+
+ribbon:
+  ReadTimeout: 300000
+  ConnectTimeout: 300000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000
+#http://192.168.2.57/webviewserver/user/1/detail
+
+
+# 授权配置
+license:
+  subject: AiEngineForMLS
+  #别名
+  publicAlias: publicCert
+  #公钥密码
+  storePass: Traits1023~
+  # 授权文件
+  licensePath: /home/test/license.lic
+  # 公钥地址
+  publicKeysStorePath: /home/test/publicCerts.keystore

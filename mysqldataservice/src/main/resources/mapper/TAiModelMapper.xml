@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TAiModelMapper">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TAiModel">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId" />
+    <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId" />
+    <result column="output_require_machine_id" jdbcType="BIGINT" property="outputRequireMachineId" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+    <result column="disabled" jdbcType="BOOLEAN" property="disabled" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="creator" jdbcType="BIGINT" property="creator" />
+  </resultMap>
+
+
+
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, type_machine_id, color_region_id, output_require_machine_id, is_delete, disabled, 
+    create_time, creator
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_ai_model
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    update  t_ai_model set is_delete = true
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <!-- 获取用这个匹配比的工单数量 -->
+ <select id="findTaskNumWithThisModel" resultType="java.lang.Integer">
+   select  count(1) FROM bs_task_state where model_id = #{modelId,jdbcType=BIGINT}
+ </select>
+  
+
+
+    <!--@mbg.generated-->
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TAiModel" useGeneratedKeys="true">
+  insert into t_ai_model
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        type_machine_id,
+      </if>
+      <if test="colorRegionId != null">
+        color_region_id,
+      </if>
+      <if test="outputRequireMachineId != null">
+        output_require_machine_id,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="disabled != null">
+        disabled,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="colorRegionId != null">
+        #{colorRegionId,jdbcType=BIGINT},
+      </if>
+      <if test="outputRequireMachineId != null">
+        #{outputRequireMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=BOOLEAN},
+      </if>
+      <if test="disabled != null">
+        #{disabled,jdbcType=BOOLEAN},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+
+
+
+
+
+
+
+    <insert id="insertTModelBom" useGeneratedKeys="true" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TModelBom">
+        insert into t_model_bom(model_id, bom_id)values (#{modelId},#{bomId});
+    </insert>
+
+
+    <select id="findModelList" resultType="java.util.LinkedHashMap">
+    select
+      ttm.id,
+      spec,
+      process_type,
+      ttm.crystal_number as crystalNumber,
+      IFNULL(bomNum,0) as bomNum,
+      IFNULL(outNum,0) as outNum ,
+      IFNULL(pbNum,0) as pbNum,
+      ttm.ra_max,ttm.ra_min
+      from t_type_machine ttm
+    LEFT JOIN
+    (select count(1) as bomNum,t_bom.type_machine_id FROM t_type_machine a left join t_bom on a.id = t_bom.type_machine_id  where t_bom.is_delete = false
+     group by t_bom.type_machine_id) a ON a.type_machine_id= ttm.id
+    LEFT JOIN
+    (select count(1) as outNum,tor.type_machine_id FROM t_type_machine a LEFT JOIN t_output_requirements tor on a.id = tor.type_machine_id
+      where  tor.is_delete = false
+     group by tor.type_machine_id) b on b.type_machine_id = ttm.id
+    LEFT JOIN
+    (select count(1) as pbNum,type_machine_id  from t_ai_model where is_delete = false group by type_machine_id) c ON c.type_machine_id = ttm.id
+    where ttm.is_delete = false
+    <if test="spec != null and spec != ''">
+    and ttm.spec like  concat('%',#{spec,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="processType != null">
+    and ttm.process_type  = #{processType,jdbcType=TINYINT}
+    </if>
+    order by ttm.disabled,ttm.create_time DESC
+  </select>
+
+
+
+
+
+  <!--<select id="findTAiModel" resultType="java.lang.String">
+    select * FROM t_ai_model as tam
+    LEFT JOIN  t_model_bom tmb on tam.id = tmb.model_id
+    LEFT JOIN t_chip_wl_rank tcwr on tmb.chip_wl_rank_id = tcwr.id
+    LEFT JOIN t_output_requirements tor on tam.output_require_machine_id = tor.id
+    LEFT JOIN t_output_requirements_dtl tord on tor.id = tord.output_require_id
+    LEFT JOIN t_bom tb on tmb.bom_id = tb.id
+  </select>-->
+
+
+
+  <resultMap id="findTModelFormulaMap" type="com.wiseq.cn.entity.ykAi.TModelFormula" autoMapping="true">
+    <id column="id" jdbcType="BIGINT" property="modelBomId" />
+    <result column="model_id" jdbcType="BIGINT" property="modelId" />
+    <result column="bom_type" jdbcType="TINYINT" property="bomType" />
+    <result column="bom_id" jdbcType="BIGINT" property="bomId" />
+    <collection property="scaffold" ofType="com.wiseq.cn.entity.ykAi.TScaffold"  select="findScaffoldByBomId" column="id"/>
+    <collection property="guleHigh" ofType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh"  select="findGuleHigeByBomId" column="id"/>
+    <collection property="glueAMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaGlueAByModelBomId" column="id"/>
+    <collection property="glueBMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaGlueBByModelBomId" column="id"/>
+    <collection property="tPhosphors" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaPhosphorsByModelBomId" column="id"/>
+    <collection property="antiStarchMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaAntiStarchByModelBomId" column="id"/>
+    <collection property="diffusionPowderMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaDiffusionPowderByModelBomId" column="id"/>
+  </resultMap>
+
+
+
+  <select id="findTModelFormula" resultMap="findTModelFormulaMap">
+    SELECT
+    tmb.id,
+    tmb.model_id,
+    bom_id,
+    <!--chip_wl_rank_id,-->
+    tb.bom_type
+    FROM t_model_bom tmb
+    LEFT JOIN t_bom tb ON tmb.bom_id = tb.id
+    WHERE tmb.model_id = #{modelId,jdbcType=BIGINT}
+    order by  tb.bom_type
+      <!--  ttmgh.gule_hight_usl,
+            ttmgh.gule_hight_lsl,
+             胶体高度
+            LEFT JOIN t_type_machine_gule_high ttmgh ON tb.type_machine_id = ttmgh.type_machine_id
+    -->
+  </select>
+
+    <!-- 获取胶体高度 -->
+    <select id="findGuleHigeByBomId" resultType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+        SELECT
+
+        ttmgh.gule_hight_usl as guleHightUsl,
+        ttmgh.gule_hight_lsl as guleHightLsl
+        FROM t_bom tb
+        <!--胶体高度-->
+        LEFT JOIN t_type_machine_gule_high ttmgh ON tb.type_machine_id = ttmgh.type_machine_id
+        WHERE tb.id = #{bomId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 获取支架参数 -->
+    <select id="findScaffoldByBomId" resultType="com.wiseq.cn.entity.ykAi.TScaffold">
+        SELECT
+        ts.is_circular,ts.param1,ts.param2,ts.param3,ts.param4,ts.param5
+        FROM t_bom tb
+        <!--支架-->
+        LEFT JOIN t_scaffold ts ON tb.scaffold_id = ts.id
+        WHERE tb.id = #{bomId,jdbcType=BIGINT}
+    </select>
+
+
+  <!-- 获取bom对应的材料库A胶比列 -->
+  <select id="findMaterialGlueARatioByBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    select tgd.id as materialId,tg.ratio_a as ratio,tgd.glue_spec as spec,tgd.density as density
+    FROM t_bom tb left join t_glue tg on tb.glue_id = tg.id
+    left join t_glue_dtl tgd on tg.id = tgd.glue_id
+    where tgd.glue_type = 'A' and tb.id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 获取bom对应的材料库B胶比列 -->
+  <select id="findMaterialGlueBRatioByBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    select tgd.id as materialId,tg.ratio_b as ratio,tgd.glue_spec as spec,tgd.density as density
+    FROM t_bom tb left join t_glue tg on tb.glue_id = tg.id
+                  left join t_glue_dtl tgd on tg.id = tgd.glue_id
+    where tgd.glue_type = 'B' and tb.id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 获取bom对应的材料库坑沉淀粉比列 -->
+  <select id="findMaterialAntiStarchRaitoByBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    select tas.anti_starch_spec as spec,tas.add_proportion as ratio, tas.id as materialId,tas.density as density
+    FROM t_bom tb , t_anti_starch tas
+    where tb.anti_starch_id = tas.id and
+          tb.id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 获取bom对应的材料库扩散分比列 -->
+  <select id="findMaterialDiffusionPowderRaitoByBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    select tdp.diffusion_powder_spec as spec, tdp.add_proportion as ratio,tdp.id as materialId,tdp.density as density
+    from t_bom tb ,t_diffusion_powder tdp
+    where tb.diffusion_powder_id = tdp.id
+      and tb.id =  #{bomId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findFormulaGlueAByModelBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- A 胶 -->
+    select
+    tmf.id, model_bom_id, material_id , ratio, material_class,
+    tgd.glue_spec,tgd.glue_id,tg.ratio_a,tgd.density as density
+    FROM t_model_formula tmf
+    left join  t_glue_dtl tgd ON tgd.id = tmf.material_id
+    left join t_glue tg  ON tgd.glue_id = tg.id
+    where material_class = 0 and model_bom_id = #{modelBomId,jdbcType=BIGINT}
+
+  </select>
+
+
+  <select id="findFormulaGlueBByModelBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- B 胶 -->
+    select
+    tmf.id, model_bom_id, material_id, ratio, material_class,
+    tgd.glue_spec,tgd.glue_id,tg.ratio_b,tgd.density as density
+    FROM t_model_formula tmf
+    LEFT JOIN   t_glue_dtl tgd ON tgd.id = tmf.material_id
+    LEFT JOIN   t_glue tg ON tgd.glue_id = tg.id
+    where material_class = 1 and model_bom_id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+
+  <select id="findFormulaPhosphorsByModelBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 荧光粉 -->
+    select
+    tmf.id, model_bom_id, material_id, ratio, material_class,
+    tp.phosphor_spec,tp.density as density
+    FROM t_model_formula tmf
+    LEFT JOIN t_phosphor tp on tmf.material_id = tp.id
+    where material_class = 2 and  model_bom_id = #{modelBomId,jdbcType=BIGINT}
+    order by ratio
+  </select>
+
+
+  <select id="findFormulaAntiStarchByModelBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 坑沉淀粉 -->
+    select
+    tmf.id, model_bom_id, material_id, ratio, material_class,
+    tas.anti_starch_spec,tas.density as density
+
+    FROM t_model_formula tmf
+    LEFT JOIN t_anti_starch  tas  ON tmf.material_id = tas.id
+    where material_class = 3 and model_bom_id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findFormulaDiffusionPowderByModelBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 扩散粉 -->
+    select
+    tmf.id, model_bom_id, material_id, ratio, material_class,tdp.diffusion_powder_spec,tdp.density as density
+    FROM t_model_formula tmf
+    LEFT JOIN  t_diffusion_powder tdp ON tmf.material_id = tdp.id
+    where material_class = 4 and model_bom_id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+  
+  <resultMap id="bomListmForModel" type="com.wiseq.cn.entity.ykAi.TBom">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="bom_code" jdbcType="VARCHAR" property="bomCode" />
+    <result column="bom_type" jdbcType="TINYINT" property="bomType" />
+    <result column="is_temp" jdbcType="BOOLEAN" property="isTemp" />
+   <!-- <result column="chip_id" jdbcType="BIGINT" property="chipId" /> -->
+    <result column="chip_spec" jdbcType="VARCHAR" property="chipSpec" />
+    <result column="scaffold_id" jdbcType="VARCHAR" property="scaffoldId" />
+    <result column="scaffold_spec" jdbcType="BIGINT" property="scaffoldSpec" />
+    <result column="glue_id" jdbcType="BIGINT" property="typeMachineId" />
+    <result column="aguleSpec" jdbcType="VARCHAR" property="aguleSpec" />
+    <result column="bguleSpec" jdbcType="VARCHAR" property="bguleSpec" />
+    <result column="aglueId" jdbcType="BIGINT" property="aglueId"/>
+    <result column="bglueId" jdbcType="BIGINT" property="bglueId"/>
+    <result column="diffusion_powder_id" jdbcType="BIGINT" property="diffusionPowderId" />
+    <result column="diffusion_powder_spec" jdbcType="VARCHAR" property="diffusionPowderSpec" />
+    <result column="anti_starch_id" jdbcType="BIGINT" property="antiStarchId" />
+    <result column="anti_starch_spec" jdbcType="VARCHAR" property="antiStarchSpec" />
+    <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId" />
+    <!--<result column="chip_wl_rank_id" jdbcType="BIGINT" property="chipWlRankId"/>-->
+    <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+    <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+    <collection property="tPhosphors" ofType="com.wiseq.cn.entity.ykAi.TPhosphor"  select="selectPhosphorByBomId" column="id"/>
+  </resultMap>
+
+
+
+
+
+  <select id="findBomByModelId" resultMap="bomListmForModel">
+    select
+    a.id,
+    a.bom_code,
+    a.bom_type,
+    a.is_temp,
+    <!--a.chip_id,-->
+   <!-- b.chip_spec,-->
+    a.scaffold_id,
+    ts.scaffold_spec,
+    a.glue_id,
+    guleA.glue_spec aguleSpec,
+    guleB.glue_spec bguleSpec,
+    guleA.id AS aglueId,
+    guleB.id AS bglueId,
+    a.diffusion_powder_id,
+    tdp.diffusion_powder_spec,
+    a.anti_starch_id,
+    tas.anti_starch_spec,
+    a.type_machine_id,
+    a.bom_source
+   <!-- tmb.chip_wl_rank_id,-->
+    <!--tcwr.wl_max,tcwr.wl_min-->
+    FROM
+    t_model_bom tmb LEFT JOIN t_bom a ON tmb.bom_id = a.id
+   <!-- LEFT JOIN t_chip b ON a.chip_id = b.id-->
+    LEFT JOIN t_scaffold ts on a.scaffold_id = ts.id
+    LEFT JOIN t_glue tg on a.glue_id = tg.id
+    LEFT JOIN (select glue_spec,glue_id,id from t_glue_dtl where glue_type='A') guleA ON guleA.glue_id = tg.id
+    LEFT JOIN (select glue_spec,glue_id,id from t_glue_dtl where glue_type='B') guleB ON guleB.glue_id = tg.id
+    LEFT JOIN t_diffusion_powder tdp on a.diffusion_powder_id = tdp.id
+    LEFT JOIN t_anti_starch tas on a.anti_starch_id = tas.id
+   <!-- LEFT JOIN t_chip_wl_rank tcwr on tmb.chip_wl_rank_id = tcwr.id-->
+    where tmb.model_id=#{modelId,jdbcType=BIGINT}
+    <!-- 排序分上下层-->
+    ORDER BY a.bom_type
+  </select>
+
+
+  <select id="findBomByModelIdOrderBy" resultType="com.wiseq.cn.entity.ykAi.TBom">
+    select
+    a.id,
+    a.bom_code,
+    a.bom_type,
+    a.is_temp,
+    <!--a.chip_id,-->
+    <!--b.chip_spec,-->
+    a.scaffold_id,
+    ts.scaffold_spec,
+    a.glue_id,
+    guleA.glue_spec aguleSpec,
+    guleB.glue_spec bguleSpec,
+    guleA.id AS aglueId,
+    guleB.id AS bglueId,
+    a.diffusion_powder_id,
+    tdp.diffusion_powder_spec,
+    a.anti_starch_id,
+    tas.anti_starch_spec,
+    a.type_machine_id
+    <!--tmb.chip_wl_rank_id,-->
+    <!--tcwr.wl_max,tcwr.wl_min-->
+    FROM
+    t_model_bom tmb LEFT JOIN t_bom a ON tmb.bom_id = a.id
+   <!-- LEFT JOIN t_chip b ON a.chip_id = b.id-->
+    LEFT JOIN t_scaffold ts on a.scaffold_id = ts.id
+    LEFT JOIN t_glue tg on a.glue_id = tg.id
+    LEFT JOIN (select glue_spec,glue_id,id from t_glue_dtl where glue_type='A') guleA ON guleA.glue_id = tg.id
+    LEFT JOIN (select glue_spec,glue_id,id from t_glue_dtl where glue_type='B') guleB ON guleB.glue_id = tg.id
+    LEFT JOIN t_diffusion_powder tdp on a.diffusion_powder_id = tdp.id
+    LEFT JOIN t_anti_starch tas on a.anti_starch_id = tas.id
+   <!-- LEFT JOIN t_chip_wl_rank tcwr on tmb.chip_wl_rank_id = tcwr.id-->
+    where tmb.model_id=#{modelId,jdbcType=BIGINT}
+    <!-- 排序分上下层-->
+    ORDER BY a.bom_type
+  </select>
+
+
+  <select id="selectPhosphorByBomIdOrderBy" resultType="com.wiseq.cn.entity.ykAi.TPhosphor">
+    select bom_id,tp.id ,tp.peak_wavelength ,tp.density ,tp.phosphor_spec FROM t_bom_Phosphor  as bom_Phosphor
+    LEFT JOIN t_phosphor tp on bom_Phosphor.phosphor_id = tp.id
+    where bom_id = #{bomId,jdbcType=BIGINT}
+    order by FIELD(tp.id,
+    <foreach collection="orderByList" index="index" item="item"   separator="," >
+      #{item.materialId,jdbcType=BIGINT}
+    </foreach>
+    )
+  </select>
+
+
+  <select id="selectPhosphorByBomId" resultType="com.wiseq.cn.entity.ykAi.TPhosphor">
+    select bom_id,tp.id ,tp.phosphor_spec FROM t_bom_Phosphor  as bom_Phosphor
+    LEFT JOIN t_phosphor tp on bom_Phosphor.phosphor_id = tp.id
+    where bom_id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="selectPhosphorByBomIdReturn" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    select bom_id,tp.id as materialId,tp.phosphor_spec as spec FROM t_bom_Phosphor  as bom_Phosphor
+    LEFT JOIN t_phosphor tp on bom_Phosphor.phosphor_id = tp.id
+    where bom_id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+
+  <select id="findMoldeList" resultType="com.wiseq.cn.entity.ykAi.TAIModelDtl">
+    select tam.id,
+           tam.type_machine_id,
+           tor.code as outputRequireMachineCode,
+           tam.output_require_machine_id,
+           tor.is_temp,
+           tor.output_kind,
+           tam.color_region_id,tcr.name as colorRegionName,
+           outCpXY.cp_x,
+           outCpXY.cp_y,
+           IFNULL(lastTime,'') as lastTime
+           ,singleBomCode,upperBomCode,underBomcode
+    FROm t_ai_model tam
+           left join t_output_requirements tor on tam.output_require_machine_id = tor.id
+           left join t_color_region tcr on tam.color_region_id = tcr.id
+           left join (select MAX(tord.cp_x) as cp_x,MAX(tord.cp_y) cp_y,output_require_id FROM t_output_requirements_dtl tord group by output_require_id) outCpXY ON outCpXY.output_require_id = tam.output_require_machine_id
+           left join (select Max(create_time) as lastTime,model_id FROM bs_task_state group by model_id) lt on lt.model_id = tam.id
+           left join
+           (select tmb.model_id,tb.bom_type,tb.bom_code as singleBomCode FROM t_model_bom tmb
+             LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 0) as singleBom ON tam.id = singleBom.model_id
+           LEFT JOIN
+           (select tmb.model_id, tb.bom_type,tb.bom_code as upperBomCode FROM t_model_bom tmb
+            LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 1) as upperBom ON tam.id = upperBom.model_id
+           LEFT JOIN
+           (select tmb.model_id,tb.bom_type,tb.bom_code as underBomcode FROM t_model_bom tmb
+            LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 2) as underBom ON tam.id = underBom.model_id
+    where tam.type_machine_id = #{typeMachineId,jdbcType=BIGINT} and tam.is_delete = false
+    <if test="bomCode != null and bomCode != ''">
+      and (singleBomCode  like CONCAT('%',#{bomCode,jdbcType=VARCHAR},'%')
+          or upperBomCode like CONCAT('%',#{bomCode,jdbcType=VARCHAR},'%')
+          or underBomcode like CONCAT('%',#{bomCode,jdbcType=VARCHAR},'%'))
+    </if>
+    <if test="outputRequireMachineCode != null and outputRequireMachineCode != ''">
+    and tor.code like CONCAT('%',#{outputRequireMachineCode,jdbcType=VARCHAR},'%')
+    </if>
+    order by tam.id DESC
+  </select>
+
+
+  <!-- 通过model获取生产搭配 -->
+  <select id="getOneMoldeByModelId"  resultType="com.wiseq.cn.entity.ykAi.TAIModelDtl">
+    select tam.id,
+    tam.type_machine_id,
+    tor.code as outputRequireMachineCode,
+    tam.output_require_machine_id,
+    tor.is_temp,
+    tor.output_kind,
+    tam.color_region_id,tcr.name as colorRegionName,
+    outCpXY.cp_x,
+    outCpXY.cp_y,
+    IFNULL(lastTime,'') as lastTime
+    ,singleBomCode,upperBomCode,underBomcode
+    FROm t_ai_model tam
+    left join t_output_requirements tor on tam.output_require_machine_id = tor.id
+    left join t_color_region tcr on tam.color_region_id = tcr.id
+    left join (select MAX(tord.cp_x) as cp_x,MAX(tord.cp_y) cp_y,output_require_id FROM t_output_requirements_dtl tord group by output_require_id) outCpXY ON outCpXY.output_require_id = tam.output_require_machine_id
+    left join (select Max(create_time) as lastTime,model_id FROM bs_task_state group by model_id) lt on lt.model_id = tam.id
+    left join
+    (select tmb.model_id,tb.bom_type,tb.bom_code as singleBomCode FROM t_model_bom tmb
+    LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 0) as singleBom ON tam.id = singleBom.model_id
+    LEFT JOIN
+    (select tmb.model_id, tb.bom_type,tb.bom_code as upperBomCode FROM t_model_bom tmb
+    LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 1) as upperBom ON tam.id = upperBom.model_id
+    LEFT JOIN
+    (select tmb.model_id,tb.bom_type,tb.bom_code as underBomcode FROM t_model_bom tmb
+    LEFT JOIN t_bom tb on tmb.bom_id = tb.id where bom_type = 2) as underBom ON tam.id = underBom.model_id
+    where tam.id = #{modelId,jdbcType=BIGINT}
+  </select>
+
+
+
+  <!-- 通过出货要求ID获取出货详情列表 -->
+  <select id="outputRequiremendtlsByOutRequireId" resultType="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+    select  * FROM (
+      select
+      tcrd.id,
+      tcrd.color_region_id,
+      tcrd.name, tcrd.xrow, tcrd.xcolumn, tcrd.shape,
+      tcrd.x1, tcrd.y1, tcrd.x2, tcrd.y2, tcrd.x3, tcrd.y3,
+      tcrd.x4, tcrd.y4,tcrd.a, tcrd.b, tcrd.x, tcrd.y,
+      tcrd.angle, tcrd.create_time, tcrd.is_delete,
+      tord.output_require_id,
+      tord.ratio_type,tord.ratio_value
+      from t_output_requirements_dtl tord
+      LEFT JOIN t_output_requirements tor  ON tord.output_require_id = tor.id
+      LEFT JOIN t_color_region tcr on tord.color_region_id = tcr.id
+      LEFT JOIN t_color_region_dtl tcrd on tcr.id = tcrd.color_region_id
+      <!-- 色荣差类型0和出货中心点类型2 -->
+      where tord.color_region_dtl_id is null and tor.output_kind IN (0,2)
+      union
+      select
+        tcrd.id,
+        tcrd.color_region_id,
+        tcrd.name, tcrd.xrow, tcrd.xcolumn, tcrd.shape,
+        tcrd.x1, tcrd.y1, tcrd.x2, tcrd.y2, tcrd.x3, tcrd.y3,
+        tcrd.x4, tcrd.y4,tcrd.a, tcrd.b, tcrd.x, tcrd.y,
+        tcrd.angle, tcrd.create_time, tcrd.is_delete
+        ,tord.output_require_id,tord.ratio_type,tord.ratio_value
+      FROM t_output_requirements tor
+      LEFT JOIN t_output_requirements_dtl tord ON tor.id = tord.output_require_id
+      LEFT JOIN t_color_region_dtl tcrd on tord.color_region_dtl_id = tcrd.id
+     <!-- 出货比列 类型 -->
+      where tor.output_kind = 1
+    ) a where a.output_require_id =#{outputRequireId,jdbcType=BIGINT}
+    order by a.color_region_id,a.id
+  </select>
+
+
+  <insert id="insertModelFormulaSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TModelFormulaForTables" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_model_formula
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="modelBomId != null">
+        model_bom_id,
+      </if>
+      <if test="materialId != null">
+        material_id,
+      </if>
+      <if test="ratio != null">
+        ratio,
+      </if>
+      <if test="materialClass != null">
+        material_class,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="modelBomId != null">
+        #{modelBomId,jdbcType=BIGINT},
+      </if>
+      <if test="materialId != null">
+        #{materialId,jdbcType=BIGINT},
+      </if>
+      <if test="ratio != null">
+        #{ratio,jdbcType=DOUBLE},
+      </if>
+      <if test="materialClass != null">
+        #{materialClass,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+
+
+
+  <update id="updateBatchModelFormula" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+      update t_model_formula
+         <set>
+            ratio = #{item.ratio,jdbcType=DOUBLE}
+         </set>
+       <where>
+          model_bom_id = #{item.modelBomId,jdbcType=BIGINT}
+          and material_class = #{item.materialClass,jdbcType=TINYINT}
+          and material_id = #{item.materialId,jdbcType=BIGINT}
+       </where>
+    </foreach>
+  </update>
+
+
+
+  <update id="updateModelFormula" parameterType="com.wiseq.cn.entity.ykAi.TModelFormulaForTables">
+    <!--@mbg.generated-->
+    update t_model_formula
+    set
+    ratio = #{ratio,jdbcType=DOUBLE}
+    where
+    model_bom_id = #{modelBomId,jdbcType=BIGINT} and
+    material_id = #{materialId,jdbcType=BIGINT} and
+    material_class = #{materialClass,jdbcType=TINYINT}
+  </update>
+
+
+
+
+
+  <select id="findAiModelIdList"  resultType="java.lang.Long">
+    select
+    tam.id as modelId
+    FROM t_ai_model tam
+    LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+    where tam.is_delete = false
+    and tam.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+    and tam.output_require_machine_id = #{outputRequireMachineId,jdbcType=BIGINT}
+    and tmb.bom_id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findModeBomByModelBomId" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.TModelBom">
+    SELECT id, model_id, bom_id
+    FROM t_model_bom where id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+
+
+  <!-- 通过modelId获取这个model的详情 -->
+  <select id="findAiModelDtlByModelId" resultType="com.wiseq.cn.entity.ykAi.BsAIModelDtl">
+    select  t_ai_model.output_require_machine_id,
+            t_ai_model.type_machine_id,
+            t_ai_model.is_delete,
+            t_ai_model.color_region_id,
+            ttm.process_type,
+            tmb.bom_id,
+            t_ai_model.id as modelId
+        FROM t_ai_model
+    LEFT JOIN t_model_bom tmb on t_ai_model.id = tmb.model_id
+    LEFT JOIN t_type_machine ttm on t_ai_model.type_machine_id = ttm.id
+    where t_ai_model.id = #{modelId,jdbcType=BIGINT}
+    and ttm.process_type = 0
+  </select>
+  
+
+  
+  
+  <select id="selectAiModelByOutputId" resultType="java.lang.Integer">
+    select  IFNULL(count(1),0) FROM t_ai_model tam
+    where tam.id != #{nowModelId,jdbcType=BIGINT}
+    and tam.output_require_machine_id = #{outputRequireMachineId,jdbcType=BIGINT}
+  </select>
+
+
+  <update id="updateOutputRequireCPXY">
+    update t_output_requirements_dtl
+    set cp_x = #{x,jdbcType=DOUBLE}
+    ,cp_y = #{y,jdbcType=DOUBLE}
+    where output_require_id = #{outputRequireMachineId,jdbcType=BIGINT}
+  </update>
+
+  <!-- 此模型是否存在配比 -->
+  <select id="findExitFormulaByModelId" resultType="java.lang.Integer">
+    select  IFNULL(count(*),0) FROM t_ai_model tam
+    LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+    LEFT JOIN t_model_formula tmf on tmb.id = tmf.model_bom_id
+    where tmf.model_bom_id IS NOT NULL and tam.id = #{modelId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 获取modelBom芯片波段集合 -->
+  <select id="findAiModelBomchipRankIdList" resultType="java.lang.Long">
+    select
+      tmbcwr.chip_wl_rank_id
+    from t_model_bom_chip_wl_rank tmbcwr,
+    t_model_bom tmb
+    where  tmbcwr.model_bom_id = tmb.id
+    and tmb.model_id = #{modelId}
+  </select>
+
+    <select id="getTypeMachineTargetParameterByModelId" resultType="com.wiseq.cn.entity.ykAi.TargetParameter">
+        select
+        ra_target   as  raTarget,
+        ra_max     as  raMax,
+        ra_min     as  raMin,
+        r9          as  r9,
+        ct           as ct,
+        lumen_lsl   as  lumenLsl,
+        lumen_usl   as  lumenUsl,
+        wl_lsl      as wlLsl ,
+        wl_usl    as    wlUsl
+        FROM t_ai_model tam
+        LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+        where tam.id = #{modelId}
+    </select>
+
+
+    <select id="getBomPhosphorPeakWavelengthList" resultType="com.wiseq.cn.entity.ykAi.PhosphorPeakWavelength">
+        select
+        tp.phosphor_spec as spec,
+        tp.peak_wavelength as peakWavelength
+        from t_ai_model tam
+        LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+        LEFT JOIN t_bom_Phosphor tbp on tmb.bom_id = tbp.bom_id
+        left join t_phosphor tp on tbp.phosphor_id = tp.id
+        where tam.id = #{modelId}
+    </select>
+
+
+    <select id="findModelWithBom" resultType="java.util.Map">
+        SELECT
+        tmb.id as modelBomId,
+        tmb.model_id as modelId,
+        bom_id as bomId,
+        <!--chip_wl_rank_id,-->
+        tb.bom_type
+        FROM t_model_bom tmb
+        LEFT JOIN t_bom tb ON tmb.bom_id = tb.id
+        WHERE tmb.model_id = #{modelId,jdbcType=BIGINT}
+        order by  tb.bom_type
+    </select>
+</mapper>

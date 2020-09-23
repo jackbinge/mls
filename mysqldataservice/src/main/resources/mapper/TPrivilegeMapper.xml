@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TPrivilegeDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@mbg.generated-->
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+  </resultMap>
+
+ <resultMap id="getBaseTreeMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+   <!--@Table t_privilege-->
+   <id column="id" jdbcType="BIGINT" property="id" />
+   <result column="name" jdbcType="VARCHAR" property="name" />
+   <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+   <result column="router" jdbcType="VARCHAR" property="router" />
+   <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+   <result column="kind" jdbcType="TINYINT" property="kind" />
+   <collection property="childList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="id" select="getChildTree"/>
+   <collection property="buttonList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="id" select="getButtonList"/>
+ </resultMap>
+
+  <resultMap id="getChildTreeMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <collection property="childList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="id" javaType="java.util.ArrayList" select="getChildTree"/>
+    <collection property="buttonList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="id" select="getButtonList"/>
+  </resultMap>
+
+
+
+  <!-- 获取所有的权限树 -->
+  <resultMap id="getButtonMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+  </resultMap>
+
+
+  <select id="getBaseTree" resultMap="getBaseTreeMap">
+    select id, name, parent_id, router, router_path, kind
+    FROM t_privilege where parent_id = 0
+  </select>
+
+
+  <select id="getChildTree" resultMap="getChildTreeMap">
+    select id, name, parent_id, router, router_path, kind
+    FROM t_privilege where parent_id = #{id,jdbcType=BIGINT} and kind = 0
+  </select>
+  
+  <select id="getButtonList" resultMap="getButtonMap">
+    select id,name,parent_id,router,router_path,kind
+    FROM t_privilege where kind = 1 and parent_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+
+  <!-- 获取用户的权限树 -->
+
+
+
+
+  <resultMap id="UserBaseTree" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <result column="userId" jdbcType="BIGINT" property="userId"/>
+    <collection property="childList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="{id = id,userId = userId}" javaType="java.util.ArrayList" select="getUserChildTree"/>
+    <collection property="buttonList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="{id = id,userId = userId}" javaType="java.util.ArrayList" select="getUserButtonList"/>
+  </resultMap>
+
+  <resultMap id="getUserChildTreeMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <result column="userId" jdbcType="BIGINT" property="userId"/>
+    <collection property="childList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="{id = id,userId = userId}" javaType="java.util.ArrayList" select="getUserChildTree"/>
+    <collection property="buttonList" ofType="com.wiseq.cn.entity.ykAi.TPrivilege" column="{id = id,userId = userId}" javaType="java.util.ArrayList" select="getUserButtonList"/>
+  </resultMap>
+
+  <resultMap id="getUserButtonMap" type="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@Table t_privilege-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="router_path" jdbcType="VARCHAR" property="routerPath" />
+    <result column="kind" jdbcType="TINYINT" property="kind" />
+    <result column="userId" jdbcType="BIGINT" property="userId"/>
+  </resultMap>
+
+
+  <select id="getUserTree" resultMap="UserBaseTree">
+    select  tp.id, tp.name, tp.parent_id, tp.router, tp.router_path, tp.kind,tur.user_id as userId from t_user_role tur
+    left join t_role tr on tur.role_id = tr.id
+    left join t_role_privilege trp on tr.id = trp.role_id
+    left join t_privilege tp on trp.privilege_id = tp.id
+    where tp.parent_id = 0 and tur.user_id = #{userId,jdbcType=BIGINT}
+  </select>
+
+  <select id="getUserChildTree" resultMap="getUserChildTreeMap">
+    select  tp.id, tp.name, tp.parent_id, tp.router, tp.router_path, tp.kind,tur.user_id as userId
+    from t_user_role tur
+    left join t_role tr on tur.role_id = tr.id
+    left join t_role_privilege trp on tr.id = trp.role_id
+    left join t_privilege tp on trp.privilege_id = tp.id
+    where tp.parent_id = #{id,jdbcType=BIGINT}
+    and tur.user_id = #{userId,jdbcType=BIGINT}
+    and kind = 0
+  </select>
+
+  <select id="getUserButtonList" resultMap="getUserButtonMap">
+
+      select  tp.id, tp.name, tp.parent_id, tp.router, tp.router_path, tp.kind,tur.user_id as userId
+      from t_user_role tur
+      left join t_role tr on tur.role_id = tr.id
+      left join t_role_privilege trp on tr.id = trp.role_id
+      left join t_privilege tp on trp.privilege_id = tp.id
+      where kind = 1 and tur.user_id = #{userId,jdbcType=BIGINT} and
+      tp.parent_id = #{id,jdbcType=BIGINT}
+
+  </select>
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `name`, parent_id, router, router_path, kind
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_privilege
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_privilege
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TPrivilege" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_privilege (`name`, parent_id, router, 
+      router_path, kind)
+    values (#{name,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, #{router,jdbcType=VARCHAR}, 
+      #{routerPath,jdbcType=VARCHAR}, #{kind,jdbcType=TINYINT})
+  </insert>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TPrivilege" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_privilege
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="router != null">
+        router,
+      </if>
+      <if test="routerPath != null">
+        router_path,
+      </if>
+      <if test="kind != null">
+        kind,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="router != null">
+        #{router,jdbcType=VARCHAR},
+      </if>
+      <if test="routerPath != null">
+        #{routerPath,jdbcType=VARCHAR},
+      </if>
+      <if test="kind != null">
+        #{kind,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@mbg.generated-->
+    update t_privilege
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="router != null">
+        router = #{router,jdbcType=VARCHAR},
+      </if>
+      <if test="routerPath != null">
+        router_path = #{routerPath,jdbcType=VARCHAR},
+      </if>
+      <if test="kind != null">
+        kind = #{kind,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TPrivilege">
+    <!--@mbg.generated-->
+    update t_privilege
+    set `name` = #{name,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      router = #{router,jdbcType=VARCHAR},
+      router_path = #{routerPath,jdbcType=VARCHAR},
+      kind = #{kind,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update t_privilege
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="`name` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.name,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="parent_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.parentId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="router = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.router,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="router_path = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.routerPath,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="kind = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.kind,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_privilege
+    (`name`, parent_id, router, router_path, kind)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.name,jdbcType=VARCHAR}, #{item.parentId,jdbcType=BIGINT}, #{item.router,jdbcType=VARCHAR}, 
+        #{item.routerPath,jdbcType=VARCHAR}, #{item.kind,jdbcType=TINYINT})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TEqptValveMapper">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TEqptValve">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="eqpt_id" jdbcType="INTEGER" property="eqptId" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, eqpt_id,`name`,is_delete, remark
+  </sql>
+  <select id="findTeqptValveList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_eqpt_valve
+    where is_delete != true
+    <if test="eqptId != null and eqptId != ''">
+      and eqpt_id =#{eqptId}
+    </if>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_eqpt_valve
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TEqptValve" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_eqpt_valve
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="eqptId != null">
+        eqpt_id,
+      </if>
+        is_delete,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+      #{remark,jdbcType=VARCHAR},
+    </if>
+      <if test="eqptId != null">
+        #{eqptId,jdbcType=INTEGER},
+      </if>
+        false
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TEqptValve">
+    <!--@mbg.generated-->
+    update t_eqpt_valve
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR} ,
+      </if>
+      <if test="eqptId != null">
+        eqpt_id = #{eqptId,jdbcType=INTEGER},
+      </if>
+      <if test="isDelete!=null">
+        is_delete = #{isDelete,jdbcType=BOOLEAN}
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TEqptValve">
+    <!--@mbg.generated-->
+    update t_eqpt_valve
+    set `name` = #{name,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+    eqpt_id = #{eqptId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="findTEqptValveExist" resultMap="BaseResultMap">
+    select * from t_eqpt_valve where `name` = #{name} and eqpt_id = #{eqptId} and is_delete != 1
+  </select>
+
+  <update id="updateByPrimaryKeySelectives" parameterType="com.wiseq.cn.entity.ykAi.TEqptValve">
+    <!--@mbg.generated-->
+    update t_eqpt_valve
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR} ,
+      </if>
+    </set>
+    where eqpt_id = #{eqptId,jdbcType=BIGINT}
+  </update>
+  <update id="deleteSelectives">
+    update t_eqpt_valve
+    <set>
+        is_delete = 1,
+    </set>
+    where eqpt_id = #{eqptId,jdbcType=BIGINT}
+  </update>
+
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap"></select>
+</mapper>

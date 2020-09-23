@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsTaskFormulaDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.BsTaskFormula">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    <!--@Table bs_task_formula-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_state_id" jdbcType="BIGINT" property="taskStateId" />
+    <result column="task_bom_id" jdbcType="BIGINT" property="taskBomId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    id, task_state_id, task_bom_id
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    update bs_task_formula
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="task_state_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.taskStateId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="task_bom_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.taskBomId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    insert into bs_task_formula
+    (task_state_id, task_bom_id)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskStateId,jdbcType=BIGINT}, #{item.taskBomId,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+  <insert id="insertOrUpdate" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskFormula" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    insert into bs_task_formula
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      task_state_id,
+      task_bom_id,
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      #{taskStateId,jdbcType=BIGINT},
+      #{taskBomId,jdbcType=BIGINT},
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      task_state_id = #{taskStateId,jdbcType=BIGINT},
+      task_bom_id = #{taskBomId,jdbcType=BIGINT},
+    </trim>
+  </insert>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskFormula" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:28 CST 2019.-->
+    insert into bs_task_formula
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskStateId != null">
+        task_state_id,
+      </if>
+      <if test="taskBomId != null">
+        task_bom_id,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskStateId != null">
+        #{taskStateId,jdbcType=BIGINT},
+      </if>
+      <if test="taskBomId != null">
+        #{taskBomId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <!-- 这里要通过taskId和BOMID获取其对应的A,B,....配比-->
+  <select id="getBsTaskFormulaGlueAByTaskFormulaId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula" >
+    SELECT
+            material_id, ratio,
+           tgd.glue_spec as spec
+    FROM bs_task_formula btf
+    LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+    LEFT JOIN t_glue_dtl tgd  ON tgd.id = btfd.material_id
+    where btfd.material_class = 0
+    and btf.task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and btf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+  <!-- 物料类型 0胶A，1胶水B,2 荧光粉，3 扩散粉 4 抗沉淀粉 -->
+  <select id="getBsTaskFormulaGlueBByTaskFormulaId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    SELECT
+    material_id, ratio,
+    tgd.glue_spec as spec
+    FROM bs_task_formula btf
+    LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+    LEFT JOIN t_glue_dtl tgd  ON tgd.id = btfd.material_id
+    where btfd.material_class = 1
+    and btf.task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and btf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 2 荧光粉 -->
+  <select id="getBsTaskFormulaPhosphorsByTaskFormulaId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    SELECT
+      material_id, ratio,
+      tp.peak_wavelength,
+      tp.density,
+      tp.phosphor_spec as spec
+    FROM bs_task_formula btf
+           LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+           LEFT JOIN t_phosphor tp on btfd.material_id = tp.id
+        where btfd.material_class = 2
+    and btf.task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and btf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+    order by ratio
+  </select>
+
+  <!-- 3 抗沉淀粉 -->
+  <select id="getBsTaskFormulaAntiStarchByTaskFormulaId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    SELECT
+      material_id, ratio,
+      tas.anti_starch_spec as spec
+    FROM bs_task_formula btf
+           LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+           LEFT JOIN t_anti_starch  tas  ON btfd.material_id = tas.id
+    where btfd.material_class = 3
+    and btf.task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and btf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 4 扩散粉 -->
+  <select id="getBsTaskFormulaDiffusionPowderTaskIdAndBomId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    SELECT
+    material_id, ratio,
+    tdp.diffusion_powder_spec as spec
+    FROM bs_task_formula btf
+    LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+    LEFT JOIN t_diffusion_powder  tdp  ON btfd.material_id = tdp.id
+    where btfd.material_class = 4
+    and btf.task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and btf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findTModelFormula" resultType="com.wiseq.cn.entity.ykAi.TModelFormula">
+    SELECT
+    tmb.id,
+    tmb.model_id,
+    bom_id,
+    chip_wl_rank_id,
+    tb.bom_type
+    FROM t_model_bom tmb
+    LEFT JOIN t_bom tb ON tmb.bom_id = tb.id
+    WHERE tmb.model_id = #{modelId,jdbcType=BIGINT}
+    order by  tb.bom_type
+  </select>
+
+  <delete id="deleteTaskModelFormula">
+    delete FROM bs_task_formula where task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </delete>
+
+
+  <delete id="deleteBsTaskFormulaDtlBytaskFormulaId">
+    delete FROM bs_task_formula_dtl where  task_formula_id = #{taskFormulaId,jdbcType=BIGINT}
+  </delete>
+
+  <select id="getTaskFormula" resultType="com.wiseq.cn.entity.ykAi.BsTaskFormula">
+    select id, task_state_id, task_bom_id FROM bs_task_formula  where task_bom_id = #{taskBomId,jdbcType=BIGINT}
+    and task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="getTaskFormulaForTaskState" resultType="com.wiseq.cn.entity.ykAi.BsTaskFormula">
+    select  id, task_state_id, task_bom_id
+    FROM bs_task_formula
+    where task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+  <resultMap id="GetBsTaskFormulaMixMap" type="com.wiseq.cn.entity.ykAi.BsTaskFormulaMix">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_state_id" jdbcType="BIGINT" property="taskStateId" />
+    <result column="task_bom_id" jdbcType="BIGINT" property="taskBomId" />
+    <collection property="bsTaskFormulaDtlList"
+                ofType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl"
+                column="id"
+                javaType="java.util.List"
+                select="getBsTaskFormulaDtl" />
+  </resultMap>
+
+
+  <select id="getBsTaskFormulaMix" resultMap="GetBsTaskFormulaMixMap">
+    select  id, task_state_id, task_bom_id FROM bs_task_formula
+    where task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+
+  <select id="getBsTaskFormulaDtl" resultType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl">
+    select
+    id,
+    task_formula_id,
+    material_id,
+    ratio,
+    material_class
+    FROM bs_task_formula_dtl
+    where task_formula_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <resultMap id="getTaskFormulaForTaskStateFromAiModel" type="com.wiseq.cn.entity.ykAi.BsTaskFormulaMix">
+    <result column="taskStateId" jdbcType="BIGINT" property="taskStateId" />
+    <result column="bom_id" jdbcType="BIGINT" property="taskBomId" />
+    <collection property="bsTaskFormulaDtlList" column="modelBomId" ofType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl"
+    select="getFormulaDtl"/>
+  </resultMap>
+
+
+  <select id="getTaskFormulaForTaskStateFromAiModel" resultMap="getTaskFormulaForTaskStateFromAiModel">
+    SELECT
+    bts.task_id,
+    bts.id as taskStateId,
+<!--    tmb.chip_wl_rank_id,-->
+    tmb.model_id,
+    tmb.bom_id,
+    tmb.id as modelBomId
+    FROM bs_task_state bts
+    LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+    LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+    where bts.id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="getFormulaDtl"  resultType = "com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl">
+    select
+    material_id as materialId,
+    ratio,
+    material_class
+    FROM  t_model_formula
+    where model_bom_id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="isTaskformula" resultType="java.lang.Integer">
+    select  IFNULL(count(1),0)  from bs_task_formula where task_state_id = #{taskStateId,jdbcType=BIGINT}
+  </select>
+</mapper>

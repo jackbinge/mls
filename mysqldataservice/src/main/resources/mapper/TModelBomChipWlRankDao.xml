@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wiseq.cn.ykAi.dao.TModelBomChipWlRankDao">
+    <insert id="insert">
+        insert INTO t_model_bom_chip_wl_rank
+        (chip_wl_rank_id, model_bom_id)
+        values
+        <foreach collection="list" item="temp" separator=",">
+            (#{temp},#{modelBomId})
+        </foreach>
+
+    </insert>
+
+    <select id="selectAiModelChipInfo" resultType="java.util.Map">
+        SELECT
+        chip_id  as chipId,
+        chip_spec  as chipSpec,
+        group_concat(DISTINCT chipWlRankId) as modelBomChipWlRankIdList ,
+        count(DISTINCT chipWlRankId) chipNum
+        FROM(
+            select
+            tcwr.chip_id,
+            tc.chip_spec,
+            tmbcwr.id as chipWlRankId
+            from
+            t_model_bom tmb
+            LEFT JOIN t_model_bom_chip_wl_rank tmbcwr ON  tmbcwr.model_bom_id = tmb.id
+            LEFT JOIN t_chip_wl_rank tcwr ON tcwr.id = tmbcwr.chip_wl_rank_id
+            LEFT JOIN  t_chip tc ON tc.id = tcwr.chip_id
+            where tmb.model_id = #{modelId,jdbcType=BIGINT}
+        )a group by a.chip_id,a.chip_spec
+    </select>
+
+    <select id="selectChipWlRankIdList" resultType="java.util.Map">
+        SELECT
+        a.wl_min as wlMin,
+        a.wl_max as wlMax,
+        a.chip_wl_rank_id as chipWlRankId,
+        name,
+        count(*) as num
+        FROM (
+            select
+            tcwr.name,
+            tmbcwr.chip_wl_rank_id,
+            tcwr.wl_min,
+            tcwr.wl_max,
+            tmbcwr.id
+            from
+            t_model_bom_chip_wl_rank tmbcwr,
+            t_chip_wl_rank tcwr
+            where tmbcwr.chip_wl_rank_id = tcwr.id
+            and find_in_set(tmbcwr.id,#{modelBomChipWlRankIdList})
+        ) a group by name,chip_wl_rank_id,wl_max,wl_min
+    </select>
+
+
+</mapper>

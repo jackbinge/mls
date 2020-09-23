@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TAlgorithmModelDao">
+
+    <select id="selectTAlgorithmModel" resultType="com.wiseq.cn.entity.ykAi.TAlgorithmModel">
+        SELECT scaffold_id,chip_id,ct,p1_id,p2_id,p3_id,a_ratio,b_ratio,c_ratio
+        FROM  t_algorithm_model
+    </select>
+
+    <update id="updateTAlgorithmMode" parameterType="com.wiseq.cn.entity.ykAi.TAlgorithmModel">
+        update t_algorithm_model
+        set scaffold_id = #{scaffoldId,jdbcType=BIGINT},
+            scaffold_name = #{scaffoldName,jdbcType=VARCHAR},
+            scaffold_param = #{scaffoldParam,jdbcType=VARCHAR},
+            scaffold_re = #{scaffoldRe,jdbcType=DOUBLE},
+            chip_id = #{chipId,jdbcType=BIGINT},
+            chip_name = #{chipName,jdbcType=VARCHAR},
+            chip_wave = #{chipWave,jdbcType=BIGINT},
+            ct = #{ct,jdbcType=BIGINT},
+            p1_id = #{p1Id,jdbcType=BIGINT},
+            p1_name = #{p1Name,jdbcType=VARCHAR},
+            p1_wave = #{p1Wave,jdbcType=BIGINT},
+            p2_id = #{p2Id,jdbcType=BIGINT},
+            p2_name = #{p2Name,jdbcType=VARCHAR},
+            p2_wave = #{p2Wave,jdbcType=BIGINT},
+            p3_id = #{p3Id,jdbcType=BIGINT},
+            p3_name = #{p3Name,jdbcType=VARCHAR},
+            p3_wave = #{p3Wave,jdbcType=BIGINT},
+            a_ratio = #{aRatio,jdbcType=DOUBLE},
+            b_ratio = #{bRatio,jdbcType=DOUBLE},
+            c_ratio = #{cRatio,jdbcType=DOUBLE},
+            p1_ratio = #{p1Ratio,jdbcType=DOUBLE},
+            p2_ratio = #{p2Ratio,jdbcType=DOUBLE},
+            p3_ratio = #{p3Ratio,jdbcType=DOUBLE},
+            center_xy = #{centerXy,jdbcType=VARCHAR},
+            ra_mean = #{raMean,jdbcType=DOUBLE},
+            ra_min = #{raMin,jdbcType=DOUBLE},
+            ra_max = #{raMax,jdbcType=DOUBLE},
+            r9_mean = #{r9Mean,jdbcType=DOUBLE},
+            r9_min = #{r9Min,jdbcType=DOUBLE},
+            r9_max = #{r9Max,jdbcType=DOUBLE},
+            lm_mean = #{lmMean,jdbcType=DOUBLE},
+            lm_min = #{lmMin,jdbcType=DOUBLE},
+            lm_max = #{lmMax,jdbcType=DOUBLE},
+            file_name  = #{fileName,jdbcType=VARCHAR}
+        where scaffold_id = #{scaffoldId,jdbcType=BIGINT}
+        and chip_id = #{chipId,jdbcType=BIGINT}
+        and ct = #{ct,jdbcType=BIGINT}
+        and p1_id = #{p1Id,jdbcType=BIGINT}
+        and a_ratio = #{aRatio,jdbcType=DOUBLE}
+    </update>
+
+    <insert id="addTAlgorithmMode" parameterType="com.wiseq.cn.entity.ykAi.TAlgorithmModel" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        t_algorithm_model
+        ( scaffold_id,
+            scaffold_name,
+            scaffold_param,
+            scaffold_re,
+            chip_id,
+            chip_name,
+            chip_wave,
+            ct,
+            p1_id,
+            p1_name,
+            p1_wave,
+            p2_id,
+            p2_name,
+            p2_wave,
+            p3_id,
+            p3_name,
+            p3_wave,
+            a_ratio,
+            b_ratio,
+            c_ratio,
+            p1_ratio,
+            p2_ratio,
+            p3_ratio,
+            center_xy,
+            ra_mean,
+            ra_min,
+            ra_max,
+            r9_mean,
+            r9_min,
+            r9_max,
+            lm_mean,
+            lm_min,
+            lm_max,
+            file_name)
+        values
+           (#{scaffoldId,jdbcType=BIGINT},
+            #{scaffoldName,jdbcType=VARCHAR},
+            #{scaffoldParam,jdbcType=VARCHAR},
+            #{scaffoldRe,jdbcType=DOUBLE},
+            #{chipId,jdbcType=BIGINT},
+            #{chipName,jdbcType=VARCHAR},
+            #{chipWave,jdbcType=BIGINT},
+            #{ct,jdbcType=BIGINT},
+            #{p1Id,jdbcType=BIGINT},
+            #{p1Name,jdbcType=VARCHAR},
+            #{p1Wave,jdbcType=BIGINT},
+            #{p2Id,jdbcType=BIGINT},
+            #{p2Name,jdbcType=VARCHAR},
+            #{p2Wave,jdbcType=BIGINT},
+            #{p3Id,jdbcType=BIGINT},
+            #{p3Name,jdbcType=VARCHAR},
+            #{p3Wave,jdbcType=BIGINT},
+            #{aRatio,jdbcType=DOUBLE},
+            #{bRatio,jdbcType=DOUBLE},
+            #{cRatio,jdbcType=DOUBLE},
+            #{p1Ratio,jdbcType=DOUBLE},
+            #{p2Ratio,jdbcType=DOUBLE},
+            #{p3Ratio,jdbcType=DOUBLE},
+            #{centerXy,jdbcType=VARCHAR},
+            #{raMean,jdbcType=DOUBLE},
+            #{raMin,jdbcType=DOUBLE},
+            #{raMax,jdbcType=DOUBLE},
+            #{r9Mean,jdbcType=DOUBLE},
+            #{r9Min,jdbcType=DOUBLE},
+            #{r9Max,jdbcType=DOUBLE},
+            #{lmMean,jdbcType=DOUBLE},
+            #{lmMin,jdbcType=DOUBLE},
+            #{lmMax,jdbcType=DOUBLE},
+            #{fileName,jdbcType=VARCHAR})
+    </insert>
+</mapper>

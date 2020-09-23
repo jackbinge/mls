@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TBeforeTestRuleDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TBeforeTestRule">
+    <!--@mbg.generated-->
+    <!--@Table t_before_test_rule-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="rule_kind" jdbcType="TINYINT" property="ruleKind" />
+    <result column="a" jdbcType="DOUBLE" property="a" />
+    <result column="b" jdbcType="DOUBLE" property="b" />
+    <result column="x" jdbcType="DOUBLE" property="x" />
+    <result column="y" jdbcType="DOUBLE" property="y" />
+    <result column="angle" jdbcType="DOUBLE" property="angle" />
+    <result column="x1" jdbcType="DOUBLE" property="x1" />
+    <result column="y1" jdbcType="DOUBLE" property="y1" />
+    <result column="x2" jdbcType="DOUBLE" property="x2" />
+    <result column="y2" jdbcType="DOUBLE" property="y2" />
+    <result column="x3" jdbcType="DOUBLE" property="x3" />
+    <result column="y3" jdbcType="DOUBLE" property="y3" />
+    <result column="x4" jdbcType="DOUBLE" property="x4" />
+    <result column="y4" jdbcType="DOUBLE" property="y4" />
+    <result column="cp_x" jdbcType="DOUBLE" property="cpX" />
+    <result column="cp_y" jdbcType="DOUBLE" property="cpY" />
+  </resultMap>
+
+
+  <resultMap id="TOutputRequireBeforeTestRuleMap" type="com.wiseq.cn.entity.ykAi.TOutputRequireBeforeTestRule">
+      <id column="id" jdbcType="BIGINT" property="id" />
+      <result column="before_test_rule_id" jdbcType="BIGINT" property="beforeTestRuleId" />
+      <result column="rule_type" jdbcType="TINYINT" property="ruleType" />
+      <result column="output_require_id" jdbcType="BIGINT" property="outputRequireId" />
+      <collection property="tBeforeTestRule" ofType="com.wiseq.cn.entity.ykAi.TBeforeTestRule">
+        <id column="tbtrid" jdbcType="BIGINT" property="id" />
+        <result column="rule_kind" jdbcType="TINYINT" property="ruleKind" />
+        <result column="a" jdbcType="DOUBLE" property="a" />
+        <result column="b" jdbcType="DOUBLE" property="b" />
+        <result column="x" jdbcType="DOUBLE" property="x" />
+        <result column="y" jdbcType="DOUBLE" property="y" />
+        <result column="angle" jdbcType="DOUBLE" property="angle" />
+        <result column="x1" jdbcType="DOUBLE" property="x1" />
+        <result column="y1" jdbcType="DOUBLE" property="y1" />
+        <result column="x2" jdbcType="DOUBLE" property="x2" />
+        <result column="y2" jdbcType="DOUBLE" property="y2" />
+        <result column="x3" jdbcType="DOUBLE" property="x3" />
+        <result column="y3" jdbcType="DOUBLE" property="y3" />
+        <result column="x4" jdbcType="DOUBLE" property="x4" />
+        <result column="y4" jdbcType="DOUBLE" property="y4" />
+        <result column="cp_x" jdbcType="DOUBLE" property="cpX" />
+        <result column="cp_y" jdbcType="DOUBLE" property="cpY" />
+      </collection>
+  </resultMap>
+
+
+
+  <select id="findDtlByOutputRequireId" parameterType="java.lang.Long" resultMap="TOutputRequireBeforeTestRuleMap">
+    select
+      torbtr.id,
+      torbtr.rule_type,
+      torbtr.before_test_rule_id,
+      torbtr.output_require_id,
+      torbtr.is_delete,
+      tbtr.id as tbtrid, rule_kind, a, b, x, y, angle, x1, y1, x2, y2, x3, y3, x4, y4, cp_x, cp_y
+    from t_output_require_before_test_rule torbtr
+           left join t_before_test_rule tbtr on torbtr.before_test_rule_id = tbtr.id
+    where torbtr.is_delete = false and rule_kind != 3 and  torbtr.output_require_id = #{outputRequireId,jdbcType=BIGINT}
+    union all
+    select
+      torbtr.id,
+      torbtr.rule_type,
+      torbtr.before_test_rule_id,
+      torbtr.output_require_id,
+      torbtr.is_delete,
+      tbtr.id as tbtrid, rule_kind, a, b, x, y, angle, x1, y1, x2, y2, x3, y3, x4, y4, cpxy.cp_x, cpxy.cp_y
+    from t_output_require_before_test_rule torbtr
+           left join t_before_test_rule tbtr on torbtr.before_test_rule_id = tbtr.id
+           left join (select DISTINCT cp_x,cp_y,output_require_id from t_output_requirements_dtl ) cpxy ON cpxy.output_require_id = torbtr.output_require_id
+    where torbtr.is_delete = false and rule_kind = 3 and  torbtr.output_require_id = #{outputRequireId,jdbcType=BIGINT}
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_before_test_rule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TBeforeTestRule" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_before_test_rule (rule_kind, `a`, b, 
+      x, y, angle, x1, 
+      y1, x2, y2, x3, 
+      y3, x4, y4, cp_x, 
+      cp_y)
+    values (#{ruleKind,jdbcType=TINYINT}, #{a,jdbcType=DOUBLE}, #{b,jdbcType=DOUBLE}, 
+      #{x,jdbcType=DOUBLE}, #{y,jdbcType=DOUBLE}, #{angle,jdbcType=DOUBLE}, #{x1,jdbcType=DOUBLE}, 
+      #{y1,jdbcType=DOUBLE}, #{x2,jdbcType=DOUBLE}, #{y2,jdbcType=DOUBLE}, #{x3,jdbcType=DOUBLE}, 
+      #{y3,jdbcType=DOUBLE}, #{x4,jdbcType=DOUBLE}, #{y4,jdbcType=DOUBLE}, #{cpX,jdbcType=DOUBLE}, 
+      #{cpY,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TBeforeTestRule" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_before_test_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleKind != null">
+        rule_kind,
+      </if>
+      <if test="a != null">
+        `a`,
+      </if>
+      <if test="b != null">
+        b,
+      </if>
+      <if test="x != null">
+        x,
+      </if>
+      <if test="y != null">
+        y,
+      </if>
+      <if test="angle != null">
+        angle,
+      </if>
+      <if test="x1 != null">
+        x1,
+      </if>
+      <if test="y1 != null">
+        y1,
+      </if>
+      <if test="x2 != null">
+        x2,
+      </if>
+      <if test="y2 != null">
+        y2,
+      </if>
+      <if test="x3 != null">
+        x3,
+      </if>
+      <if test="y3 != null">
+        y3,
+      </if>
+      <if test="x4 != null">
+        x4,
+      </if>
+      <if test="y4 != null">
+        y4,
+      </if>
+      <if test="cpX != null">
+        cp_x,
+      </if>
+      <if test="cpY != null">
+        cp_y,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ruleKind != null">
+        #{ruleKind,jdbcType=TINYINT},
+      </if>
+      <if test="a != null">
+        #{a,jdbcType=DOUBLE},
+      </if>
+      <if test="b != null">
+        #{b,jdbcType=DOUBLE},
+      </if>
+      <if test="x != null">
+        #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="angle != null">
+        #{angle,jdbcType=DOUBLE},
+      </if>
+      <if test="x1 != null">
+        #{x1,jdbcType=DOUBLE},
+      </if>
+      <if test="y1 != null">
+        #{y1,jdbcType=DOUBLE},
+      </if>
+      <if test="x2 != null">
+        #{x2,jdbcType=DOUBLE},
+      </if>
+      <if test="y2 != null">
+        #{y2,jdbcType=DOUBLE},
+      </if>
+      <if test="x3 != null">
+        #{x3,jdbcType=DOUBLE},
+      </if>
+      <if test="y3 != null">
+        #{y3,jdbcType=DOUBLE},
+      </if>
+      <if test="x4 != null">
+        #{x4,jdbcType=DOUBLE},
+      </if>
+      <if test="y4 != null">
+        #{y4,jdbcType=DOUBLE},
+      </if>
+      <if test="cpX != null">
+        #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        #{cpY,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TBeforeTestRule">
+    <!--@mbg.generated-->
+    update t_before_test_rule
+    <set>
+      <if test="ruleKind != null">
+        rule_kind = #{ruleKind,jdbcType=TINYINT},
+      </if>
+      <if test="a != null">
+        `a` = #{a,jdbcType=DOUBLE},
+      </if>
+      <if test="b != null">
+        b = #{b,jdbcType=DOUBLE},
+      </if>
+      <if test="x != null">
+        x = #{x,jdbcType=DOUBLE},
+      </if>
+      <if test="y != null">
+        y = #{y,jdbcType=DOUBLE},
+      </if>
+      <if test="angle != null">
+        angle = #{angle,jdbcType=DOUBLE},
+      </if>
+      <if test="x1 != null">
+        x1 = #{x1,jdbcType=DOUBLE},
+      </if>
+      <if test="y1 != null">
+        y1 = #{y1,jdbcType=DOUBLE},
+      </if>
+      <if test="x2 != null">
+        x2 = #{x2,jdbcType=DOUBLE},
+      </if>
+      <if test="y2 != null">
+        y2 = #{y2,jdbcType=DOUBLE},
+      </if>
+      <if test="x3 != null">
+        x3 = #{x3,jdbcType=DOUBLE},
+      </if>
+      <if test="y3 != null">
+        y3 = #{y3,jdbcType=DOUBLE},
+      </if>
+      <if test="x4 != null">
+        x4 = #{x4,jdbcType=DOUBLE},
+      </if>
+      <if test="y4 != null">
+        y4 = #{y4,jdbcType=DOUBLE},
+      </if>
+      <if test="cpX != null">
+        cp_x = #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        cp_y = #{cpY,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TBeforeTestRule">
+    <!--@mbg.generated-->
+    update t_before_test_rule
+    set rule_kind = #{ruleKind,jdbcType=TINYINT},
+      `a` = #{a,jdbcType=DOUBLE},
+      b = #{b,jdbcType=DOUBLE},
+      x = #{x,jdbcType=DOUBLE},
+      y = #{y,jdbcType=DOUBLE},
+      angle = #{angle,jdbcType=DOUBLE},
+      x1 = #{x1,jdbcType=DOUBLE},
+      y1 = #{y1,jdbcType=DOUBLE},
+      x2 = #{x2,jdbcType=DOUBLE},
+      y2 = #{y2,jdbcType=DOUBLE},
+      x3 = #{x3,jdbcType=DOUBLE},
+      y3 = #{y3,jdbcType=DOUBLE},
+      x4 = #{x4,jdbcType=DOUBLE},
+      y4 = #{y4,jdbcType=DOUBLE},
+      cp_x = #{cpX,jdbcType=DOUBLE},
+      cp_y = #{cpY,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update t_before_test_rule
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="rule_kind = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.ruleKind,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="`a` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.a,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="b = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.b,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="x = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.x,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="y = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.y,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="angle = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.angle,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="x1 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.x1,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="y1 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.y1,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="x2 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.x2,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="y2 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.y2,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="x3 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.x3,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="y3 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.y3,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="x4 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.x4,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="y4 = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.y4,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="cp_x = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.cpX,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="cp_y = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.cpY,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_before_test_rule
+    (rule_kind, `a`, b, x, y, angle, x1, y1, x2, y2, x3, y3, x4, y4, cp_x, cp_y)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.ruleKind,jdbcType=TINYINT}, #{item.a,jdbcType=DOUBLE}, #{item.b,jdbcType=DOUBLE}, 
+        #{item.x,jdbcType=DOUBLE}, #{item.y,jdbcType=DOUBLE}, #{item.angle,jdbcType=DOUBLE}, 
+        #{item.x1,jdbcType=DOUBLE}, #{item.y1,jdbcType=DOUBLE}, #{item.x2,jdbcType=DOUBLE}, 
+        #{item.y2,jdbcType=DOUBLE}, #{item.x3,jdbcType=DOUBLE}, #{item.y3,jdbcType=DOUBLE}, 
+        #{item.x4,jdbcType=DOUBLE}, #{item.y4,jdbcType=DOUBLE}, #{item.cpX,jdbcType=DOUBLE}, 
+        #{item.cpY,jdbcType=DOUBLE})
+    </foreach>
+  </insert>
+
+
+  <delete id="deleteTOutputRequireBeforeTestRuleById">
+    update t_output_require_before_test_rule set is_delete = true  where before_test_rule_id = #{beforeTestRuleId,jdbcType=BIGINT}
+  </delete>
+
+
+  <delete id="deleteTOutputRequireByOutputRequireId">
+    update t_output_require_before_test_rule set is_delete = true  where output_require_id = #{outputRequireId,jdbcType=BIGINT}
+  </delete>
+
+
+  <insert id="insertOutRequireToBeforeTestTable" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequireBeforeTestRule" useGeneratedKeys="true">
+    insert into t_output_require_before_test_rule
+      (before_test_rule_id, output_require_id, rule_type)
+    values
+    ( #{beforeTestRuleId,jdbcType=BIGINT},
+      #{outputRequireId,jdbcType=BIGINT},
+      #{ruleType,jdbcType=TINYINT})
+  </insert>
+
+</mapper>

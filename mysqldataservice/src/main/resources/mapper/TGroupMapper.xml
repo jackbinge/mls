@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TGroupMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TGroup">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="map_eas_id" jdbcType="VARCHAR" property="mapEasId"/>
+        <result column="parent_path" jdbcType="VARCHAR" property="parentPath"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, parent_id, code, `name`, map_eas_id, parent_path, level, is_delete, create_time
+    </sql>
+    <select id="findGroupTree" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_group
+        where is_delete = false
+        <if test="code != null">
+            and code = #{code}
+        </if>
+        <if test="name != null and name != ''">
+            and name LIKE CONCAT('%',#{name},'%')
+        </if>
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TGroup"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="mapEasId != null">
+                map_eas_id,
+            </if>
+            <if test="parentPath != null">
+                parent_path,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="mapEasId != null">
+                #{mapEasId,jdbcType=VARCHAR},
+            </if>
+            <if test="parentPath != null">
+                #{parentPath,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="productionCodeinsert" parameterType="com.wiseq.cn.entity.ykAi.TGroup">
+        <!--@mbg.generated-->
+        update t_group
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TGroup">
+        <!--@mbg.generated-->
+        update t_group
+        set parent_id = #{parentId,jdbcType=BIGINT},
+        code = #{code,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
+        map_eas_id = #{mapEasId,jdbcType=VARCHAR},
+        parent_path = #{parentPass,jdbcType=VARCHAR},
+        level = #{level,jdbcType=VARCHAR},
+        is_delete = #{isDelete,jdbcType=BOOLEAN},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findExist" resultMap="BaseResultMap">
+        select * from t_group
+        where  name = #{name}
+        <if test="parentId != null">
+        and parent_id = #{parentId,jdbcType=BIGINT}
+        </if>
+        and is_delete = false
+    </select>
+
+
+    <select id="findChildExist" resultMap="BaseResultMap">
+        select
+        *
+        FROM t_group
+        where parent_id = #{parentId,jdbcType=BIGINT}
+        and is_delete = false
+    </select>
+
+
+
+
+
+  <update id="updateDel" parameterType="com.wiseq.cn.entity.ykAi.TGroup">
+    UPDATE t_group
+    <set>
+        is_delete = 1
+    </set>
+    WHERE id=#{id}
+  </update>
+  <select id="findProductionCodeList" resultType="com.wiseq.cn.commons.entity.Result">
+    select * from t_group where parent_id = 3 and code != null and is_delete = false
+    <if test="id != null">
+      and id = #{id}
+    </if>
+  </select>
+    <select id="findProductionNoCodeList" resultType="com.wiseq.cn.commons.entity.Result">
+        select * from t_group where parent_id = 3 and code = null and is_delete = false
+    </select>
+
+    <insert id="productionCodeinserts" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TGroup"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="code != null">
+                code,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="findCodeExist" resultMap="BaseResultMap">
+        select * from t_group where code = #{code} and is_delete = false
+    </select>
+
+    <update id="productionCodeUpdate" parameterType="com.wiseq.cn.entity.ykAi.TGroup">
+        <!--@mbg.generated-->
+        update t_group
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="getProductionList" resultType="java.util.LinkedHashMap">
+        select id,code,name,map_eas_id FROM t_group tg  where level = 3 and is_delete = false
+    </select>
+    
+    <update id="updateMapEasId">
+        update t_group set map_eas_id = #{mapEasId,jdbcType=VARCHAR} where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="getProductionMapEASIdList" resultType="java.util.LinkedHashMap">
+        select id,code,name,map_eas_id FROM t_group tg
+        where level = 3 and is_delete = false and map_eas_id is not null
+        <if test="id != null">
+        and id = #{id,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+    <select id="findExit" resultType="java.util.LinkedHashMap">
+        select id,code,name,map_eas_id FROM t_group tg
+        where level = 3 and is_delete = false
+        and map_eas_id = #{mapEasId,jdbcType=VARCHAR}
+        and id != #{id,jdbcType=BIGINT}
+    </select>
+    
+    <select id="getNoMapEasIdShopList" resultType="java.util.LinkedHashMap">
+        select id,code,name,map_eas_id
+        from t_group where is_delete = false
+        and level = 3 and map_eas_id is null
+    </select>
+</mapper>

@@ -1,0 +1,54 @@
+debug: true
+server:
+  port: 8080
+
+spring:
+  cloud:
+    consul:
+      host: 192.168.2.42
+      port: 8500
+      discovery:
+        register: true
+        hostname: 192.168.2.42
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        tags: urlprefix-/${spring.application.name}
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+
+#通过网关避免跨域问题
+zuul:
+  routes:
+    hiveservice:
+      path: /hiveservice/**
+      serviceId: hive-service #hive服务
+
+    mysqldataservice:
+      path: /mysqldataservice/**
+      serviceId: mysqldata-service #mysqldata服务
+
+    webviewserver:
+      path: /webviewserver/**
+      serviceId: webview-server #web展示服务
+
+    htmlserver:
+      path: /htmlserver/**
+      url: http://www.wiseq.cn #静态页面
+
+    jsonserver:
+      path: /json/**
+      url: http://192.168.2.42:8082/swagger-ui.html
+  host:
+    connect-timeout-millis: 3000000
+    socket-timeout-millis: 3000000
+ribbon:
+  ReadTimeout: 3000000
+  ConnectTimeout: 3000000
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000000
+#http://192.168.2.57/webviewserver/user/1/detail

@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TBomDao">
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update  t_bom set is_delete = true
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <select id="selectAllByTypeMachineId" resultType="com.wiseq.cn.entity.ykAi.TBom">
+    select
+           a.id,
+           a.bom_code,
+           a.bom_type,
+           a.is_temp,
+         <!--  a.chip_id,
+           b.chip_spec,-->
+           a.scaffold_id,
+           ts.scaffold_spec,
+           a.glue_id,
+           guleA.glue_spec aguleSpec,
+           guleB.glue_spec bguleSpec,
+           a.diffusion_powder_id,
+           tdp.diffusion_powder_spec,
+           a.anti_starch_id,
+           tas.anti_starch_spec,
+           a.bom_source as bomSource
+    FROM t_bom a
+    <!--LEFT JOIN t_chip b ON a.chip_id = b.id-->
+    LEFT JOIN t_scaffold ts on a.scaffold_id = ts.id
+    LEFT JOIN t_glue tg on a.glue_id = tg.id
+    LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='A') guleA ON a.glue_id = guleA.glue_id
+    LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='B') guleB ON a.glue_id = guleB.glue_id
+    LEFT JOIN t_diffusion_powder tdp on a.diffusion_powder_id = tdp.id
+    LEFT JOIN t_anti_starch tas on a.anti_starch_id = tas.id
+    where a.type_machine_id=#{typeMachineId,jdbcType=BIGINT}
+    AND a.is_delete=false
+    <if test="bomCode != null and bomCode != ''">
+    and a.bom_code like concat('%',#{bomCode,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="isTemp != null">
+    and a.is_temp = #{isTemp,jdbcType=BOOLEAN}
+    </if>
+    <if test="bomType != null">
+    and a.bom_type = #{bomType,jdbcType=TINYINT}
+    </if>
+    <if test="bomSource != null">
+        and a.bom_source = #{bomSource}
+    </if>
+    ORDER BY  a.create_time DESC
+  </select>
+
+
+    <select id="getBomMaxLength" resultType="java.lang.Integer">
+      select IFNULL(max(a.num),0) FROM(
+        select count(1) num,tb.id FROM t_bom_Phosphor tbP
+        left join t_bom tb  on tb.id = tbP.bom_id
+        where tb.is_delete = false
+          and tb.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+        group by tb.id) a
+    </select>
+
+  <select id="selectPhosphorByBomId" resultType="com.wiseq.cn.entity.ykAi.TPhosphor">
+    select bom_id,tp.id ,tp.phosphor_spec ,tp.peak_wavelength , tp.density FROM t_bom_Phosphor  as bom_Phosphor
+    LEFT JOIN t_phosphor tp on bom_Phosphor.phosphor_id = tp.id
+    where bom_id = #{bomId,jdbcType=BIGINT}
+  </select>
+
+  <select id="getTGlues" resultType="com.wiseq.cn.entity.ykAi.TABGlue">
+      SELECT
+            g.id,
+            g.create_time,
+            g.ratio_a,
+            g.ratio_b,
+            a.glue_spec AS aGlueSpec,
+            b.glue_spec AS bglueSpec,
+            a.hardness_max,
+            a.hardness_min,
+            a.viscosity_max,
+            a.viscosity_min,
+            a.density,
+            a.supplier,
+            g.disabled
+      FROM t_glue g
+     LEFT JOIN
+   (SELECT glue_id,glue_type,glue_code,glue_spec,supplier,viscosity_max,viscosity_min,hardness_max,hardness_min,density
+    FROM t_glue_dtl WHERE glue_type='A') a ON a.glue_id = g.id
+   LEFT JOIN (SELECT glue_code,glue_id,glue_spec FROM t_glue_dtl WHERE glue_type='B') b ON b.glue_id = g.id
+   where  g.is_delete = false AND g.disabled = false
+   order by g.create_time DESC
+  </select>
+
+  <select id="getTChips" resultType="com.wiseq.cn.entity.ykAi.TChip">
+    select id,
+           chip_code,
+           chip_spec,
+           chip_rank,
+           supplier,
+           test_condition,
+           vf_max,
+           vf_min,
+           iv_max,
+           iv_min,
+           wl_max,
+           wl_min,
+           lumen_max,
+           lumen_min,
+           fwhm,
+           create_time,
+           is_delete,
+           disabled
+    from t_chip where disabled=false and is_delete=false
+    ORDER BY create_time desc
+  </select>
+
+  <select id="getTPhosphors" resultType="com.wiseq.cn.entity.ykAi.TPhosphor">
+    select
+           id,
+           phosphor_code,
+           phosphor_spec,
+           supplier,
+           cold_heat_ratio,
+           particle_diameter10,
+           particle_diameter50,
+           particle_diameter90,
+           peak_wavelength,
+           density,
+           cie_x,
+           cie_y,
+           fwhm,
+           create_time,
+           is_delete,
+           disabled
+    from  t_phosphor where is_delete=false and disabled=false
+    ORDER BY create_time desc
+  </select>
+
+  <select id="getTScaffolds" resultType="com.wiseq.cn.entity.ykAi.TScaffold">
+        select
+               id,
+               scaffold_code,
+               scaffold_spec,
+               supplier,
+               family,
+               is_circular,
+               param1,
+               param2,
+               param3,
+               param4,
+               param5,
+               create_time,
+               is_delete,
+               disabled
+        from t_scaffold where disabled=false and is_delete=false
+        ORDER BY create_time DESC
+  </select>
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TBom" useGeneratedKeys="true">
+    insert into t_bom
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        type_machine_id,
+      </if>
+      <if test="bomCode != null">
+        bom_code,
+      </if>
+      <if test="scaffoldId != null">
+        scaffold_id,
+      </if>
+      <if test="glueId != null">
+        glue_id,
+      </if>
+      <if test="diffusionPowderId != null">
+        diffusion_powder_id,
+      </if>
+      <if test="antiStarchId != null">
+        anti_starch_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="isTemp != null">
+        is_temp,
+      </if>
+      <if test="bomType != null">
+        bom_type,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+        <if test="bomSource != null ">
+            bom_source,
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="bomCode != null">
+        #{bomCode,jdbcType=VARCHAR},
+      </if>
+      <if test="scaffoldId != null">
+        #{scaffoldId,jdbcType=BIGINT},
+      </if>
+      <if test="glueId != null">
+        #{glueId,jdbcType=BIGINT},
+      </if>
+      <if test="diffusionPowderId != null">
+        #{diffusionPowderId,jdbcType=BIGINT},
+      </if>
+      <if test="antiStarchId != null">
+        #{antiStarchId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isTemp != null">
+        #{isTemp,jdbcType=BIT},
+      </if>
+      <if test="bomType != null">
+        #{bomType,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+        <if test="bomSource != null ">
+            #{bomSource}
+        </if>
+    </trim>
+  </insert>
+
+    <!-- 批量新增bom荧光粉中间表 -->
+    <insert id="batchInsertBomPhosphor" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_bom_Phosphor
+        (bom_id, phosphor_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.bomId,jdbcType=BIGINT}, #{item.phosphorId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+
+    <select id="getBomById" resultType="com.wiseq.cn.entity.ykAi.TBom">
+        select
+        a.id,
+        a.bom_code,
+        a.bom_type,
+        a.is_temp,
+        <!--b.chip_spec,-->
+        a.scaffold_id,
+        ts.scaffold_spec,
+        a.glue_id,
+        guleA.glue_spec aguleSpec,
+        guleB.glue_spec bguleSpec,
+        a.diffusion_powder_id,
+        tdp.diffusion_powder_spec,
+        a.anti_starch_id,
+        tas.anti_starch_spec,
+        a.bom_source as bomSource
+        FROM t_bom a
+        <!--LEFT JOIN t_chip b ON a.chip_id = b.id-->
+        LEFT JOIN t_scaffold ts on a.scaffold_id = ts.id
+        LEFT JOIN t_glue tg on a.glue_id = tg.id
+        LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='A') guleA ON a.glue_id = guleA.glue_id
+        LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='B') guleB ON a.glue_id = guleB.glue_id
+        LEFT JOIN t_diffusion_powder tdp on a.diffusion_powder_id = tdp.id
+        LEFT JOIN t_anti_starch tas on a.anti_starch_id = tas.id
+        where a.id=#{bomId,jdbcType=BIGINT}
+        ORDER BY  a.create_time DESC
+    </select>
+    <!-- 修改BOM数据 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TBom">
+        <!--@mbg.generated-->
+        update t_bom
+        <set>
+            <if test="typeMachineId != null">
+                type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+            </if>
+            <if test="bomCode != null">
+                bom_code = #{bomCode,jdbcType=VARCHAR},
+            </if>
+            <if test="scaffoldId != null">
+                scaffold_id = #{scaffoldId,jdbcType=BIGINT},
+            </if>
+            <if test="glueId != null">
+                glue_id = #{glueId,jdbcType=BIGINT},
+            </if>
+            <if test="diffusionPowderId != null">
+                diffusion_powder_id = #{diffusionPowderId,jdbcType=BIGINT},
+            </if>
+            <if test="antiStarchId != null">
+                anti_starch_id = #{antiStarchId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isTemp != null">
+                is_temp = #{isTemp,jdbcType=BOOLEAN},
+            </if>
+            <if test="bomType != null">
+                bom_type = #{bomType,jdbcType=TINYINT},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <select id="finExit" resultType="java.lang.Integer">
+        select count(1) FROM t_bom
+        where  bom_code = #{bomCode,jdbcType=VARCHAR}
+        and is_delete = false
+        and type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+    </select>
+    
+    <select id="findExitForMaterialPhosphor" resultType="com.wiseq.cn.entity.ykAi.TBomMaterial">
+        select tb.id as bomId,
+        tbp.phosphor_id as materialId,
+        2 as materialType
+        from t_bom tb
+        LEFT JOIN t_bom_Phosphor tbp on tb.id = tbp.bom_id
+        where
+        tb.is_delete =false
+        and tb.type_machine_id = #{typeMachineId}
+        and tb.glue_id = #{glueId}
+        <if test="antiStarchId != null">
+            and tb.anti_starch_id = #{antiStarchId}
+        </if>
+        <if test="diffusionPowderId != null">
+        and tb.diffusion_powder_id = #{diffusionPowderId}
+        </if>
+    </select>
+    
+    
+    <select id="findTPhosphorList" resultType="java.lang.Long">
+        select phosphor_id from t_bom_Phosphor
+        where bom_id = #{bomId,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insertChipList">
+        insert into t_bom_chip(bom_id,chip_id)
+            values
+        <foreach collection="list" item="temp" separator=",">
+            (#{bomId},#{temp.chipId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteChipListByBomId">
+        delete from t_bom_chip where bom_id = #{bomId}
+    </delete>
+
+    <select id="getChipList" resultType="com.wiseq.cn.entity.ykAi.TBomChip">
+        select chipId,chipSpec from (
+            select
+            chip_id as chipId,
+            chip_spec as chipSpec
+            from t_bom_chip tbc
+            LEFT JOIN t_chip tc on tbc.chip_id = tc.id
+            where bom_id = #{bomId}
+        ) a
+    </select>
+
+    <select id="getTBomSystemRecommendTargetParameter" resultType="java.util.Map">
+        select  id ,
+        ra_target   as  raTarget,
+        ra_max     as  raMax,
+        ra_min     as  raMin,
+        r9          as  r9,
+        ct           as ct,
+        lumen_lsl   as  lumenLsl,
+        lumen_usl   as  lumenUsl,
+        wl_lsl      as wlLsl ,
+        wl_usl    as    wlUsl,
+        gule_hight_lsl as guleHightLsl,
+        gule_hight_usl as guleHightUsl,
+        bom_id    as bomId
+        FROM t_bom_target_parameter
+        where bom_id = #{bomId}
+    </select>
+
+    <select id="getBomPhosphorForRecommendedlimitPhosphorType"
+            resultType="java.util.Map">
+        SELECT
+            tbpfr.bom_id as bomId,
+            tpt.id as typeId,
+            tpt.name as typeName
+        FROM t_bom_phosphor_for_recommended tbpfr,t_phosphor_type tpt
+        where find_in_set(tpt.id,tbpfr.limit_phosphor_type)
+        and tbpfr.bom_id = #{bomId}
+        order by tpt.id
+    </select>
+
+    <select id="getBomMustUsePhosphor" resultType="java.util.Map">
+        SELECT
+        tbpfr.bom_id as bomId,
+        tp.phosphor_type_id as phosphorTypeId,
+        tp.id as phosphorId,
+        tp.phosphor_spec as phosphorSpec,
+        t_phosphor_type.name as phosphorTypeName
+        FROM t_bom_phosphor_for_recommended tbpfr,t_phosphor tp,t_phosphor_type
+        where find_in_set(tp.id,tbpfr.must_use_phosphor_id)
+        and tp.phosphor_type_id = t_phosphor_type.id
+        and tbpfr.bom_id = #{bomId}
+        order by tp.id
+    </select>
+
+
+    <select id="getBomProhibitedPhosphor" resultType="java.util.Map">
+        SELECT
+        tbpfr.bom_id as bomId,
+        tp.phosphor_type_id as phosphorTypeId,
+        tp.id as phosphorId,
+        tp.phosphor_spec as phosphorSpec,
+        t_phosphor_type.name as phosphorTypeName
+        FROM t_bom_phosphor_for_recommended tbpfr,t_phosphor tp,t_phosphor_type
+        where find_in_set(tp.id,tbpfr.prohibited_phosphor_id)
+        and tp.phosphor_type_id = t_phosphor_type.id
+        and tbpfr.bom_id = #{bomId}
+        order by tp.id
+    </select>
+
+    <insert id="insertTBomTargetParameter" parameterType="com.wiseq.cn.entity.ykAi.TbomTargetParameter">
+        insert into t_bom_target_parameter
+        (ra_target,ra_max,ra_min,r9,ct,lumen_lsl,lumen_usl,wl_lsl,wl_usl,gule_hight_lsl,gule_hight_usl,bom_id       )
+values (#{raTarget},#{raMax},#{raMin},#{r9},#{ct},#{lumenLsl},#{lumenUsl},#{wlLsl},#{wlUsl},#{guleHightLsl},#{guleHightUsl},#{bomId})
+    </insert>
+
+    <insert id="insertTBomPhosphorForRecommended">
+        insert into t_bom_phosphor_for_recommended( must_use_phosphor_id ,
+                                                    prohibited_phosphor_id ,
+                                                    limit_phosphor_type,
+                                                    bom_id )
+        values (#{mustUsePhosphorId},#{prohibitedPhosphorId},#{limitPhosphorType},#{bomId});
+    </insert>
+
+
+    <select id="selectTypeMachineTargetParameter" resultType="com.wiseq.cn.entity.ykAi.TbomTargetParameter">
+        select
+               ra_target   as  raTarget,
+               ra_max     as  raMax,
+               ra_min     as  raMin,
+               r9          as  r9,
+               ct           as ct,
+               lumen_lsl   as  lumenLsl,
+               lumen_usl   as  lumenUsl,
+               wl_lsl      as wlLsl ,
+               wl_usl    as    wlUsl,
+               ttmgh.gule_hight_lsl,
+               ttmgh.gule_hight_usl
+        FROM t_type_machine a
+        LEFT JOIN t_type_machine_gule_high ttmgh on a.id = ttmgh.type_machine_id
+        where a.id = #{typeMachineId}
+    </select>
+
+
+    <select id="findExitForMaterialChip" resultType="com.wiseq.cn.entity.ykAi.TBomMaterial">
+        select tb.id as bomId,
+        tbc.chip_id as materialId,
+        0 as materialType FROM t_bom tb
+        LEFT JOIN t_bom_chip tbc on tb.id = tbc.bom_id
+        where tb.type_machine_id = #{typeMachineId}
+        and tb.glue_id = #{glueId}
+        <if test="antiStarchId != null">
+        and tb.anti_starch_id = #{antiStarchId}
+        </if>
+        <if test="diffusionPowderId != null">
+        and tb.diffusion_powder_id = #{diffusionPowderId}
+        </if>
+    </select>
+
+
+    <select id="getUseCurrentBomAiModelList" resultType="java.util.Map">
+        select tam.color_region_id,
+               tam.id as modelId,
+               tam.output_require_machine_id,
+               b.output_kind,
+               b.outputparams,
+               b.output_require_code,
+               a.task_code,
+               a.task_id
+            from t_ai_model tam
+        LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+        LEFT JOIN
+        (
+            SELECT
+                a.output_require_id,
+                concat(skxlname,' ',group_concat(concat(a.name,a.ratio_type,ratio_value))) outputparams,
+                '出货比例类型' output_kind,
+                output_require_code
+                FROM (
+                select
+                tord.output_require_id,
+                tor2.code as output_require_code,
+                case when tord.ratio_type = 0 then '='
+                when tord.ratio_type = 1 then <![CDATA[ '<' ]]>
+                when tord.ratio_type = 2  then <![CDATA[ '<=' ]]>
+                when
+                tord.ratio_type = 3 then <![CDATA[ '>' ]]>
+                when tord.ratio_type = 4 then <![CDATA[ '>=' ]]>
+                end as ratio_type,
+                tord.ratio_value,
+                tcrd.name,
+                tcr.name as skxlname
+                from t_output_requirements tor2
+                LEFT JOIN t_output_requirements_dtl tord on tor2.id = tord.output_require_id
+                LEFT JOIN t_color_region_dtl tcrd on tord.color_region_dtl_id = tcrd.id
+                LEFT JOIN t_color_region tcr on tcrd.color_region_id = tcr.id
+                where tor2.output_kind = 1
+            ) a group by a.output_require_id,skxlname,output_require_code
+            union all
+            select
+                t.output_require_id,
+                case when output_kind = 0 THEN '色容差类型'
+                     when output_kind = 2 THEN '中心点'
+                    end as output_kind,
+                case when output_kind = 0 THEN tcr2.name
+                    when output_kind = 2 THEN concat(tcr2.name,' 中心点','(',t.cp_x,t.cp_y,')')
+                    end as outputparams,
+            tor.code as output_require_code
+            from t_output_requirements tor
+            left join t_output_requirements_dtl t on tor.id = t.output_require_id
+            left join t_color_region tcr2 on tcr2.id = t.color_region_id
+            where tor.output_kind != 1
+        ) b ON b.output_require_id = tam.output_require_machine_id
+        LEFT JOIN
+        (select task_id,bt.task_code,tam2.id as model_id FROM t_ai_model tam2
+        left join bs_task_state bts on tam2.id = bts.model_id
+        LEFT JOIN bs_task bt ON bts.task_id = bt.id
+        order by task_id limit 1) a ON a.model_id = tam.id
+        where tmb.bom_id = #{bomId}
+    </select>
+
+    <select id="getPosphorByIdList" resultType="com.alibaba.fastjson.JSONObject">
+        select phosphor_spec,id as phosphorId FROM t_phosphor
+        where id in
+        (
+        <foreach collection="posphor" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <delete id="deleteByBomId">
+    update t_bom set is_delete = true where id = #{bomId}
+    </delete>
+
+    <select id="getBomMinimumWavelengthPhosphor" resultType="java.lang.String">
+        select
+            tp.phosphor_spec as phosphorSpec
+        from  t_bom_phosphor tbp , t_phosphor tp
+        where tbp.phosphor_id = tp.id and tbp.bom_id = #{bomId}
+        order by tp.peak_wavelength limit 1
+    </select>
+</mapper>

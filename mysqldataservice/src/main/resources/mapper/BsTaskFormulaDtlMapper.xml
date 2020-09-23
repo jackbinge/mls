@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsTaskFormulaDtlDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:11 CST 2019.-->
+    <!--@Table bs_task_formula_dtl-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_formula_id" jdbcType="BIGINT" property="taskFormulaId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="ratio" jdbcType="DOUBLE" property="ratio" />
+    <result column="material_class" jdbcType="TINYINT" property="materialClass" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:11 CST 2019.-->
+    id, task_formula_id, material_id, ratio, material_class
+  </sql>
+
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated generated on Thu Nov 21 21:07:11 CST 2019.-->
+    insert into bs_task_formula_dtl
+    (task_formula_id, material_id, ratio, material_class)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskFormulaId,jdbcType=BIGINT},
+        #{item.materialId,jdbcType=BIGINT},
+        #{item.ratio,jdbcType=DOUBLE},
+        #{item.materialClass,jdbcType=TINYINT})
+    </foreach>
+  </insert>
+
+
+
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskFormulaDtl" useGeneratedKeys="true">
+    insert into bs_task_formula_dtl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskFormulaId != null">
+        task_formula_id,
+      </if>
+      <if test="materialId != null">
+        material_id,
+      </if>
+      <if test="ratio != null">
+        ratio,
+      </if>
+      <if test="materialClass != null">
+        material_class,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskFormulaId != null">
+        #{taskFormulaId,jdbcType=BIGINT},
+      </if>
+      <if test="materialId != null">
+        #{materialId,jdbcType=BIGINT},
+      </if>
+      <if test="ratio != null">
+        #{ratio,jdbcType=DOUBLE},
+      </if>
+      <if test="materialClass != null">
+        #{materialClass,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <!--<resultMap id="" type="">
+
+  </resultMap>
+  <select id="getModelFormulaForTaskModel" resultType="">
+    select
+      tmb.bom_id,
+      tmb.chip_wl_rank_id,
+      tmf.material_class,
+      tmf.material_id
+    FROM bs_task_state bts
+    LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+    LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+    LEFT JOIN t_model_formula tmf on tmb.id = tmf.model_bom_id
+    where bts.id = #{taskStateId,jdbcType=BIGINT}
+  </select>-->
+</mapper>

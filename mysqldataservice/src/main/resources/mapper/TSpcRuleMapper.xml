@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TSpcRuleDao">
+
+
+  <select id="selectSpcRuleByTypeMachineId" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.TSpcRule">
+    <!--@mbg.generated-->
+    select 
+    id, type_machine_id, qc_point, ucl, lcl, delta_x_ucl, delta_x_lcl, delta_y_ucl, delta_y_lcl, cl_optional, disabled
+    from t_spc_rule
+    where type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+  </select>
+
+  
+
+
+  <select id="selectSpcRuleDtlByQcRuleId" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.TSpcRuleDtl">
+    <!--@mbg.generated-->
+    select
+    id, qc_rule_id, base_rule_id, m, n
+    from t_spc_rule_dtl
+    where qc_rule_id = #{qcRuleId,jdbcType=BIGINT}
+  </select>
+
+
+
+  <select id="selectSpcBaseRule"  resultType="com.wiseq.cn.entity.ykAi.TSpcBaseRule">
+    <!--@mbg.generated-->
+    select
+    id, rule_no, rule_template, m, n, create_time
+    from t_spc_base_rule
+  </select>
+
+
+  <insert id="batchInsertTSpcRuleDtl" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TSpcRuleDtl" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_spc_rule_dtl
+    (qc_rule_id, base_rule_id, `m`, n)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.qcRuleId,jdbcType=BIGINT}, #{item.baseRuleId,jdbcType=BIGINT}, #{item.m,jdbcType=INTEGER},
+      #{item.n,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+
+  <delete id="deleteTSpcRuleDtlByQcRuleId" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_spc_rule_dtl
+    where qc_rule_id = #{qcRuleId,jdbcType=BIGINT}
+  </delete>
+
+
+  <insert id="insertSpcRuleSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TSpcRule" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_spc_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        type_machine_id,
+      </if>
+      <if test="qcPoint != null">
+        qc_point,
+      </if>
+      <if test="ucl != null">
+        ucl,
+      </if>
+      <if test="lcl != null">
+        lcl,
+      </if>
+      <if test="deltaXUcl != null">
+        delta_x_ucl,
+      </if>
+      <if test="deltaXLcl != null">
+        delta_x_lcl,
+      </if>
+      <if test="deltaYUcl != null">
+        delta_y_ucl,
+      </if>
+      <if test="deltaYLcl != null">
+        delta_y_lcl,
+      </if>
+      <if test="clOptional != null">
+        cl_optional,
+      </if>
+      <if test="disabled != null">
+        disabled,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="typeMachineId != null">
+        #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="qcPoint != null">
+        #{qcPoint,jdbcType=TINYINT},
+      </if>
+      <if test="ucl != null">
+        #{ucl,jdbcType=DOUBLE},
+      </if>
+      <if test="lcl != null">
+        #{lcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaXUcl != null">
+        #{deltaXUcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaXLcl != null">
+        #{deltaXLcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaYUcl != null">
+        #{deltaYUcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaYLcl != null">
+        #{deltaYLcl,jdbcType=DOUBLE},
+      </if>
+      <if test="clOptional != null">
+        #{clOptional,jdbcType=TINYINT},
+      </if>
+      <if test="disabled != null">
+        #{disabled,jdbcType=BOOLEAN},
+      </if>
+    </trim>
+  </insert>
+
+
+  <update id="updateTSpcRuleSelective" parameterType="com.wiseq.cn.entity.ykAi.TSpcRule">
+    <!--@mbg.generated-->
+    update t_spc_rule
+    <set>
+      <if test="typeMachineId != null">
+        type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="qcPoint != null">
+        qc_point = #{qcPoint,jdbcType=TINYINT},
+      </if>
+      <if test="ucl != null">
+        ucl = #{ucl,jdbcType=DOUBLE},
+      </if>
+      <if test="lcl != null">
+        lcl = #{lcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaXUcl != null">
+        delta_x_ucl = #{deltaXUcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaXLcl != null">
+        delta_x_lcl = #{deltaXLcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaYUcl != null">
+        delta_y_ucl = #{deltaYUcl,jdbcType=DOUBLE},
+      </if>
+      <if test="deltaYLcl != null">
+        delta_y_lcl = #{deltaYLcl,jdbcType=DOUBLE},
+      </if>
+      <if test="clOptional != null">
+        cl_optional = #{clOptional,jdbcType=TINYINT},
+      </if>
+      <if test="disabled != null">
+        disabled = #{disabled,jdbcType=BOOLEAN},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+</mapper>

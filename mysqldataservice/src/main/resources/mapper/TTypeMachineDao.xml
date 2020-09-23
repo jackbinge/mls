@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TTypeMachineDao">
+
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TTypeMachine">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="spec" jdbcType="VARCHAR" property="spec" />
+    <result column="ra_target" jdbcType="DOUBLE" property="raTarget" />
+    <result column="ra_max" jdbcType="DOUBLE" property="raMax" />
+    <result column="ra_min" jdbcType="DOUBLE" property="raMin" />
+    <result column="r9" jdbcType="DOUBLE" property="r9" />
+    <result column="ct" jdbcType="INTEGER" property="ct" />
+    <result column="lumen_lsl" jdbcType="DOUBLE" property="lumenLsl" />
+    <result column="lumen_usl" jdbcType="DOUBLE" property="lumenUsl" />
+    <result column="wl_lsl" jdbcType="DOUBLE" property="wlLsl" />
+    <result column="wl_usl" jdbcType="DOUBLE" property="wlUsl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="process_type" jdbcType="TINYINT" property="processType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
+    <result column="disabled" jdbcType="BIT" property="disabled" />
+    <result column="sRcnum" jdbcType="INTEGER" property="sRcnum" />
+    <result column="sKnum" jdbcType="INTEGER" property="sKnum" />
+    <result column="crystal_number" jdbcType="INTEGER" property="crystalNumber"/>
+
+    <collection property="tTypeMachineGuleHigh" column="id" ofType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh" select="selectAllByTypeMachineId"/>
+  </resultMap>
+
+
+
+
+  <select id="findList" resultMap="BaseResultMap">
+    select
+    ttm.id,
+    code,
+    spec,
+    ra_target,
+    ra_max,
+    ra_min,
+    r9,
+    ct,
+    lumen_lsl,
+    lumen_usl,
+    wl_lsl, wl_usl,
+    create_time, process_type,
+    remark, is_delete, disabled,
+    ttm.crystal_number,
+    IFNULL(sRcnum,0) sRcnum,
+    IFNULL(sKnum,0) sKnum
+    from t_type_machine ttm
+    left join
+    (
+    select count(1) as sRcnum,type_machine_id FROM t_color_region
+    where   color_region_type = 0 and is_delete = false  group by type_machine_id ) src on src.type_machine_id = ttm.id
+    left join
+    (
+    select count(1) as sKnum,type_machine_id FROM t_color_region
+    where   color_region_type = 1 and is_delete = false  group by type_machine_id ) sk on sk.type_machine_id = ttm.id
+    where 1=1
+    <if test="spec!=null">
+      and ttm.spec like concat('%',#{spec},'%')
+    </if>
+    <if test="processType!=null ">
+      and ttm.process_type = #{processType,jdbcType=TINYINT}
+    </if>
+    <if test="disabled!=null ">
+      and ttm.disabled = #{disabled,jdbcType=BOOLEAN}
+    </if>
+    <if test="crystalNumber != null">
+      and ttm.crystal_number = #{crystalNumber}
+    </if>
+    and is_delete= false
+    order by  ttm.disabled,ttm.create_time DESC
+  </select>
+
+
+  <select id="selectAllByTypeMachineId" resultType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh">
+    select
+      id, type_machine_id, gule_hight_usl, gule_hight_lsl, process_type, layer
+    from t_type_machine_gule_high
+    where type_machine_id = #{id,jdbcType=BIGINT}
+    order by layer
+  </select>
+
+
+
+
+
+
+
+
+
+
+
+  <sql id="Base_Column_List">
+    id, code, spec, ra_target, ra_max, ra_min, r9, ct, lumen_lsl, lumen_usl, wl_lsl, 
+    wl_usl, create_time, process_type, remark, is_delete, disabled
+  </sql>
+
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_type_machine
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from t_type_machine
+    where 1=1
+    <if test="spec!=null">
+      and spec like concat('%',#{spec},'%')
+    </if>
+    <if test="processType!=null ">
+      and process_type = #{processType,jdbcType=TINYINT}
+    </if>
+    <if test="disabled!=null ">
+      and disabled = #{disabled,jdbcType=BOOLEAN}
+    </if>
+    and is_delete=0
+    order by  disabled,create_time DESC
+  </select>
+
+  <select id="findTTypeMachineBySpec" resultType="com.wiseq.cn.entity.ykAi.TTypeMachine">
+    select * FROM t_type_machine where spec = #{spec} and is_delete = false
+  </select>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update t_type_machine set  is_delete= true
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachine" useGeneratedKeys="true">
+    insert into t_type_machine
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        code,
+      </if>
+      <if test="spec != null">
+        spec,
+      </if>
+      <if test="raTarget != null">
+        ra_target,
+      </if>
+      <if test="raMax != null">
+        ra_max,
+      </if>
+      <if test="raMin != null">
+        ra_min,
+      </if>
+      <if test="r9 != null">
+        r9,
+      </if>
+      <if test="ct != null">
+        ct,
+      </if>
+      <if test="lumenLsl != null">
+        lumen_lsl,
+      </if>
+      <if test="lumenUsl != null">
+        lumen_usl,
+      </if>
+      <if test="wlLsl != null">
+        wl_lsl,
+      </if>
+      <if test="wlUsl != null">
+        wl_usl,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="processType != null">
+        process_type,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="disabled != null">
+        disabled,
+      </if>
+      <if test="crystalNumber != null">
+        crystal_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null">
+        #{spec,jdbcType=VARCHAR},
+      </if>
+      <if test="raTarget != null">
+        #{raTarget,jdbcType=DOUBLE},
+      </if>
+      <if test="raMax != null">
+        #{raMax,jdbcType=DOUBLE},
+      </if>
+      <if test="raMin != null">
+        #{raMin,jdbcType=DOUBLE},
+      </if>
+      <if test="r9 != null">
+        #{r9,jdbcType=DOUBLE},
+      </if>
+      <if test="ct != null">
+        #{ct,jdbcType=INTEGER},
+      </if>
+      <if test="lumenLsl != null">
+        #{lumenLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="lumenUsl != null">
+        #{lumenUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="wlLsl != null">
+        #{wlLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="wlUsl != null">
+        #{wlUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processType != null">
+        #{processType,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="disabled != null">
+        #{disabled,jdbcType=BIT},
+      </if>
+      <if test="crystalNumber != null">
+        #{crystalNumber,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachine">
+    update t_type_machine
+    <set>
+      <if test="code != null">
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="spec != null">
+        spec = #{spec,jdbcType=VARCHAR},
+      </if>
+        ra_target = #{raTarget,jdbcType=DOUBLE},
+        ra_max = #{raMax,jdbcType=DOUBLE},
+        ra_min = #{raMin,jdbcType=DOUBLE},
+        r9 = #{r9,jdbcType=DOUBLE},
+      <if test="ct != null">
+        ct = #{ct,jdbcType=INTEGER},
+      </if>
+      <if test="lumenLsl != null">
+        lumen_lsl = #{lumenLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="lumenUsl != null">
+        lumen_usl = #{lumenUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="wlLsl != null">
+        wl_lsl = #{wlLsl,jdbcType=DOUBLE},
+      </if>
+      <if test="wlUsl != null">
+        wl_usl = #{wlUsl,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="processType != null">
+        process_type = #{processType,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=BIT},
+      </if>
+      <if test="disabled != null">
+        disabled = #{disabled,jdbcType=BIT},
+      </if>
+      <if test="crystalNumber != null">
+        crystal_number = #{crystalNumber},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateOnAndOff" parameterType="com.wiseq.cn.entity.ykAi.TTypeMachine">
+    update t_type_machine
+    set disabled = #{disabled,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <resultMap id="TypeMachineMapForTest" type="com.wiseq.cn.entity.ykAi.TypeMachineForTest">
+    <collection property="tTypeMachine" ofType="com.wiseq.cn.entity.ykAi.TTypeMachine">
+      <id column="id" jdbcType="BIGINT" property="id" />
+      <result column="code" jdbcType="VARCHAR" property="code" />
+      <result column="spec" jdbcType="VARCHAR" property="spec" />
+      <result column="ra_target" jdbcType="DOUBLE" property="raTarget" />
+      <result column="ra_max" jdbcType="DOUBLE" property="raMax" />
+      <result column="ra_min" jdbcType="DOUBLE" property="raMin" />
+      <result column="r9" jdbcType="DOUBLE" property="r9" />
+      <result column="ct" jdbcType="INTEGER" property="ct" />
+      <result column="lumen_lsl" jdbcType="DOUBLE" property="lumenLsl" />
+      <result column="lumen_usl" jdbcType="DOUBLE" property="lumenUsl" />
+      <result column="wl_lsl" jdbcType="DOUBLE" property="wlLsl" />
+      <result column="wl_usl" jdbcType="DOUBLE" property="wlUsl" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="process_type" jdbcType="TINYINT" property="processType" />
+      <result column="remark" jdbcType="VARCHAR" property="remark" />
+      <result column="is_delete" jdbcType="BIT" property="isDelete" />
+      <result column="disabled" jdbcType="BIT" property="disabled" />
+      <result column="crystal_number" jdbcType="INTEGER" property="crystalNumber"/>
+
+    </collection>
+    <collection property="colorRegionNum"  column="id" ofType="java.lang.Integer" select="findTypeMachineColorRegionNum"/>
+    <collection property="outRatioNum" column="id" ofType="java.lang.Integer" select="findTypeMachineOutRatioNumNum"/>
+    <collection property="targetPointNum" column="id" ofType="java.lang.Integer" select="findTypeMachineTargetPointNum"/>
+
+  </resultMap>
+
+
+  <select id="findTypeMatchineListForTest" resultMap="TypeMachineMapForTest">
+    select
+    ttm.id, code, spec, ra_target, ra_max, ra_min, r9, ct, lumen_lsl,
+    lumen_usl, wl_lsl, wl_usl, create_time, process_type, remark,
+    is_delete, disabled,ttm.crystal_number
+      FROM t_type_machine ttm
+      where ttm.is_delete = false
+      <if test="spec!= null">
+      and ttm.spec like  concat('%',#{spec},'%')
+      </if>
+      <if test="processType != null">
+      and ttm.process_type = #{processType}
+      </if>
+    <if test="crystalNumber != null">
+      and ttm.crystal_number = #{crystalNumber}
+    </if>
+    order by ttm.disabled,ttm.create_time DESC
+  </select>
+
+
+  <!-- 获取机种的出货要求中色容差类型的数量 -->
+  <select id="findTypeMachineColorRegionNum" resultType="java.lang.Integer">
+      SELECT IFNULL(a.colorRegionNum,0) FROM
+      (select IFNULL(count(1),0) as colorRegionNum,tor.type_machine_id FROM t_type_machine
+      LEFT JOIN t_output_requirements tor on t_type_machine.id = tor.type_machine_id
+       where tor.output_kind = 0 and tor.is_delete = false
+       and tor.type_machine_id = #{id,jdbcType=BIGINT}
+       GROUP BY t_type_machine.id) a
+  </select>
+
+
+  <!-- 获取机种的出货要求中出货比列类型的数量 -->
+  <select id="findTypeMachineOutRatioNumNum" resultType="java.lang.Integer">
+    SELECT IFNULL(a.outRatioNum,0)  FROM
+    (SELECT IFNULL(count(1),0) as outRatioNum,tor.type_machine_id FROM t_type_machine
+    LEFT JOIN t_output_requirements tor on t_type_machine.id = tor.type_machine_id
+     where tor.output_kind = 1 and tor.is_delete = false
+    and tor.type_machine_id = #{id,jdbcType=BIGINT}
+    GROUP BY t_type_machine.id)a
+  </select>
+
+
+  <!-- 获取机种的出货要求是目标中心点的数量 -->
+  <select id="findTypeMachineTargetPointNum" resultType="java.lang.Integer">
+    select  IFNULL(a.targetPointNum,0) FROM
+    (SELECT IFNULL(count(1),0) as targetPointNum,tor.type_machine_id FROM t_type_machine
+        LEFT JOIN t_output_requirements tor on t_type_machine.id = tor.type_machine_id
+     where tor.output_kind = 2 and tor.is_delete = false
+    and tor.type_machine_id = #{id,jdbcType=BIGINT}
+    GROUP BY t_type_machine.id) a
+
+  </select>
+
+
+  <select id="findTypeMachineById" resultMap="BaseResultMap">
+    select
+      ttm.*,
+      IFNULL(sRcnum,0) sRcnum,
+      IFNULL(sKnum,0) sKnum
+    from t_type_machine ttm
+           left join
+         (
+           select count(1) as sRcnum,type_machine_id FROM t_color_region
+           where   color_region_type = 0 and is_delete = false  group by type_machine_id ) src on src.type_machine_id = ttm.id
+           left join
+         (
+           select count(1) as sKnum,type_machine_id FROM t_color_region
+           where   color_region_type = 1 and is_delete = false  group by type_machine_id ) sk on sk.type_machine_id = ttm.id
+    where 1=1
+    and ttm.id = #{typeMachineId,jdbcType=BIGINT}
+  </select>
+
+  <update id="updateTypeMachineGlueHigh">
+    update t_type_machine_gule_high set gule_hight_usl = #{guleHightUsl},
+      gule_hight_lsl = #{guleHightLsl}
+    where type_machine_id = #{typeMachineId}
+  </update>
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TScaffoldDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TScaffold">
+    <!--@mbg.generated-->
+    <!--@Table t_scaffold-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="scaffold_code" jdbcType="VARCHAR" property="scaffoldCode" />
+    <result column="scaffold_spec" jdbcType="VARCHAR" property="scaffoldSpec" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+    <result column="family" jdbcType="VARCHAR" property="family" />
+    <result column="is_circular" jdbcType="TINYINT" property="isCircular" />
+    <result column="param1" jdbcType="DOUBLE" property="param1" />
+    <result column="param2" jdbcType="DOUBLE" property="param2" />
+    <result column="param3" jdbcType="DOUBLE" property="param3" />
+    <result column="param4" jdbcType="DOUBLE" property="param4" />
+    <result column="param5" jdbcType="DOUBLE" property="param5" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+    <result column="disabled" jdbcType="BOOLEAN" property="disabled" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, scaffold_code, scaffold_spec, supplier, family, is_circular, param1, param2, 
+    param3, param4, param5, create_time, is_delete, disabled
+  </sql>
+
+  <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_scaffold
+    where is_delete != true
+    <if test="scaffoldSpec != null and scaffoldSpec != ''">
+      and scaffold_spec LIKE CONCAT('%',#{scaffoldSpec},'%')
+    </if>
+    <if test="disabled != null">
+      and disabled = #{disabled}
+    </if>
+    <if test="scaffoldType != null">
+      and is_circular = #{scaffoldType,jdbcType=TINYINT}
+    </if>
+    order by disabled , create_time DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_scaffold
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="inserts" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TScaffold" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_scaffold (scaffold_code, scaffold_spec, supplier, 
+      family, is_circular, param1, 
+      param2, param3, param4, 
+      param5, create_time, is_delete, 
+      disabled)
+    values (#{scaffoldCode,jdbcType=VARCHAR}, #{scaffoldSpec,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR}, 
+      #{family,jdbcType=VARCHAR}, #{isCircular,jdbcType=TINYINT}, #{param1,jdbcType=DOUBLE}, 
+      #{param2,jdbcType=DOUBLE}, #{param3,jdbcType=DOUBLE}, #{param4,jdbcType=DOUBLE}, 
+      #{param5,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=BOOLEAN}, 
+      #{disabled,jdbcType=BOOLEAN})
+  </insert>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TScaffold" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_scaffold
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="scaffoldCode != null">
+        scaffold_code,
+      </if>
+      <if test="scaffoldSpec != null">
+        scaffold_spec,
+      </if>
+      <if test="supplier != null">
+        supplier,
+      </if>
+      <if test="family != null">
+        family,
+      </if>
+      <if test="isCircular != null">
+        is_circular,
+      </if>
+      <if test="param1 != null">
+        param1,
+      </if>
+      <if test="param2 != null">
+        param2,
+      </if>
+      <if test="param3 != null">
+        param3,
+      </if>
+      <if test="param4 != null">
+        param4,
+      </if>
+      <if test="param5 != null">
+        param5,
+      </if>
+        create_time,
+        is_delete,
+        disabled,
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="scaffoldCode != null">
+        #{scaffoldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="scaffoldSpec != null">
+        #{scaffoldSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="family != null">
+        #{family,jdbcType=VARCHAR},
+      </if>
+      <if test="isCircular != null">
+        #{isCircular,jdbcType=TINYINT},
+      </if>
+      <if test="param1 != null">
+        #{param1,jdbcType=DOUBLE},
+      </if>
+      <if test="param2 != null">
+        #{param2,jdbcType=DOUBLE},
+      </if>
+      <if test="param3 != null">
+        #{param3,jdbcType=DOUBLE},
+      </if>
+      <if test="param4 != null">
+        #{param4,jdbcType=DOUBLE},
+      </if>
+      <if test="param5 != null">
+        #{param5,jdbcType=DOUBLE},
+      </if>
+      NOW(),
+      0,
+      0,
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TScaffold">
+    <!--@mbg.generated-->
+    update t_scaffold
+    <set>
+      <if test="scaffoldCode != null">
+        scaffold_code = #{scaffoldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="scaffoldSpec != null">
+        scaffold_spec = #{scaffoldSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="family != null">
+        family = #{family,jdbcType=VARCHAR},
+      </if>
+      <if test="isCircular != null">
+        is_circular = #{isCircular,jdbcType=TINYINT},
+      </if>
+      <if test="param1 != null">
+        param1 = #{param1,jdbcType=DOUBLE},
+      </if>
+      <if test="param2 != null">
+        param2 = #{param2,jdbcType=DOUBLE},
+      </if>
+      <if test="param3 != null">
+        param3 = #{param3,jdbcType=DOUBLE},
+      </if>
+      <if test="param4 != null">
+        param4 = #{param4,jdbcType=DOUBLE},
+      </if>
+      <if test="param5 != null">
+        param5 = #{param5,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        create_time = NOW(),
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TScaffold">
+    <!--@mbg.generated-->
+    update t_scaffold
+    set scaffold_code = #{scaffoldCode,jdbcType=VARCHAR},
+      scaffold_spec = #{scaffoldSpec,jdbcType=VARCHAR},
+      supplier = #{supplier,jdbcType=VARCHAR},
+      family = #{family,jdbcType=VARCHAR},
+      is_circular = #{isCircular,jdbcType=TINYINT},
+      param1 = #{param1,jdbcType=DOUBLE},
+      param2 = #{param2,jdbcType=DOUBLE},
+      param3 = #{param3,jdbcType=DOUBLE},
+      param4 = #{param4,jdbcType=DOUBLE},
+      param5 = #{param5,jdbcType=DOUBLE},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=BOOLEAN},
+      disabled = #{disabled,jdbcType=BOOLEAN}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findExistList" resultMap="BaseResultMap">
+    select * from t_scaffold where scaffold_spec = #{scaffoldSpec} and is_delete = false
+    <if test="id != null">
+     and id != #{id,jdbcType=BIGINT}
+    </if>
+  </select>
+
+  <delete id="updateDisabled">
+    UPDATE t_scaffold
+    <set>
+      <if test="disabled != null">
+        disabled = #{disabled,jdbcType=BOOLEAN}
+      </if>
+    </set>
+    WHERE id=#{id}
+  </delete>
+  <delete id="updateDel">
+    UPDATE t_scaffold
+    <set>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=BOOLEAN}
+      </if>
+    </set>
+    WHERE id=#{id}
+  </delete>
+</mapper>

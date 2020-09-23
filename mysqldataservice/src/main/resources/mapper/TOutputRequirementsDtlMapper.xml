@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TOutputRequirementsDtlMapper">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="output_require_id" jdbcType="BIGINT" property="outputRequireId" />
+    <result column="cp_x" jdbcType="DOUBLE" property="cpX" />
+    <result column="cp_y" jdbcType="DOUBLE" property="cpY" />
+    <result column="ratio_type" jdbcType="DOUBLE" property="ratioType" />
+    <result column="ratio_value" jdbcType="DOUBLE" property="ratioValue" />
+    <result column="color_region_dtl_id" jdbcType="BIGINT" property="colorRegionDtlId" />
+    <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, output_require_id, cp_x, cp_y, ratio_type, ratio_value, color_region_dtl_id, 
+    color_region_id, create_time
+  </sql>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_output_requirements_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_output_requirements_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <delete id="deleteByORidAndCRid" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from t_output_requirements_dtl
+    where output_require_id = #{param1,jdbcType=BIGINT}
+    AND color_region_id = #{param2,jdbcType=BIGINT}
+  </delete>
+
+
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements_dtl (output_require_id, cp_x, cp_y,
+      ratio_type, ratio_value, color_region_dtl_id, 
+      color_region_id)
+    values (#{outputRequireId,jdbcType=BIGINT}, #{cpX,jdbcType=DOUBLE}, #{cpY,jdbcType=DOUBLE}, 
+      #{ratioType,jdbcType=DOUBLE}, #{ratioValue,jdbcType=DOUBLE}, #{colorRegionDtlId,jdbcType=BIGINT}, 
+      #{colorRegionId,jdbcType=BIGINT})
+  </insert>
+
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements_dtl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="outputRequireId != null">
+        output_require_id,
+      </if>
+      <if test="cpX != null">
+        cp_x,
+      </if>
+      <if test="cpY != null">
+        cp_y,
+      </if>
+      <if test="ratioType != null">
+        ratio_type,
+      </if>
+      <if test="ratioValue != null">
+        ratio_value,
+      </if>
+      <if test="colorRegionDtlId != null">
+        color_region_dtl_id,
+      </if>
+      <if test="colorRegionId != null">
+        color_region_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="outputRequireId != null">
+        #{outputRequireId,jdbcType=BIGINT},
+      </if>
+      <if test="cpX != null">
+        #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        #{cpY,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioType != null">
+        #{ratioType,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioValue != null">
+        #{ratioValue,jdbcType=DOUBLE},
+      </if>
+      <if test="colorRegionDtlId != null">
+        #{colorRegionDtlId,jdbcType=BIGINT},
+      </if>
+      <if test="colorRegionId != null">
+        #{colorRegionId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    update t_output_requirements_dtl
+    <set>
+      <if test="outputRequireId != null">
+        output_require_id = #{outputRequireId,jdbcType=BIGINT},
+      </if>
+      <if test="cpX != null">
+        cp_x = #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        cp_y = #{cpY,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioType != null">
+        ratio_type = #{ratioType,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioValue != null">
+        ratio_value = #{ratioValue,jdbcType=DOUBLE},
+      </if>
+      <if test="colorRegionDtlId != null">
+        color_region_dtl_id = #{colorRegionDtlId,jdbcType=BIGINT},
+      </if>
+      <if test="colorRegionId != null">
+        color_region_id = #{colorRegionId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="updateByColorRegionIdSelective" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    update t_output_requirements_dtl
+    <set>
+      <if test="outputRequireId != null">
+        output_require_id = #{outputRequireId,jdbcType=BIGINT},
+      </if>
+      <if test="cpX != null">
+        cp_x = #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        cp_y = #{cpY,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioType != null">
+        ratio_type = #{ratioType,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioValue != null">
+        ratio_value = #{ratioValue,jdbcType=DOUBLE},
+      </if>
+      <if test="colorRegionDtlId != null">
+        color_region_dtl_id = #{colorRegionDtlId,jdbcType=BIGINT},
+      </if>
+      <if test="colorRegionId != null">
+        color_region_id = #{colorRegionId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where color_region_id = #{colorRegionId,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    update t_output_requirements_dtl
+    set output_require_id = #{outputRequireId,jdbcType=BIGINT},
+      cp_x = #{cpX,jdbcType=DOUBLE},
+      cp_y = #{cpY,jdbcType=DOUBLE},
+      ratio_type = #{ratioType,jdbcType=DOUBLE},
+      ratio_value = #{ratioValue,jdbcType=DOUBLE},
+      color_region_dtl_id = #{colorRegionDtlId,jdbcType=BIGINT},
+      color_region_id = #{colorRegionId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update t_output_requirements_dtl
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="output_require_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.outputRequireId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="cp_x = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.cpX,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="cp_y = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.cpY,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="ratio_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.ratioType,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="ratio_value = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.ratioValue,jdbcType=DOUBLE}
+        </foreach>
+      </trim>
+      <trim prefix="color_region_dtl_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.colorRegionDtlId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="color_region_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.colorRegionId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements_dtl
+    (output_require_id, cp_x, cp_y, ratio_type, ratio_value, color_region_dtl_id, color_region_id, 
+      create_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.outputRequireId,jdbcType=BIGINT}, #{item.cpX,jdbcType=DOUBLE}, #{item.cpY,jdbcType=DOUBLE}, 
+        #{item.ratioType,jdbcType=DOUBLE}, #{item.ratioValue,jdbcType=DOUBLE}, #{item.colorRegionDtlId,jdbcType=BIGINT}, 
+        #{item.colorRegionId,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+
+  <select id="findOutRequirements" resultType="java.util.LinkedHashMap">
+    select tor.id , tor.code, tor.type_machine_id, tor.output_kind, tor.is_temp, tor.create_time, tor.is_delete,
+           tord.id, tord.output_require_id, tord.cp_x, tord.cp_y, tord.ratio_type, tord.ratio_value, tord.color_region_dtl_id, tord.color_region_id, tord.create_time,
+           tcrd.id, type_machine_id, name, color_region_type, xrows, xcolumns, create_time, is_delete, disabled
+    FROM t_output_requirements_dtl tord
+    LEFT JOIN t_output_requirements tor on tord.output_require_id = tor.id
+    LEFT JOIN t_color_region tcrd on tord.color_region_id = tcrd.id
+    where output_kind = 0 OR output_kind = 2;
+
+
+    select  * FROM t_output_requirements tor
+    LEFT JOIN t_output_requirements_dtl tord on tor.id = tord.output_require_id
+    LEFT JOIN t_color_region_dtl tcrd  ON tord.color_region_dtl_id = tcrd.id;
+
+
+    select  tcr.id, type_machine_id, tcrd.name, color_region_type, xrows, xcolumns, tcrd.create_time, tcrd.is_delete, disabled,
+            tcrd.id, tcrd.color_region_id, tcrd.name, tcrd.xrow, tcrd.xcolumn, tcrd.shape, tcrd.x1, tcrd.y1, tcrd.x2, tcrd.y2, tcrd.x3, tcrd.y3, tcrd.x4, tcrd.y4, tcrd.a, tcrd.b, tcrd.x, tcrd.y, tcrd.angle, tcrd.create_time, tcrd.is_delete
+    from t_color_region tcr left join  t_color_region_dtl tcrd on tcr.id = tcrd.color_region_id;
+
+    select tam.id,tcr.name,
+           tor.code as outputRequireMachineCode,
+           tam.output_require_machine_id,
+           tor.is_temp,
+           tor.output_kind,
+           tam.color_region_id,tcr.name as colorRegionName,
+           lastTime
+    FROm t_ai_model tam
+    left join t_output_requirements tor on tam.output_require_machine_id = tor.id
+    left join t_color_region tcr on tam.color_region_id = tcr.id
+    LEFT JOIN (select Max(create_time) as lastTime,model_id FROM bs_task_state group by model_id,create_time) lt on lt.model_id = tam.id
+  </select>
+</mapper>

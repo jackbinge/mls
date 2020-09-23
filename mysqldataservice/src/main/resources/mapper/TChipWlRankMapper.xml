@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TChipWlRankDao">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TChipWlRank">
+        <!--@mbg.generated-->
+        <!--@Table t_chip_wl_rank-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="chip_id" jdbcType="BIGINT" property="chipId"/>
+        <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+        <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, `name`, chip_id, wl_max, wl_min, is_delete
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_chip_wl_rank
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_chip_wl_rank
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="inserts" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TChipWlRank"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_chip_wl_rank (chip_id, `name`, wl_max,
+        wl_min, `is_delete`)
+        values (#{chipId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{wlMax,jdbcType=DOUBLE},
+        #{wlMin,jdbcType=DOUBLE}, #{isDelete,jdbcType=INTEGER})
+    </insert>
+
+    <select id="findtChipWlRankExistList" resultMap="BaseResultMap">
+        select * from t_chip_wl_rank where name = #{name} and is_delete = false;
+    </select>
+
+
+    <update id="updateDelete">
+        UPDATE t_chip_wl_rank
+        <set>
+                is_delete = true
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_chip_wl_rank
+        where is_delete != true
+        <if test="chipId != null">
+          and  chip_id = #{chipId,jdbcType=BIGINT}
+        </if>
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TChipWlRank"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_chip_wl_rank
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="chipId != null">
+                chip_id,
+            </if>
+            <if test="wlMax != null">
+                wl_max,
+            </if>
+            <if test="wlMin != null">
+                wl_min,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chipId != null">
+                #{chipId,jdbcType=BIGINT},
+            </if>
+            <if test="wlMax != null">
+                #{wlMax,jdbcType=DOUBLE},
+            </if>
+            <if test="wlMin != null">
+                #{wlMin,jdbcType=DOUBLE},
+            </if>
+
+        </trim>
+    </insert>
+
+
+    <select id="tChipWlRankExistList" resultType="com.wiseq.cn.entity.ykAi.TChipWlRank">
+      select * from t_chip_wl_rank where is_delete = 0
+  </select>
+
+
+    <update id="update">
+        update t_chip_wl_rank
+        <set>
+            <if test="wlMax != null">
+                wl_max = #{wlMax,jdbcType=DOUBLE},
+            </if>
+            <if test="wlMin != null">
+                wl_min = #{wlMin,jdbcType=DOUBLE},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where chip_id = #{chipId,jdbcType=BIGINT}
+    </update>
+
+    <!-- 批量修改 -->
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_chip_wl_rank
+            <set>
+                <if test="item.name != null">
+                    `name` = #{item.name,jdbcType=VARCHAR},
+                </if>
+                <if test="item.chipId != null">
+                    chip_id = #{item.chipId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.wlMax != null">
+                    wl_max = #{item.wlMax,jdbcType=DOUBLE},
+                </if>
+                <if test="item.wlMin != null">
+                    wl_min = #{item.wlMin,jdbcType=DOUBLE},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    
+    <select id="batchDelete" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update t_chip_wl_rank
+            set is_delete = true
+            where id = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </select>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TChipWlRank">
+        <!--@mbg.generated-->
+        update t_chip_wl_rank
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="chipId != null">
+                chip_id = #{chipId,jdbcType=BIGINT},
+            </if>
+            <if test="wlMax != null">
+                wl_max = #{wlMax,jdbcType=DOUBLE},
+            </if>
+            <if test="wlMin != null">
+                wl_min = #{wlMin,jdbcType=DOUBLE},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    
+    
+    <select id="findTChipWlRank" resultType="com.wiseq.cn.entity.ykAi.TChipWlRank">
+        select * FROM t_chip_wl_rank tcwr
+        where tcwr.id = #{id,jdbcType=BIGINT}
+    </select>
+</mapper>

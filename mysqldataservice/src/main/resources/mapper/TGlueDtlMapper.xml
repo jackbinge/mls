@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TGlueDtlDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TGlueDtl">
+    <!--@mbg.generated-->
+    <!--@Table t_glue_dtl-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="glue_id" jdbcType="BIGINT" property="glueId" />
+    <result column="glue_type" jdbcType="VARCHAR" property="glueType" />
+    <result column="glue_code" jdbcType="VARCHAR" property="glueCode" />
+    <result column="glue_spec" jdbcType="VARCHAR" property="glueSpec" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+    <result column="viscosity_max" jdbcType="DOUBLE" property="viscosityMax" />
+    <result column="viscosity_min" jdbcType="DOUBLE" property="viscosityMin" />
+    <result column="hardness_max" jdbcType="DOUBLE" property="hardnessMax" />
+    <result column="hardness_min" jdbcType="DOUBLE" property="hardnessMin" />
+    <result column="density" jdbcType="DOUBLE" property="density" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, glue_id, glue_type, glue_code, glue_spec, supplier, viscosity_max, viscosity_min, 
+    hardness_max, hardness_min, density, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_glue_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TGlueDtl" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_glue_dtl
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="glueId != null">
+        glue_id,
+      </if>
+      <if test="glueType != null">
+        glue_type,
+      </if>
+      <if test="glueCode != null">
+        glue_code,
+      </if>
+      <if test="glueSpec != null">
+        glue_spec,
+      </if>
+      <if test="supplier != null">
+        supplier,
+      </if>
+      <if test="viscosityMax != null">
+        viscosity_max,
+      </if>
+      <if test="viscosityMin != null">
+        viscosity_min,
+      </if>
+      <if test="hardnessMax != null">
+        hardness_max,
+      </if>
+      <if test="hardnessMin != null">
+        hardness_min,
+      </if>
+      <if test="density != null">
+        density,
+      </if>
+        create_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="glueId != null">
+        #{glueId,jdbcType=BIGINT},
+      </if>
+      <if test="glueType != null">
+        #{glueType,jdbcType=VARCHAR},
+      </if>
+      <if test="glueCode != null">
+        #{glueCode,jdbcType=VARCHAR},
+      </if>
+      <if test="glueSpec != null">
+        #{glueSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="viscosityMax != null">
+        #{viscosityMax,jdbcType=DOUBLE},
+      </if>
+      <if test="viscosityMin != null">
+        #{viscosityMin,jdbcType=DOUBLE},
+      </if>
+      <if test="hardnessMax != null">
+        #{hardnessMax,jdbcType=DOUBLE},
+      </if>
+      <if test="hardnessMin != null">
+        #{hardnessMin,jdbcType=DOUBLE},
+      </if>
+      <if test="density != null">
+        #{density,jdbcType=DOUBLE},
+      </if>
+      NOW(),
+    </trim>
+  </insert>
+  <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TGlueDtl">
+    <!--@mbg.generated-->
+    update t_glue_dtl
+    <set>
+      <if test="glueId != null">
+        glue_id = #{glueId,jdbcType=BIGINT},
+      </if>
+      <if test="glueType != null">
+        glue_type = #{glueType,jdbcType=VARCHAR},
+      </if>
+      <if test="glueCode != null">
+        glue_code = #{glueCode,jdbcType=VARCHAR},
+      </if>
+      <if test="glueSpec != null">
+        glue_spec = #{glueSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        supplier = #{supplier,jdbcType=VARCHAR},
+      </if>
+
+        viscosity_max = #{viscosityMax,jdbcType=DOUBLE},
+
+
+        viscosity_min = #{viscosityMin,jdbcType=DOUBLE},
+
+
+        hardness_max = #{hardnessMax,jdbcType=DOUBLE},
+
+
+        hardness_min = #{hardnessMin,jdbcType=DOUBLE},
+
+      <if test="density != null">
+        density = #{density,jdbcType=DOUBLE},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findExist" resultMap="BaseResultMap">
+    select * from t_glue_dtl tgd
+    LEFT JOIN  t_glue tg on tgd.glue_id = tg.id
+    where tgd.glue_spec = #{glueSpec}
+    <if test="glueDtlId !=null">
+      and tgd.id != #{glueDtlId,jdbcType=BIGINT}
+    </if>
+    and tg.is_delete = false
+  </select>
+
+</mapper>

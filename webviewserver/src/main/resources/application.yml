@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: test  #使用开发环境
+    include:
+  servlet:
+
+    multipart:
+      enabled: true
+      max-file-size: 1024MB #  设置单个文件最大内存 -1为不限制
+      max-request-size: 1024MB # 设置所有文件最大内存 -1为不限制
+      # 这里写你的include
+logging.level.org.springframework.boot.autoconfigure: ERROR

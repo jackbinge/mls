@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wiseq.cn.ykAi.dao.TPhosphorTypeDao">
+    <insert id="add">
+        INSERT INTO t_phosphor_type (name,is_delete)VALUES(#{name},0);
+    </insert>
+
+    <delete id="batchDelete">
+        update t_phosphor_type set is_delete = 1 where find_in_set(id,#{listid})
+    </delete>
+
+    <select id="select" resultType="java.util.Map">
+        select tpt.id,IFNULL(num,0) num,tpt.name FROM t_phosphor_type tpt
+        LEFT JOIN
+            (SELECT count(id) as num,phosphor_type_id FROM t_phosphor tp group by tp.phosphor_type_id) a ON tpt.id = a.phosphor_type_id
+        where
+            tpt.is_delete = 0
+        order by tpt.id DESC
+    </select>
+
+    <select id="findExit" resultType="int">
+        select count(1) from t_phosphor_type where name = #{name,jdbcType=VARCHAR}
+        and is_delete = 0;
+    </select>
+
+
+    <select id="getSomeTypePosphor" resultType="java.util.Map">
+        select tp.id,tp.phosphor_spec as phosphorSpec
+        FROM t_phosphor tp
+        where
+        1 = 1
+        <if test="phosphorTypes != '' ">
+            and find_in_set(tp.phosphor_type_id,#{phosphorTypes})
+        </if>
+        and is_delete = false
+    </select>
+
+
+    <insert id="batchAdd" parameterType="collection">
+        INSERT INTO t_phosphor_type
+        (name,is_delete)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item},0)
+        </foreach>
+    </insert>
+</mapper>

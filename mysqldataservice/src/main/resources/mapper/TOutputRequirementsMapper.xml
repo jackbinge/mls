@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TOutputRequirementsDao">
+
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TOutputRequirements">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="output_kind" jdbcType="TINYINT" property="outputKind" />
+    <result column="is_temp" jdbcType="BOOLEAN" property="isTemp" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, type_machine_id,code, output_kind, is_temp, create_time
+  </sql>
+
+
+  <select id="selectByTypeMachineId"  resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from t_output_requirements
+    where type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+    <if test="code != null and code != ''">
+    and code like concat('%',#{code,jdbcType=VARCHAR},'%')
+    </if>
+    <if test="isTemp != null">
+    and is_temp = #{isTemp,jdbcType=BOOLEAN}
+    </if>
+    <if test="outputKind != null">
+    and output_kind = #{outputKind,jdbcType=TINYINT}
+    </if>
+    and is_delete = false
+  </select>
+
+
+  <select id="selectByPK" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_output_requirements
+    where id = #{outputId,jdbcType=BIGINT}
+
+    and is_delete = false
+  </select>
+
+
+  <select id="selectByPKWithDelete" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_output_requirements
+    where id = #{outputId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    update  t_output_requirements set is_delete = true
+    where id = #{id,jdbcType=BIGINT}
+
+  </delete>
+
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirements" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements (type_machine_id, output_kind, is_temp, 
+      create_time)
+    values (#{typeMachineId,jdbcType=BIGINT}, #{outputKind,jdbcType=TINYINT}, #{isTemp,jdbcType=BOOLEAN}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirements" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="code != null and code != ''">
+        code,
+      </if>
+      <if test="typeMachineId != null">
+        type_machine_id,
+      </if>
+      <if test="outputKind != null">
+        output_kind,
+      </if>
+      <if test="isTemp != null">
+        is_temp,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="code != null and code != ''">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="typeMachineId != null">
+        #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="outputKind != null">
+        #{outputKind,jdbcType=TINYINT},
+      </if>
+      <if test="isTemp != null">
+        #{isTemp,jdbcType=BOOLEAN},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirements">
+    <!--@mbg.generated-->
+    update t_output_requirements
+    <set>
+      <if test="typeMachineId != null">
+        type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+      </if>
+      <if test="outputKind != null">
+        output_kind = #{outputKind,jdbcType=TINYINT},
+      </if>
+      <if test="isTemp != null">
+        is_temp = #{isTemp,jdbcType=BOOLEAN},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateDtlByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    update t_output_requirements_dtl
+    <set>
+
+      <if test="cpX != null">
+        cp_x = #{cpX,jdbcType=DOUBLE},
+      </if>
+      <if test="cpY != null">
+        cp_y = #{cpY,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioType != null">
+        ratio_type = #{ratioType,jdbcType=DOUBLE},
+      </if>
+      <if test="ratioValue != null">
+        ratio_value = #{ratioValue,jdbcType=DOUBLE},
+      </if>
+      <if test="colorRegionDtlId != null">
+      color_region_dtl_id = #{colorRegionDtlId,jdbcType=BIGINT},
+    </if>
+      <if test="colorRegionId != null">
+        color_region_id = #{colorRegionId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <!--
+     <if test="id != null">
+        id = #{id,jdbcType=BIGINT},
+      </if>
+      <if test="outputRequireId != null">
+        output_require_id = #{outputRequireId,jdbcType=BIGINT},
+      </if>-->
+    where output_require_id = #{outputRequireId,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TOutputRequirements">
+    <!--@mbg.generated-->
+    update t_output_requirements
+    set type_machine_id = #{typeMachineId,jdbcType=BIGINT},
+      output_kind = #{outputKind,jdbcType=TINYINT},
+      is_temp = #{isTemp,jdbcType=BOOLEAN},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update t_output_requirements
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="type_machine_id = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.typeMachineId,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+      <trim prefix="output_kind = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.outputKind,jdbcType=TINYINT}
+        </foreach>
+      </trim>
+      <trim prefix="is_temp = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.isTemp,jdbcType=BOOLEAN}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when id = #{item.id,jdbcType=BIGINT} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.id,jdbcType=BIGINT}
+    </foreach>
+  </update>
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_output_requirements
+    (type_machine_id, output_kind, is_temp, create_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.typeMachineId,jdbcType=BIGINT}, #{item.outputKind,jdbcType=TINYINT}, #{item.isTemp,jdbcType=BOOLEAN}, 
+        #{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
+  <select id="findTOutputRequirementsColorReginName" resultType="com.wiseq.cn.entity.ykAi.TOutPutRequirementsColorRegion">
+    select c.name,c.id,a.cp_x,a.cp_y from t_output_requirements_dtl a
+        left join t_color_region_dtl b ON a.color_region_dtl_id =b.id
+        LEFT JOIN t_color_region c On b.color_region_id = c.id
+        where a.output_require_id = #{outputRequireId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findTOutputRequirementsColorList"
+          resultType="com.wiseq.cn.entity.ykAi.TOutPutRequirementsColorSK">
+    SELECT c.name,
+           b.name as sname,
+           a.cp_x,
+           a.cp_y,
+           a.id,
+           a.output_require_id,
+           a.ratio_type,
+           a.ratio_value
+    FROM t_output_requirements_dtl a
+    LEFT JOIN t_color_region_dtl b ON a.color_region_dtl_id = b.id
+    LEFT JOIN t_color_region c ON c.id = b.color_region_id
+    where a.output_require_id = #{outputRequireId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+
+  <resultMap id="tOutputRequirementsDtlsMap" type="com.wiseq.cn.entity.ykAi.TOutputRequirementsDtl">
+    <!--@mbg.generated-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="output_require_id" jdbcType="BIGINT" property="outputRequireId" />
+    <result column="cp_x" jdbcType="DOUBLE" property="cpX" />
+    <result column="cp_y" jdbcType="DOUBLE" property="cpY" />
+    <result column="ratio_type" jdbcType="DOUBLE" property="ratioType" />
+    <result column="ratio_value" jdbcType="DOUBLE" property="ratioValue" />
+    <result column="color_region_dtl_id" jdbcType="BIGINT" property="colorRegionDtlId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+
+    <collection property="tColorRegionDtl" ofType="com.wiseq.cn.entity.ykAi.TColorRegionDtl" >
+      <!--@mbg.generated-->
+      <id column="id" jdbcType="BIGINT" property="id"/>
+      <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId"/>
+      <result column="name" jdbcType="VARCHAR" property="name"/>
+      <result column="xrow" jdbcType="INTEGER" property="xrow"/>
+      <result column="xcolumn" jdbcType="INTEGER" property="xcolumn"/>
+      <result column="shape" jdbcType="TINYINT" property="shape"/>
+      <result column="x1" jdbcType="DOUBLE" property="x1"/>
+      <result column="y1" jdbcType="DOUBLE" property="y1"/>
+      <result column="x2" jdbcType="DOUBLE" property="x2"/>
+      <result column="y2" jdbcType="DOUBLE" property="y2"/>
+      <result column="x3" jdbcType="DOUBLE" property="x3"/>
+      <result column="y3" jdbcType="DOUBLE" property="y3"/>
+      <result column="x4" jdbcType="DOUBLE" property="x4"/>
+      <result column="y4" jdbcType="DOUBLE" property="y4"/>
+      <result column="a" jdbcType="DOUBLE" property="a"/>
+      <result column="b" jdbcType="DOUBLE" property="b"/>
+      <result column="x" jdbcType="DOUBLE" property="x"/>
+      <result column="y" jdbcType="DOUBLE" property="y"/>
+      <result column="angle" jdbcType="DOUBLE" property="angle"/>
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+      <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </collection>
+
+
+    <collection property="tColorRegion" ofType="com.wiseq.cn.entity.ykAi.TColorRegion">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type_machine_id" jdbcType="BIGINT" property="typeMachineId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="color_region_type" jdbcType="TINYINT" property="colorRegionType"/>
+        <result column="xrows" jdbcType="INTEGER" property="xrows"/>
+        <result column="xcolumns" jdbcType="INTEGER" property="xcolumns"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+
+
+        <collection property="tColorRegionDtl" ofType="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+          <!--@mbg.generated-->
+          <id column="id" jdbcType="BIGINT" property="id"/>
+          <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId"/>
+          <result column="name" jdbcType="VARCHAR" property="name"/>
+          <result column="xrow" jdbcType="INTEGER" property="xrow"/>
+          <result column="xcolumn" jdbcType="INTEGER" property="xcolumn"/>
+          <result column="shape" jdbcType="TINYINT" property="shape"/>
+          <result column="x1" jdbcType="DOUBLE" property="x1"/>
+          <result column="y1" jdbcType="DOUBLE" property="y1"/>
+          <result column="x2" jdbcType="DOUBLE" property="x2"/>
+          <result column="y2" jdbcType="DOUBLE" property="y2"/>
+          <result column="x3" jdbcType="DOUBLE" property="x3"/>
+          <result column="y3" jdbcType="DOUBLE" property="y3"/>
+          <result column="x4" jdbcType="DOUBLE" property="x4"/>
+          <result column="y4" jdbcType="DOUBLE" property="y4"/>
+          <result column="a" jdbcType="DOUBLE" property="a"/>
+          <result column="b" jdbcType="DOUBLE" property="b"/>
+          <result column="x" jdbcType="DOUBLE" property="x"/>
+          <result column="y" jdbcType="DOUBLE" property="y"/>
+          <result column="angle" jdbcType="DOUBLE" property="angle"/>
+          <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+          <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        </collection>
+
+    </collection>
+  </resultMap>
+
+
+  <select id="findTOutputRequirementsDtls" resultMap="tOutputRequirementsDtlsMap">
+     select *  FROM t_output_requirements_dtl AS out_dtl
+      LEFT JOIN t_color_region_dtl tColorRegionDtl on out_dtl.color_region_dtl_id = tColorRegionDtl.id
+      LEFT JOIN t_color_region tcr ON tcr.id = out_dtl.color_region_id
+      LEFT JOIN t_color_region_dtl tcrd on tcr.id = tcrd.color_region_id
+      where out_dtl.output_require_id =#{outputRequireId,jdbcType=BIGINT}
+  </select>
+
+
+
+  <select id="findTOutputRequirementstColorRegionDtl" resultType="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+    select
+    id,
+    color_region_id,
+    name,
+    xrow,
+    xcolumn,
+    shape,
+    x1, y1,
+    x2, y2,
+    x3, y3,
+    x4, y4,
+    a, b, x, y, angle,
+    create_time, is_delete
+    FROM t_color_region_dtl where  id = #{colorRegionDtlId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="findColorRegionById">
+
+  </select>
+
+  <select id="findTColorTolerance" resultType="com.wiseq.cn.entity.ykAi.TColorTolerance">
+    SELECT
+      a.id ,
+      a.`name`,a.color_region_type,
+      dtl.shape,
+      dtl.id as dtlId,
+      dtl.a,dtl.b,dtl.angle,dtl.x,dtl.y,
+      dtl.x1,dtl.x2,dtl.x3,dtl.x4,
+      dtl.y1,dtl.y2,dtl.y3,dtl.y4
+    FROM t_color_region a
+           LEFT JOIN t_color_region_dtl dtl ON a.id = dtl.color_region_id
+
+    where a.is_delete=false
+      and a.disabled=false
+      and a.color_region_type = 0
+      <if test="typeMachineId != null">
+        and a.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+      </if>
+  </select>
+
+
+
+
+  <resultMap id="colorRegionResultMap" type="com.wiseq.cn.entity.ykAi.TColorRegionSK">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="zxrows" property="xrows"/>
+    <result column="zxcolumns" property="xcolumns"/>
+    <collection property="lists" ofType="com.wiseq.cn.entity.ykAi.TColorRegionOneSK">
+      <id column="dtlId" property="id"/>
+      <result column="xrow" property="xrow"/>
+      <result column="xcolumn" property="xcolumn"/>
+      <result column="skName" property="name"/>
+      <result column="x1" property="x1"/>
+      <result column="x2" property="x2"/>
+      <result column="x3" property="x3"/>
+      <result column="x4" property="x4"/>
+      <result column="y1" property="y1"/>
+      <result column="y2" property="y2"/>
+      <result column="y3" property="y3"/>
+      <result column="y4" property="y4"/>
+    </collection>
+  </resultMap>
+
+
+
+
+  <select id="findTColorRegionSKs" resultMap="colorRegionResultMap">
+    SELECT
+      a.id,
+      a.`name`,
+      a.xrows as zxrows,
+      a.xcolumns as zxcolumns,
+      dtl.id as dtlId,
+      dtl.xrow,dtl.xcolumn,
+      dtl.`name` as skName,
+      dtl.x1,dtl.x2,dtl.x3,dtl.x4,
+      dtl.y1,dtl.y2,dtl.y3,dtl.y4
+    FROM t_color_region a
+           LEFT JOIN t_color_region_dtl dtl ON a.id = dtl.color_region_id
+    where
+    a.color_region_type = 1 and a.is_delete=false
+    and a.disabled=false and
+    type_machine_id=#{typeMachineId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <resultMap id="colorRegionSKAllMap" type="com.wiseq.cn.entity.ykAi.TColorRegionSK">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="zxrows" property="xrows"/>
+    <result column="zxcolumns" property="xcolumns"/>
+    <result column="is_delete" property="isDelete"/>
+    <collection property="lists" ofType="com.wiseq.cn.entity.ykAi.TColorRegionOneSK"
+                column="id" javaType="java.util.List" select="findTColorRegionDtlByColorRegionId"/>
+  </resultMap>
+
+  <resultMap id="SKDetlMap" type="com.wiseq.cn.entity.ykAi.TColorRegionOneSK">
+    <id column="id" property="id"/>
+    <result column="xrow" property="xrow"/>
+    <result column="xcolumn" property="xcolumn"/>
+    <result column="name" property="name"/>
+    <result column="x1" property="x1"/>
+    <result column="x2" property="x2"/>
+    <result column="x3" property="x3"/>
+    <result column="x4" property="x4"/>
+    <result column="y1" property="y1"/>
+    <result column="y2" property="y2"/>
+    <result column="y3" property="y3"/>
+    <result column="y4" property="y4"/>
+  </resultMap>
+
+
+
+  <select id="findAllTColorRegionSKs" resultMap="colorRegionSKAllMap">
+    SELECT
+    a.id,
+    a.`name`,
+    a.xrows as zxrows,
+    a.xcolumns as zxcolumns,
+    a.is_delete
+    FROM t_color_region a where
+    a.color_region_type = 1
+    and is_delete = false and
+    type_machine_id=#{typeMachineId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findTColorRegionDtlByColorRegionId" resultMap="SKDetlMap">
+    SELECT
+    id,
+    name,
+    xrow,
+    xcolumn,
+    x1, y1, x2, y2, x3, y3, x4, y4
+    FROM
+    t_color_region_dtl where color_region_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <!-- 获取所有的色容差类型的信息 -->
+  <select id="findAllTColorTolerance" resultType="com.wiseq.cn.entity.ykAi.TColorTolerance">
+    SELECT
+    a.id ,
+    a.`name`,a.color_region_type,
+    dtl.shape,
+    dtl.id as dtlId,
+    dtl.a,dtl.b,dtl.angle,dtl.x,dtl.y,
+    dtl.x1,dtl.x2,dtl.x3,dtl.x4,
+    dtl.y1,dtl.y2,dtl.y3,dtl.y4,
+    a.is_delete
+    FROM t_color_region a
+    LEFT JOIN t_color_region_dtl dtl ON a.id = dtl.color_region_id
+
+    where a.color_region_type = 0
+    <if test="typeMachineId != null">
+      and a.type_machine_id = #{typeMachineId,jdbcType=BIGINT}
+    </if>
+  </select>
+
+
+  <select id="findAllTColorToleranceById" resultType="com.wiseq.cn.entity.ykAi.TColorTolerance">
+    SELECT
+    a.id ,
+    a.`name`,a.color_region_type,
+    dtl.shape,
+    dtl.id as dtlId,
+    dtl.a,dtl.b,dtl.angle,dtl.x,dtl.y,
+    dtl.x1,dtl.x2,dtl.x3,dtl.x4,
+    dtl.y1,dtl.y2,dtl.y3,dtl.y4,
+    a.is_delete
+    FROM t_color_region a
+    LEFT JOIN t_color_region_dtl dtl ON a.id = dtl.color_region_id
+
+    where a.color_region_type = 0
+    and a.id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <!-- 0 色容差类型，1 出货比例类型，2 中心点类型 -->
+  <!-- 类型，0 等于 、1 小于、 2 小于等于、 3大于、 4 大于等于，对应与output_kind为1时 -->
+  <select id="getOutputRequitementParams" resultType="java.util.Map">
+    SELECT b.name,output_kind FROM (
+    select tcr.name,tor.id,'色容差' as output_kind
+    from t_output_requirements tor
+    LEFT JOIN t_output_requirements_dtl tord on tor.id = tord.output_require_id
+    LEFT JOIN t_color_region tcr on tcr.id = tord.color_region_id
+    where  tor.output_kind = 0
+    UNION
+    select concat(tcr.name,'中心点：','(',tord.cp_x,tord.cp_y,')')   as name,
+           tor.id,
+          '中心点' as output_kind
+    from t_output_requirements tor
+         LEFT JOIN t_output_requirements_dtl tord on tor.id = tord.output_require_id
+         LEFT JOIN t_color_region tcr on tcr.id = tord.color_region_id
+    where  tor.output_kind = 2
+    UNION
+    SELECT GROUP_CONCAT(a.s) as name,a.id ,'出货比例' as output_kind  FROM (
+    select
+    tor.id,
+    tcrd.color_region_id,
+    CONCAT(tcrd.name, case tord.ratio_type when  0 THEN '='
+    when  1 THEN  <![CDATA['<'   ]]>
+    when  2 THEN  <![CDATA['<='  ]]>
+    when  3 THEN  <![CDATA[ '>'  ]]>
+    when  4 THEN  <![CDATA[ '>=' ]]>
+    end  ,tord.ratio_value,'%') s
+    ,
+    tord.ratio_value
+    from t_output_requirements tor
+    LEFT JOIN t_output_requirements_dtl tord ON tor.id = tord.output_require_id
+    LEFT JOIN t_color_region_dtl tcrd ON tcrd.id = tord.color_region_dtl_id
+    where  tor.output_kind = 1
+    ) a GROUP BY a.id,a.color_region_id
+    ) b where  b.id =#{outputId,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="test">
+
+    SELECT bts.model_id,dosage.dosage,duf.path,btfd.* FROM bs_task_state bts,
+                                                           bs_task_formula btf,
+                                                           (
+                                                             SELECT
+                                                               id, task_formula_id, material_id, ratio, material_class, material_class_name, spec
+                                                             FROM (
+                                                                    select btfd.id, task_formula_id, material_id, ratio, material_class,'A胶' as material_class_name, tgd.glue_spec as spec
+                                                                    FROM bs_task_formula_dtl btfd
+                                                                           LEFT JOIN t_glue_dtl tgd on btfd.material_id = tgd.id
+                                                                    where btfd.material_class = 0
+                                                                    union
+                                                                    select btfd.id, task_formula_id, material_id, ratio, material_class,'B胶' as material_class_name, tgd.glue_spec as spec
+                                                                    FROM bs_task_formula_dtl btfd
+                                                                           LEFT JOIN t_glue_dtl tgd on btfd.material_id = tgd.id
+                                                                    where btfd.material_class = 1
+                                                                    union
+                                                                    SELECT btfd.id, task_formula_id, material_id, ratio, material_class,'荧光粉' as material_class_name, tp.phosphor_spec as spec
+                                                                    FROM bs_task_formula_dtl btfd
+                                                                           LEFT JOIN t_phosphor tp ON tp.id = btfd.material_id
+                                                                    where btfd.material_class = 2
+                                                                    union
+                                                                    SELECT btfd.id, task_formula_id, material_id, ratio, material_class,'坑沉淀粉' as material_class_name, tas.anti_starch_spec as spec
+                                                                    FROM bs_task_formula_dtl btfd,t_anti_starch tas
+                                                                    where btfd.material_class = 3 and tas.id = btfd.material_id
+                                                                    union
+                                                                    SELECT btfd.id, task_formula_id, material_id, ratio, material_class,'扩散粉' as material_class_name, tdp.diffusion_powder_spec as spec
+                                                                    FROM bs_task_formula_dtl btfd,t_diffusion_powder tdp
+                                                                    where btfd.material_class = 4 and  btfd.material_id = tdp.id
+                                                                  )  as bs_task_formula_dtl
+                                                           ) btfd,
+
+                                                           (SELECT  bts.id,GROUP_CONCAT(duf.path) path FROM bs_task_state bts,d_upload_file duf
+                                                            where FIND_IN_SET(duf.id,bts.fileid_list)
+                                                            group by  bts.id) duf ,
+
+                                                           (SELECT id,GROUP_CONCAT(dosage)as dosage FROM (
+                                                                                                           SELECT  bts.id,JSON_OBJECT('阀体ID',eqpt_valve_id,'点胶量',begd.dosage) as dosage
+                                                                                                           FROM bs_task_state bts,
+                                                                                                                bs_eqpt_gule_dosage begd
+                                                                                                           where
+                                                                                                             bts.id = begd.task_state_id) dosage GROUP BY dosage.id)dosage
+
+    WHERE bts.id = btf.task_state_id and btf.id = btfd.task_formula_id and  duf.id = bts.id
+      and dosage.id = bts.id
+  </select>
+</mapper>

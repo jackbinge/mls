@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TPhosphorDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TPhosphor">
+    <!--@mbg.generated-->
+    <!--@Table t_phosphor-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="phosphor_code" jdbcType="VARCHAR" property="phosphorCode" />
+    <result column="phosphor_spec" jdbcType="VARCHAR" property="phosphorSpec" />
+    <result column="supplier" jdbcType="VARCHAR" property="supplier" />
+    <result column="cold_heat_ratio" jdbcType="DOUBLE" property="coldHeatRatio" />
+    <result column="particle_diameter10" jdbcType="DOUBLE" property="particleDiameter10" />
+    <result column="particle_diameter50" jdbcType="DOUBLE" property="particleDiameter50" />
+    <result column="particle_diameter90" jdbcType="DOUBLE" property="particleDiameter90" />
+    <result column="peak_wavelength" jdbcType="DOUBLE" property="peakWavelength" />
+    <result column="density" jdbcType="DOUBLE" property="density" />
+    <result column="cie_x" jdbcType="DOUBLE" property="cieX" />
+    <result column="cie_y" jdbcType="DOUBLE" property="cieY" />
+    <result column="fwhm" jdbcType="DOUBLE" property="fwhm" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+    <result column="disabled" jdbcType="BOOLEAN" property="disabled" />
+    <result column="typeName" jdbcType="VARCHAR" property="typeName"/>
+    <result column="phosphorTypeId" jdbcType="BIGINT" property="phosphorTypeId"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, phosphor_code, phosphor_spec, supplier, cold_heat_ratio, particle_diameter10, 
+    particle_diameter50, particle_diameter90, peak_wavelength, density, cie_x, cie_y, 
+    fwhm, create_time, is_delete, disabled
+  </sql>
+
+
+  <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    tp.id,
+    tp.phosphor_code,
+    tp.phosphor_spec,
+    tp.supplier,
+    tp.cold_heat_ratio,
+    tp.particle_diameter10,
+    tp.particle_diameter50,
+    tp.particle_diameter90,
+    tp.peak_wavelength,
+    tp.density,
+    tp.cie_x, tp.cie_y,
+    tp.fwhm, tp.create_time,tp. is_delete, tp.disabled,
+    tpt.name as typeName,
+    tp.phosphor_type_id as phosphorTypeId
+    from t_phosphor tp,t_phosphor_type tpt
+    where tp.is_delete != true and tpt.id = tp.phosphor_type_id
+    <if test="phosphorSpec != null and phosphorSpec != ''">
+      and tp.phosphor_spec LIKE CONCAT('%',#{phosphorSpec},'%')
+    </if>
+    <if test="disabled != null">
+      and tp.disabled = #{disabled}
+    </if>
+    <if test="phosphorType != null and phosphorType != ''">
+      and INSTR(tpt.name,#{phosphorType})
+    </if>
+    <if test="phosphorTypeId != null">
+      and phosphor_type_id = #{phosphorTypeId}
+    </if>
+    order by tp.disabled , tp.create_time desc
+  </select>
+
+
+  <insert id="insert2" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TPhosphor" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_phosphor (phosphor_code, phosphor_spec, supplier, 
+      cold_heat_ratio, particle_diameter10, particle_diameter50, 
+      particle_diameter90, peak_wavelength, density, 
+      cie_x, cie_y, fwhm, create_time, 
+      is_delete, disabled)
+    values (#{phosphorCode,jdbcType=VARCHAR}, #{phosphorSpec,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR}, 
+      #{coldHeatRatio,jdbcType=DOUBLE}, #{particleDiameter10,jdbcType=DOUBLE}, #{particleDiameter50,jdbcType=DOUBLE}, 
+      #{particleDiameter90,jdbcType=DOUBLE}, #{peakWavelength,jdbcType=DOUBLE}, #{density,jdbcType=DOUBLE}, 
+      #{cieX,jdbcType=DOUBLE}, #{cieY,jdbcType=DOUBLE}, #{fwhm,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{isDelete,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER})
+  </insert>
+
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TPhosphor" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into t_phosphor
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="phosphorTypeId != null">
+        phosphor_type_id,
+      </if>
+      <if test="phosphorCode != null">
+        phosphor_code,
+      </if>
+      <if test="phosphorSpec != null">
+        phosphor_spec,
+      </if>
+      <if test="supplier != null">
+        supplier,
+      </if>
+      <if test="coldHeatRatio != null">
+        cold_heat_ratio,
+      </if>
+      <if test="particleDiameter10 != null">
+        particle_diameter10,
+      </if>
+      <if test="particleDiameter50 != null">
+        particle_diameter50,
+      </if>
+      <if test="particleDiameter90 != null">
+        particle_diameter90,
+      </if>
+      <if test="peakWavelength != null">
+        peak_wavelength,
+      </if>
+      <if test="density != null">
+        density,
+      </if>
+      <if test="cieX != null">
+        cie_x,
+      </if>
+      <if test="cieY != null">
+        cie_y,
+      </if>
+      <if test="fwhm != null">
+        fwhm,
+      </if>
+        create_time,
+        is_delete,
+        disabled,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="phosphorTypeId != null">
+        #{phosphorTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="phosphorCode != null">
+        #{phosphorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="phosphorSpec != null">
+        #{phosphorSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null">
+        #{supplier,jdbcType=VARCHAR},
+      </if>
+      <if test="coldHeatRatio != null">
+        #{coldHeatRatio,jdbcType=DOUBLE},
+      </if>
+      <if test="particleDiameter10 != null">
+        #{particleDiameter10,jdbcType=DOUBLE},
+      </if>
+      <if test="particleDiameter50 != null">
+        #{particleDiameter50,jdbcType=DOUBLE},
+      </if>
+      <if test="particleDiameter90 != null">
+        #{particleDiameter90,jdbcType=DOUBLE},
+      </if>
+      <if test="peakWavelength != null">
+        #{peakWavelength,jdbcType=DOUBLE},
+      </if>
+      <if test="density != null">
+        #{density,jdbcType=DOUBLE},
+      </if>
+      <if test="cieX != null">
+        #{cieX,jdbcType=DOUBLE},
+      </if>
+      <if test="cieY != null">
+        #{cieY,jdbcType=DOUBLE},
+      </if>
+      <if test="fwhm != null">
+        #{fwhm,jdbcType=DOUBLE},
+      </if>
+      NOW(),
+      0 ,
+      0,
+    </trim>
+  </insert>
+
+  <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TPhosphor">
+    <!--@mbg.generated-->
+    update t_phosphor
+    <set>
+      <if test="phosphorCode != null">
+        phosphor_code = #{phosphorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="phosphorSpec != null">
+        phosphor_spec = #{phosphorSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="phosphorTypeId != null">
+        phosphor_type_id = #{phosphorTypeId,jdbcType=BIGINT},
+      </if>
+        supplier = #{supplier,jdbcType=VARCHAR},
+        cold_heat_ratio = #{coldHeatRatio,jdbcType=DOUBLE},
+        particle_diameter10 = #{particleDiameter10,jdbcType=DOUBLE},
+        particle_diameter50 = #{particleDiameter50,jdbcType=DOUBLE},
+        particle_diameter90 = #{particleDiameter90,jdbcType=DOUBLE},
+        peak_wavelength = #{peakWavelength,jdbcType=DOUBLE},
+      <if test="density != null">
+        density = #{density,jdbcType=DOUBLE},
+      </if>
+        cie_x = #{cieX,jdbcType=DOUBLE},
+        cie_y = #{cieY,jdbcType=DOUBLE},
+        fwhm = #{fwhm,jdbcType=DOUBLE},
+        create_time = NOW(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <select id="findExistList" resultMap="BaseResultMap">
+    select * from t_phosphor where phosphor_spec = #{phosphorSpec} and is_delete != 1
+  </select>
+
+  <update id="updateDisabled" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+    UPDATE t_phosphor
+    <set>
+      <if test="disabled != null">
+        disabled = #{disabled,jdbcType=BOOLEAN}
+      </if>
+    </set>
+    WHERE id=#{id}
+  </update>
+
+  <update id="updateDel" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+    UPDATE t_phosphor
+    <set>
+      <if test="isDelete != null">
+        is_delete = 1
+      </if>
+    </set>
+    WHERE id=#{id}
+  </update>
+
+  <select id="getPhSpec" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.AiDadainRatio">
+    <!--@mbg.generated-->
+    select
+    id as materialId,phosphor_spec as spec,peak_wavelength as peakWavelength
+    from t_phosphor
+    where id = #{specId}
+  </select>
+</mapper>

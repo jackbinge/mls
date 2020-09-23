@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TEqptMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TEqpt">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="eqpt_code" jdbcType="VARCHAR" property="eqptCode"/>
+        <result column="positon" jdbcType="INTEGER" property="positon"/>
+        <result column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="pinhead_num" jdbcType="INTEGER" property="pinheadNum"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <result column="assets_code" jdbcType="VARCHAR" property="assetsCode"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="gname" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, eqpt_code, positon, group_id, pinhead_num, disabled, assets_code, `type`, create_time,
+        is_delete
+    </sql>
+
+    <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        e.id
+        ,e.positon
+        ,e.group_id
+        ,e.disabled
+        ,e.assets_code
+        ,e.is_delete
+        ,g.`name` as gname
+        from t_eqpt e
+        LEFT JOIN
+        t_group g on e.group_id = g.id
+        WHERE e.is_delete = FALSE
+        <if test="groupId != null and groupId != ''">
+            and e.group_id = #{groupId}
+        </if>
+        <if test="positon != null and positon != ''">
+            and e.positon LIKE  CONCAT('%',#{positon},'%')
+        </if>
+        <if test="assetsCode != null and assetsCode != ''">
+            and e.assets_code LIKE CONCAT('%',#{assetsCode},'%')
+        </if>
+        <if test="disabled != null">
+            and  e.disabled = #{disabled}
+        </if>
+        order by e.disabled ,e.create_time DESC
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_eqpt
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TEqpt"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_eqpt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqptCode != null">
+                eqpt_code,
+            </if>
+            <if test="positon != null">
+                positon,
+            </if>
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="pinheadNum != null">
+                pinhead_num,
+            </if>
+            <if test="disabled != null">
+                disabled,
+            </if>
+            <if test="assetsCode != null">
+                assets_code,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqptCode != null">
+                #{eqptCode,jdbcType=VARCHAR},
+            </if>
+            <if test="positon != null">
+                #{positon,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null">
+                #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="pinheadNum != null">
+                #{pinheadNum,jdbcType=INTEGER},
+            </if>
+            <if test="disabled != null">
+                #{disabled,jdbcType=BOOLEAN},
+            </if>
+            <if test="assetsCode != null">
+                #{assetsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TEqpt">
+        <!--@mbg.generated-->
+        update t_eqpt
+        <set>
+            <if test="eqptCode != null">
+                eqpt_code = #{eqptCode,jdbcType=VARCHAR},
+            </if>
+            <if test="positon != null">
+                positon = #{positon,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="pinheadNum != null">
+                pinhead_num = #{pinheadNum,jdbcType=INTEGER},
+            </if>
+            <if test="disabled != null">
+                disabled = #{disabled,jdbcType=BOOLEAN},
+            </if>
+            <if test="assetsCode != null">
+                assets_code = #{assetsCode,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=TINYINT},
+            </if>
+                create_time = NOW(),
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TEqpt">
+        <!--@mbg.generated-->
+        update t_eqpt
+        set eqpt_code = #{eqptCode,jdbcType=VARCHAR},
+        positon = #{positon,jdbcType=INTEGER},
+        group_id = #{groupId,jdbcType=BIGINT},
+        pinhead_num = #{pinheadNum,jdbcType=INTEGER},
+        disabled = #{disabled,jdbcType=BOOLEAN},
+        assets_code = #{assetsCode,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=TINYINT},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        is_delete = #{isDelete,jdbcType=BOOLEAN}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!-- 资产编码校验 -->
+    <select id="findTEqptAssetsCodeExist" resultType="java.lang.String">
+        SELECT concat(tg.name,'的',te2.positon,'号机已经使用了该资产编码') FROM t_eqpt te2
+        LEFT JOIN t_group tg on te2.group_id = tg.id
+        where te2.id IN (
+        SELECT id FROM t_eqpt te where te.assets_code = #{assetsCode,jdbcType=VARCHAR}
+        <if test="id != null">
+            and id !=#{id,jdbcType=BIGINT}
+        </if>
+        )
+        and te2.is_delete = false
+    </select>
+    
+    <select id="findTEqptExistPositon" resultType="com.wiseq.cn.entity.ykAi.TEqpt">
+        SELECT * FROM t_eqpt WHERE group_id = #{groupId,jdbcType=BIGINT}
+        and positon = #{positon,jdbcType=INTEGER}
+        <if test="id != null">
+        and id != #{id,jdbcType=BIGINT}
+        </if>
+        and is_delete = false
+    </select>
+
+
+    <delete id="updateDel">
+        UPDATE t_eqpt
+        set is_delete = 1
+        WHERE id=#{id}
+    </delete>
+
+
+    <update id="updateToDisable" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        update t_eqpt
+        <set>
+            disabled = #{disable,jdbcType=BOOLEAN}
+        </set>
+        where id = #{eqptId,jdbcType=BIGINT}
+    </update>
+    
+    
+    <select id="findTEqptExistForUpdate" resultType="com.wiseq.cn.entity.ykAi.TEqpt">
+        select * from t_eqpt
+        where positon = #{positon} and assets_code = #{assetsCode} and group_id = #{groupId} and
+        is_delete = false and id != #{eqptId,jdbcType=BIGINT}
+    </select>
+</mapper>

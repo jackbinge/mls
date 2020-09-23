@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TRoleMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TRole">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <id column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="disable" jdbcType="BOOLEAN" property="disabled"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, group_id,`name`, remark,disabled,is_delete, create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_role
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TRole"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_role (group_id,`name`, remark, disabled,create_time
+        )
+        values (#{groupId,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},#{disabled,jdbcType=BOOLEAN}, #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TRole"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TRole">
+        <!--@mbg.generated-->
+        update t_role
+        <set>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="disabled != null">
+                disabled = #{disabled,jdbcType=BOOLEAN},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+
+    <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_role
+        (`name`, remark,create_time,disabled)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.name,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR},#{item.isDelete,jdbcType=BOOLEAN},
+            #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <update id="disable">
+        update t_role set disabled = #{disable,jdbcType=BOOLEAN}
+        where id = #{roleId,jdbcType=BIGINT}
+    </update>
+
+
+
+
+    
+   <resultMap id="RoleListMap" type="com.wiseq.cn.entity.ykAi.TRoleGroup">
+       <!--@mbg.generated-->
+       <id column="id" jdbcType="BIGINT" property="id"/>
+       <id column="group_id" jdbcType="BIGINT" property="groupId"/>
+       <result column="name" jdbcType="VARCHAR" property="name"/>
+       <result column="remark" jdbcType="VARCHAR" property="remark"/>
+       <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+       <result column="disabled" jdbcType="BOOLEAN" property="disable"/>
+       <collection property="roleMenuList" ofType="java.lang.Long" javaType="java.util.List" column="id" select="findRolePrivilegeMenuList" />
+       <collection property="roleButtonList" ofType="java.lang.Long" javaType="java.util.List" column="id" select="findRolePrivilegeButtonList"/>
+   </resultMap>
+
+    <!-- 获取角色列表 -->
+    <select id="findList" resultMap="RoleListMap">
+        select r.*
+        ,g.`code` as gcode
+        ,g.`name` as gname
+        from t_role r
+        left join (select id,code,name from t_group) g on r.group_id = g.id
+        where r.group_id = #{groupId}
+        <if test="name != null">
+            and r.name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="disabled != null">
+            and r.disabled = #{disabled}
+        </if>
+        order by  r.disabled ASC,r.create_time DESC
+    </select>
+    
+    <!-- 获取角色的菜单权限 -->
+    <select id="findRolePrivilegeMenuList" resultType="java.lang.Long">
+        select  trp.privilege_id
+        from t_role_privilege trp
+        left join t_privilege tp on trp.privilege_id = tp.id
+        where tp.kind = 0 and trp.role_id = #{id,jdbcType=BIGINT}
+    </select>
+    
+    <!-- 获取角色的按钮权限 -->
+    <select id="findRolePrivilegeButtonList" resultType="java.lang.Long">
+        select trp.privilege_id from t_role_privilege trp
+        LEFT JOIN t_privilege tp on trp.privilege_id = tp.id
+        where tp.kind = 1 and trp.role_id = #{id,jdbcType=BIGINT}
+    </select>
+
+
+    <!-- 角色的删除包含其对应的权限 -->
+    <delete id="deleteRoleAndPrivilege" parameterType="java.lang.Long">
+        delete from t_user_role where role_id = #{id,jdbcType=BIGINT};
+        delete from t_role_privilege where role_id = #{id,jdbcType=BIGINT};
+        delete from t_role where id = #{id,jdbcType=BIGINT};
+    </delete>
+
+    <!-- 删除角色的所有权限 -->
+    <delete id="deleteRolePrivilege" parameterType="java.lang.Long">
+        delete from t_role_privilege where role_id = #{id,jdbcType=BIGINT};
+    </delete>
+    
+    
+    <select id="findRoleExit" resultType="int">
+        select count(1) FROM t_role where name = #{name,jdbcType=VARCHAR}
+        and group_id = #{groupId,jdbcType=BIGINT}
+        <if test="id != null">
+        and id != #{id,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+    <insert id="batchInsertRoleWithPrivilege" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TRolePrivilege" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_role_privilege
+        (privilege_id, role_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.privilegeId,jdbcType=BIGINT}, #{item.roleId,jdbcType=BIGINT})
+        </foreach>
+    </insert>
+</mapper>

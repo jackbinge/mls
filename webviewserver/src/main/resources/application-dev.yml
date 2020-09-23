@@ -1,0 +1,48 @@
+web:
+  upload_path: D:\softcode\webapplication\webviewserver\upload #无状态信息存储路径，在centos中则需要调整
+
+debug: true
+server:
+  port: 8082
+
+spring:
+  cloud:
+    consul:
+      host: 192.168.68.86
+      port: 8500
+      discovery:
+        register: true
+        hostname: 192.168.68.86
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        tags: urlprefix-/${spring.application.name}
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+feign:
+  hystrix:
+    enabled: true
+
+#高版本的时间控制有两个地方ribbon，hystrix 先ribbon 后hystrix
+#请求处理的超时时间,超时则进行熔断降级处理
+ribbon:
+  ReadTimeout: 60000 #1min
+  ConnectTimeout: 60000 #1min
+  MaxAutoRetries: 0 #同一台实例最大重试次数,不包括首次调用
+  MaxAutoRetriesNextServer: 0 #重试负载均衡其他的实例最大重试次数,不包括首次调用
+  OkToRetryOnAllOperations: false  #是否所有操作都重试 false只针对get请
+
+
+#hystrix 配置
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          #如果enabled设置为false，则请求超时交给ribbon控制
+          enabled: true
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 60000
+
+attachmentPath: C://uploadDll/  # 文件上传目录

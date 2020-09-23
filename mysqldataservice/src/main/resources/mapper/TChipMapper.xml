@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TChipDao">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TChip">
+        <!--@mbg.generated-->
+        <!--@Table t_chip-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="chip_code" jdbcType="VARCHAR" property="chipCode"/>
+        <result column="chip_spec" jdbcType="VARCHAR" property="chipSpec"/>
+        <result column="chip_rank" jdbcType="VARCHAR" property="chipRank"/>
+        <result column="supplier" jdbcType="VARCHAR" property="supplier"/>
+        <result column="test_condition" jdbcType="VARCHAR" property="testCondition"/>
+        <result column="vf_max" jdbcType="DOUBLE" property="vfMax"/>
+        <result column="vf_min" jdbcType="DOUBLE" property="vfMin"/>
+        <result column="iv_max" jdbcType="DOUBLE" property="ivMax"/>
+        <result column="iv_min" jdbcType="DOUBLE" property="ivMin"/>
+        <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+        <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+        <result column="lumen_max" jdbcType="DOUBLE" property="lumenMax"/>
+        <result column="lumen_min" jdbcType="DOUBLE" property="lumenMin"/>
+        <result column="fwhm" jdbcType="DOUBLE" property="fwhm"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, chip_code, chip_spec, chip_rank, supplier, test_condition, vf_max, vf_min, iv_max,
+        iv_min, wl_max, wl_min, lumen_max, lumen_min, fwhm, create_time, is_delete, disabled
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_chip
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_chip
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert2" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TChip"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_chip (chip_code, chip_spec, chip_rank,
+        supplier, test_condition, vf_max,
+        vf_min, iv_max, iv_min, wl_max,
+        wl_min, lumen_max, lumen_min,
+        fwhm,create_time, is_delete,
+        disabled)
+        values (#{chipCode,jdbcType=VARCHAR}, #{chipSpec,jdbcType=VARCHAR}, #{chipRank,jdbcType=VARCHAR},
+        #{supplier,jdbcType=VARCHAR}, #{testCondition,jdbcType=VARCHAR}, #{vfMax,jdbcType=DOUBLE},
+        #{vfMin,jdbcType=DOUBLE}, #{ivMax,jdbcType=DOUBLE}, #{ivMin,jdbcType=DOUBLE}, #{wlMax,jdbcType=DOUBLE},
+        #{wlMin,jdbcType=DOUBLE}, #{lumenMax,jdbcType=DOUBLE}, #{lumenMin,jdbcType=DOUBLE},
+        #{fwhm,jdbcType=DOUBLE} ,NOW(),0,0)
+
+    </insert>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TChip"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        <!--@mbg.generated-->
+        insert into t_chip
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="chipCode != null">
+                chip_code,
+            </if>
+            <if test="chipSpec != null">
+                chip_spec,
+            </if>
+            <if test="chipRank != null">
+                chip_rank,
+            </if>
+            <if test="supplier != null">
+                supplier,
+            </if>
+            <if test="testCondition != null">
+                test_condition,
+            </if>
+            <if test="vfMax != null">
+                vf_max,
+            </if>
+            <if test="vfMin != null">
+                vf_min,
+            </if>
+            <if test="ivMax != null">
+                iv_max,
+            </if>
+            <if test="ivMin != null">
+                iv_min,
+            </if>
+            <if test="wlMax != null">
+                wl_max,
+            </if>
+            <if test="wlMin != null">
+                wl_min,
+            </if>
+            <if test="lumenMax != null">
+                lumen_max,
+            </if>
+            <if test="lumenMin != null">
+                lumen_min,
+            </if>
+            <if test="fwhm != null">
+                fwhm,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="disabled != null">
+                disabled,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="chipCode != null">
+                #{chipCode,jdbcType=VARCHAR},
+            </if>
+            <if test="chipSpec != null">
+                #{chipSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="chipRank != null">
+                #{chipRank,jdbcType=VARCHAR},
+            </if>
+            <if test="supplier != null">
+                #{supplier,jdbcType=VARCHAR},
+            </if>
+            <if test="testCondition != null">
+                #{testCondition,jdbcType=VARCHAR},
+            </if>
+            <if test="vfMax != null">
+                #{vfMax,jdbcType=DOUBLE},
+            </if>
+            <if test="vfMin != null">
+                #{vfMin,jdbcType=DOUBLE},
+            </if>
+            <if test="ivMax != null">
+                #{ivMax,jdbcType=DOUBLE},
+            </if>
+            <if test="ivMin != null">
+                #{ivMin,jdbcType=DOUBLE},
+            </if>
+            <if test="wlMax != null">
+                #{wlMax,jdbcType=DOUBLE},
+            </if>
+            <if test="wlMin != null">
+                #{wlMin,jdbcType=DOUBLE},
+            </if>
+            <if test="lumenMax != null">
+                #{lumenMax,jdbcType=DOUBLE},
+            </if>
+            <if test="lumenMin != null">
+                #{lumenMin,jdbcType=DOUBLE},
+            </if>
+            <if test="fwhm != null">
+                #{fwhm,jdbcType=DOUBLE},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="disabled != null">
+                #{disabled,jdbcType=BOOLEAN},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+        <!--@mbg.generated-->
+        update t_chip
+        <set>
+
+                chip_code = #{chipCode,jdbcType=VARCHAR},
+            <if test="chipSpec != null">
+                chip_spec = #{chipSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="chipRank != null">
+                chip_rank = #{chipRank,jdbcType=VARCHAR},
+            </if>
+            <if test="supplier != null ">
+                supplier = #{supplier,jdbcType=VARCHAR},
+            </if>
+            <if test="testCondition != null">
+                test_condition = #{testCondition,jdbcType=VARCHAR},
+            </if>
+
+                vf_max = #{vfMax,jdbcType=DOUBLE},
+                vf_min = #{vfMin,jdbcType=DOUBLE},
+                iv_max = #{ivMax,jdbcType=DOUBLE},
+                iv_min = #{ivMin,jdbcType=DOUBLE},
+                wl_max = #{wlMax,jdbcType=DOUBLE},
+                wl_min = #{wlMin,jdbcType=DOUBLE},
+                lumen_max = #{lumenMax,jdbcType=DOUBLE},
+                lumen_min = #{lumenMin,jdbcType=DOUBLE},
+                fwhm = #{fwhm,jdbcType=DOUBLE},
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="update2" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+        <!--@mbg.generated-->
+        update t_chip
+        set chip_code = #{chipCode,jdbcType=VARCHAR},
+        chip_spec = #{chipSpec,jdbcType=VARCHAR},
+        chip_rank = #{chipRank,jdbcType=VARCHAR},
+        supplier = #{supplier,jdbcType=VARCHAR},
+        test_condition = #{testCondition,jdbcType=VARCHAR},
+        vf_max = #{vfMax,jdbcType=DOUBLE},
+        vf_min = #{vfMin,jdbcType=DOUBLE},
+        iv_max = #{ivMax,jdbcType=DOUBLE},
+        iv_min = #{ivMin,jdbcType=DOUBLE},
+        wl_max = #{wlMax,jdbcType=DOUBLE},
+        wl_min = #{wlMin,jdbcType=DOUBLE},
+        lumen_max = #{lumenMax,jdbcType=DOUBLE},
+        lumen_min = #{lumenMin,jdbcType=DOUBLE},
+        fwhm = #{fwhm,jdbcType=DOUBLE},
+        create_time = NOW()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="updateDisabled" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+        UPDATE t_chip
+        <set>
+            <if test="disabled != null">
+                disabled = #{disabled,jdbcType=BOOLEAN}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateDel" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+        UPDATE t_chip
+        <set>
+                is_delete = 1
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <select id="findExistList" resultMap="BaseResultMap">
+        select * from t_chip where chip_spec = #{chipSpec} and is_delete = false
+        <if test="id != null">
+            and id != #{id,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+
+    <resultMap id="findListMap" type="com.wiseq.cn.entity.ykAi.TChip">
+        <!--@mbg.generated-->
+        <!--@Table t_chip-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="chip_code" jdbcType="VARCHAR" property="chipCode"/>
+        <result column="chip_spec" jdbcType="VARCHAR" property="chipSpec"/>
+        <result column="chip_rank" jdbcType="VARCHAR" property="chipRank"/>
+        <result column="supplier" jdbcType="VARCHAR" property="supplier"/>
+        <result column="test_condition" jdbcType="VARCHAR" property="testCondition"/>
+        <result column="vf_max" jdbcType="DOUBLE" property="vfMax"/>
+        <result column="vf_min" jdbcType="DOUBLE" property="vfMin"/>
+        <result column="iv_max" jdbcType="DOUBLE" property="ivMax"/>
+        <result column="iv_min" jdbcType="DOUBLE" property="ivMin"/>
+        <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+        <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+        <result column="lumen_max" jdbcType="DOUBLE" property="lumenMax"/>
+        <result column="lumen_min" jdbcType="DOUBLE" property="lumenMin"/>
+        <result column="fwhm" jdbcType="DOUBLE" property="fwhm"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <collection property="tChipWlRankList" column="id"
+                    ofType="com.wiseq.cn.entity.ykAi.TChipWlRank" javaType="java.util.List"
+                    select="getChipWlRankListByChipId"/>
+    </resultMap>
+
+    <select id="findList" resultMap="findListMap">
+        select
+        tc.id,
+        tc.chip_code,
+        tc.chip_spec,
+        tc.chip_rank,
+        tc.supplier,
+        tc.test_condition,
+        tc.vf_max,
+        tc.vf_min,
+        tc.iv_max,
+        tc.iv_min,
+        tc.wl_max,
+        tc.wl_min,
+        tc.lumen_max,
+        tc.lumen_min,
+        tc.fwhm,
+        tc.create_time, tc.is_delete, tc.disabled
+        FROM
+         t_chip as tc
+        where tc.is_delete = false
+        <if test="chipSpec != null and chipSpec != ''">
+            and tc.chip_spec LIKE  CONCAT('%',#{chipSpec},'%')
+        </if>
+        <if test="disabled != null">
+            and tc.disabled = #{disabled}
+        </if>
+        order by tc.disabled ASC, tc.id DESC
+    </select>
+
+    <!-- 通过芯片ID获取芯片波段列表 -->
+    <select id="getChipWlRankListByChipId" resultType="com.wiseq.cn.entity.ykAi.TChipWlRank">
+        SELECT  id, name, chip_id, wl_max, wl_min, is_delete
+        FROM t_chip_wl_rank where is_delete = false
+        and chip_id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <!-- jiangbailing 勿动 -->
+    <resultMap id="findChipMixMap" type="com.wiseq.cn.entity.ykAi.TChip">
+        <!--@mbg.generated-->
+        <!--@Table t_chip-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="chip_code" jdbcType="VARCHAR" property="chipCode"/>
+        <result column="chip_spec" jdbcType="VARCHAR" property="chipSpec"/>
+        <result column="chip_rank" jdbcType="VARCHAR" property="chipRank"/>
+        <result column="supplier" jdbcType="VARCHAR" property="supplier"/>
+        <result column="test_condition" jdbcType="VARCHAR" property="testCondition"/>
+        <result column="vf_max" jdbcType="DOUBLE" property="vfMax"/>
+        <result column="vf_min" jdbcType="DOUBLE" property="vfMin"/>
+        <result column="iv_max" jdbcType="DOUBLE" property="ivMax"/>
+        <result column="iv_min" jdbcType="DOUBLE" property="ivMin"/>
+        <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+        <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+        <result column="lumen_max" jdbcType="DOUBLE" property="lumenMax"/>
+        <result column="lumen_min" jdbcType="DOUBLE" property="lumenMin"/>
+        <result column="fwhm" jdbcType="DOUBLE" property="fwhm"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <collection property="tChipWlRankList" ofType="com.wiseq.cn.entity.ykAi.TChipWlRank">
+            <id column="rkId" jdbcType="BIGINT" property="id"/>
+            <result column="rkName" jdbcType="VARCHAR" property="name"/>
+            <result column="chip_id" jdbcType="BIGINT" property="chipId"/>
+            <result column="rkWl_max" jdbcType="DOUBLE" property="wlMax"/>
+            <result column="rkWl_min" jdbcType="DOUBLE" property="wlMin"/>
+            <result column="rkIs_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        </collection>
+    </resultMap>
+
+
+    <!-- jiangbailing 勿动 -->
+    <select id="findChipMixByTbomId" resultMap="findChipMixMap" parameterType="java.lang.Long">
+        select
+        tc.id,
+        tc.chip_code,
+        tc.chip_spec,
+        tc.chip_rank,
+        tc.supplier,
+        tc.test_condition,
+        tc.vf_max,
+        tc.vf_min,
+        tc.iv_max,
+        tc.iv_min,
+        tc.wl_max,
+        tc.wl_min,
+        tc.lumen_max,
+        tc.lumen_min,
+        tc.fwhm,
+        tc.create_time, tc.is_delete, tc.disabled,
+        tcwr.id as rkId, tcwr.name as rkName, tcwr.chip_id , tcwr.wl_max as rkWl_max, tcwr.wl_min as rkWl_min, tcwr.is_delete as rkIs_delete FROM
+        t_bom tb LEFT JOIN
+        t_chip tc ON tb.chip_id = tc.id
+        LEFT JOIN t_chip_wl_rank tcwr on tc.id = tcwr.chip_id
+        where tc.is_delete = false and tc.disabled = false
+        and tb.id = #{id,jdbcType=BIGINT}
+        order by tc.create_time DESC
+    </select>
+
+</mapper>

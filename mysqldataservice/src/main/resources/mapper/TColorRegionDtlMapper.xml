@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TColorRegionDtlMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="color_region_id" jdbcType="BIGINT" property="colorRegionId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="xrow" jdbcType="INTEGER" property="xrow"/>
+        <result column="xcolumn" jdbcType="INTEGER" property="xcolumn"/>
+        <result column="shape" jdbcType="TINYINT" property="shape"/>
+        <result column="x1" jdbcType="DOUBLE" property="x1"/>
+        <result column="y1" jdbcType="DOUBLE" property="y1"/>
+        <result column="x2" jdbcType="DOUBLE" property="x2"/>
+        <result column="y2" jdbcType="DOUBLE" property="y2"/>
+        <result column="x3" jdbcType="DOUBLE" property="x3"/>
+        <result column="y3" jdbcType="DOUBLE" property="y3"/>
+        <result column="x4" jdbcType="DOUBLE" property="x4"/>
+        <result column="y4" jdbcType="DOUBLE" property="y4"/>
+        <result column="a" jdbcType="DOUBLE" property="a"/>
+        <result column="b" jdbcType="DOUBLE" property="b"/>
+        <result column="x" jdbcType="DOUBLE" property="x"/>
+        <result column="y" jdbcType="DOUBLE" property="y"/>
+        <result column="angle" jdbcType="DOUBLE" property="angle"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, color_region_id, `name`, xrow, xcolumn, shape, x1, y1, x2, y2, x3, y3, x4, y4,
+        `a`, b, x, y, angle, create_time, is_delete
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_color_region_dtl
+        where color_region_id = #{colorRegionId,jdbcType=BIGINT}
+      <if test="name != null and name != ''">
+        and name LIKE CONCAT('%',#{name},'%')
+      </if>
+      <if test="shape != null">
+        and shape = #{shape}
+      </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_color_region_dtl
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.wiseq.cn.entity.ykAi.TColorRegionDtl" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_color_region_dtl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="colorRegionId != null">
+                color_region_id,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="xrow != null">
+                xrow,
+            </if>
+            <if test="xcolumn != null">
+                xcolumn,
+            </if>
+            <if test="shape != null">
+                shape,
+            </if>
+            <if test="x1 != null">
+                x1,
+            </if>
+            <if test="y1 != null">
+                y1,
+            </if>
+            <if test="x2 != null">
+                x2,
+            </if>
+            <if test="y2 != null">
+                y2,
+            </if>
+            <if test="x3 != null">
+                x3,
+            </if>
+            <if test="y3 != null">
+                y3,
+            </if>
+            <if test="x4 != null">
+                x4,
+            </if>
+            <if test="y4 != null">
+                y4,
+            </if>
+            <if test="a != null">
+                `a`,
+            </if>
+            <if test="b != null">
+                b,
+            </if>
+            <if test="x != null">
+                x,
+            </if>
+            <if test="y != null">
+                y,
+            </if>
+            <if test="angle != null">
+                angle,
+            </if>
+                create_time,
+                is_delete,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="colorRegionId != null">
+                #{colorRegionId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="xrow != null">
+                #{xrow,jdbcType=INTEGER},
+            </if>
+            <if test="xcolumn != null">
+                #{xcolumn,jdbcType=INTEGER},
+            </if>
+            <if test="shape != null">
+                #{shape,jdbcType=TINYINT},
+            </if>
+            <if test="x1 != null">
+                #{x1,jdbcType=DOUBLE},
+            </if>
+            <if test="y1 != null">
+                #{y1,jdbcType=DOUBLE},
+            </if>
+            <if test="x2 != null">
+                #{x2,jdbcType=DOUBLE},
+            </if>
+            <if test="y2 != null">
+                #{y2,jdbcType=DOUBLE},
+            </if>
+            <if test="x3 != null">
+                #{x3,jdbcType=DOUBLE},
+            </if>
+            <if test="y3 != null">
+                #{y3,jdbcType=DOUBLE},
+            </if>
+            <if test="x4 != null">
+                #{x4,jdbcType=DOUBLE},
+            </if>
+            <if test="y4 != null">
+                #{y4,jdbcType=DOUBLE},
+            </if>
+            <if test="a != null">
+                #{a,jdbcType=DOUBLE},
+            </if>
+            <if test="b != null">
+                #{b,jdbcType=DOUBLE},
+            </if>
+            <if test="x != null">
+                #{x,jdbcType=DOUBLE},
+            </if>
+            <if test="y != null">
+                #{y,jdbcType=DOUBLE},
+            </if>
+            <if test="angle != null">
+                #{angle,jdbcType=DOUBLE},
+            </if>
+            NOW(),
+            1,
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+        <!--@mbg.generated-->
+        update t_color_region_dtl
+        <set>
+            <if test="colorRegionId != null">
+                color_region_id = #{colorRegionId,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="xrow != null">
+                xrow = #{xrow,jdbcType=INTEGER},
+            </if>
+            <if test="xcolumn != null">
+                xcolumn = #{xcolumn,jdbcType=INTEGER},
+            </if>
+            <if test="shape != null">
+                shape = #{shape,jdbcType=TINYINT},
+            </if>
+            <if test="x1 != null">
+                x1 = #{x1,jdbcType=DOUBLE},
+            </if>
+            <if test="y1 != null">
+                y1 = #{y1,jdbcType=DOUBLE},
+            </if>
+            <if test="x2 != null">
+                x2 = #{x2,jdbcType=DOUBLE},
+            </if>
+            <if test="y2 != null">
+                y2 = #{y2,jdbcType=DOUBLE},
+            </if>
+            <if test="x3 != null">
+                x3 = #{x3,jdbcType=DOUBLE},
+            </if>
+            <if test="y3 != null">
+                y3 = #{y3,jdbcType=DOUBLE},
+            </if>
+            <if test="x4 != null">
+                x4 = #{x4,jdbcType=DOUBLE},
+            </if>
+            <if test="y4 != null">
+                y4 = #{y4,jdbcType=DOUBLE},
+            </if>
+            <if test="a != null">
+                `a` = #{a,jdbcType=DOUBLE},
+            </if>
+            <if test="b != null">
+                b = #{b,jdbcType=DOUBLE},
+            </if>
+            <if test="x != null">
+                x = #{x,jdbcType=DOUBLE},
+            </if>
+            <if test="y != null">
+                y = #{y,jdbcType=DOUBLE},
+            </if>
+            <if test="angle != null">
+                angle = #{angle,jdbcType=DOUBLE},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TColorRegionDtl">
+        <!--@mbg.generated-->
+        update t_color_region_dtl
+        set
+        create_time = NOW(),
+        is_delete = #{isDelete,jdbcType=BOOLEAN}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateBatch" parameterType="java.util.List">
+        <!--@mbg.generated-->
+        update t_color_region_dtl
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="is_delete = case" suffix="end,">
+                <foreach collection="list" index="index" item="item">
+                    when color_region_id = #{item.colorRegionId,jdbcType=BIGINT} then #{item.isDelete,jdbcType=BOOLEAN}
+                </foreach>
+            </trim>
+        </trim>
+        where color_region_id in
+        <foreach close=")" collection="list" item="item" open="(" separator=", ">
+            #{item.colorRegionId,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+  <select id="findExist" resultMap="BaseResultMap">
+    select * from t_color_region_dtl where `name` = #{name} and color_region_id = #{colorRegionId} and is_delete = false
+  </select>
+
+    <update id="updateSkBatch" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" separator=";">
+            update t_color_region_dtl
+            <set>
+
+                <if test="item.x1!=null and item.x1!=''">
+                    x1 = #{item.x1},
+                </if>
+                <if test="item.x2!=null and item.x2!=''">
+                    x2 = #{item.x2},
+                </if>
+                <if test="item.x3!=null and item.x3!=''">
+                    x3 = #{item.x3},
+                </if>
+                <if test="item.x4!=null and item.x4!=''">
+                    x4 = #{item.x4},
+                </if>
+                <if test="item.y1!=null and item.y1!=''">
+                    y1 = #{item.y1},
+                </if>
+                <if test="item.y2!=null and item.y2!=''">
+                    y2 = #{item.y2},
+                </if>
+                <if test="item.y3!=null and item.y3!=''">
+                    y3 = #{item.y3},
+                </if>
+                <if test="item.y4!=null and item.y4!=''">
+                    y4 = #{item.y4},
+                </if>
+                <if test="item.xcolumn!=null and item.xcolumn!=''">
+                xcolumn = #{item.xcolumn},
+                </if>
+                <if test="item.xrow!=null and item.xrow!=''">
+                xrow = #{item.xrow},
+                </if>
+                <!--
+                is_delete = true
+                -->
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+
+    <update id="updateTy" parameterType="com.wiseq.cn.entity.ykAi.TyInfoDTO">
+        update t_color_region_dtl
+        set
+
+                a = #{a},
+                b = #{b},
+                x = #{x},
+                y = #{y},
+                angle = #{angle}
+                <!--
+                id = #{id},
+                color_region_id = #{colorRegionId},
+                is_delete = true
+                -->
+        where color_region_id = #{colorRegionId}
+    </update>
+
+
+    <update id="updateFk" parameterType="com.wiseq.cn.entity.ykAi.FkInfoDTO">
+
+            update t_color_region_dtl
+            set
+
+                x1 = #{x1},
+                x2 = #{x2},
+                x3 = #{x3},
+                x4 = #{x4},
+                y1 = #{y1},
+                y2 = #{y2},
+                y3 = #{y3},
+                y4 = #{y4}
+                <!--
+                id = #{id},
+                color_region_id = #{colorRegionId},
+                is_delete = true
+                -->
+
+            where color_region_id = #{colorRegionId}
+
+    </update>
+    <!--
+<foreach collection="list" item="item" index="index" separator=";">
+</foreach>
+-->
+</mapper>

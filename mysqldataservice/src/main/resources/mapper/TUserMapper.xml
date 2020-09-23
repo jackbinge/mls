@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TUserMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TUser">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="account" jdbcType="VARCHAR" property="account"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, group_id, username, account, `password`, disabled, is_delete, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="inserts" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TUser"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_user (group_id, username, account,
+        `password`, disabled, is_delete,
+        create_time)
+        values (#{groupId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR},
+        #{password,jdbcType=VARCHAR}, #{disabled,jdbcType=BOOLEAN}, #{isDelete,jdbcType=BOOLEAN},
+        #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TUser"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                group_id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                `password`,
+            </if>
+                disabled,
+                is_delete,
+                create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            false,
+            false,
+            NOW(),
+        </trim>
+    </insert>
+    <update id="updateUser" parameterType="com.wiseq.cn.entity.ykAi.TUser">
+        <!--@mbg.generated-->
+        update t_user
+        <set>
+            <if test="groupId != null">
+                group_id = #{groupId,jdbcType=BIGINT},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null and account != ''">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password != ''">
+                `password` = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = NOW(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateDisabled" parameterType="com.wiseq.cn.entity.ykAi.TUser">
+        UPDATE t_user
+        <set>
+            <if test="disabled != null">
+                disabled = #{disabled,jdbcType=BOOLEAN}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateDel" parameterType="com.wiseq.cn.entity.ykAi.TChip">
+        UPDATE t_user
+        <set>
+            <if test="isDelete != null">
+                is_delete = 1
+            </if>
+        </set>
+        WHERE id=#{id};
+        delete from t_user_role where user_id = #{id,jdbcType=BIGINT};
+    </update>
+
+    <select id="findList" resultType="com.wiseq.cn.entity.ykAi.TUserMix">
+        select
+        u.*
+        ,g.parent_id
+        ,g.name as gname
+        ,g.level
+        ,c.user_id
+        ,c.role_id
+        ,r.name as rname
+        ,r.remark as rremark
+        ,r.disabled as rdisabled
+        from t_user u
+        left join
+        (select id,parent_id,name,parent_path,level from t_group) g on u.group_id = g.id
+        left join
+        (select user_id,role_id from t_user_role) c on u.id = c.user_id
+        left join
+        (select id,name,remark,disabled from t_role) r on c.role_id = r.id
+        where u.is_delete = false
+        <if test="groupId != null and groupId != ''">
+            and u.group_id = #{groupId}
+        </if>
+        <if test="username != null">
+            and u.username LIKE CONCAT('%',#{username},'%')
+        </if>
+        <if test="disabled != null">
+            and u.disabled = #{disabled}
+        </if>
+        <if test="gname != null">
+            and g.name = #{gname}
+        </if>
+        order by disabled ,u.create_time desc
+    </select>
+
+
+    <select id="findExist" resultMap="BaseResultMap">
+        select * from t_user where account = #{account} and is_delete != 1
+    </select>
+    <delete id="updatePass">
+        UPDATE t_user
+        <set>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </delete>
+
+    <select id="findStillExist" resultMap="BaseResultMap">
+        select * from t_user where group_id = #{groupId} and is_delete != 1
+    </select>
+    
+
+    
+
+
+    <select id="findUserByAccountAndPassword" resultType="com.wiseq.cn.entity.ykAi.TUser">
+        select id, group_id, username FROM t_user
+        where
+        account = #{account,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+        and  disabled = false and is_delete = false
+    </select>
+
+    <!-- 通过账户用户列表 -->
+    <select id="findUserByAccount"  resultType="com.wiseq.cn.entity.ykAi.TUser">
+        select * FROM t_user where  is_delete = false
+        AND  account = #{account,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 获取此用户下没有禁用角色的数量 -->
+    <select id="findRoleByUser" resultType="java.lang.Integer">
+        select
+        IFNULL(count(1),0)
+        from t_user_role
+        LEFT JOIN  t_role tr on t_user_role.role_id = tr.id
+        where user_id = #{userId,jdbcType=BIGINT}
+        and tr.disabled = false
+    </select>
+    
+    <select id="findUserById" resultType="com.wiseq.cn.entity.ykAi.TUser">
+        select
+        id,
+        group_id,
+        username,
+        account,
+        password,
+        disabled,
+        is_delete,
+        create_time
+        FROM
+        t_user
+        where  id = #{userId,jdbcType=BIGINT}
+    </select>
+</mapper>

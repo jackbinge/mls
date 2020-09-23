@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsFormulaUpdateLogDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.BsFormulaUpdateLog">
+    <!--@mbg.generated-->
+    <!--@Table bs_formula_update_log-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="model_bom_id" jdbcType="BIGINT" property="modelBomId" />
+    <result column="update_type" jdbcType="TINYINT" property="updateType" />
+    <result column="creator" jdbcType="BIGINT" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, model_bom_id, update_type, creator, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from bs_formula_update_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsFormulaUpdateLog" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into bs_formula_update_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="modelBomId != null">
+        model_bom_id,
+      </if>
+      <if test="updateType != null">
+        update_type,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="modelBomId != null">
+        #{modelBomId,jdbcType=BIGINT},
+      </if>
+      <if test="updateType != null">
+        #{updateType,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+
+
+  <resultMap id="FormulaUpdteLongMap" type="com.wiseq.cn.entity.ykAi.BsFormulaUpdateLongPage">
+    <!--@mbg.generated-->
+    <!--@Table bs_formula_update_log-->
+    <result column="bsFormulaUpdateLongId" jdbcType="BIGINT" property="bsFormulaUpdateLongId"/>
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="model_bom_id" jdbcType="BIGINT" property="modelBomId" />
+    <result column="update_type" jdbcType="BIGINT" property="updateType" />
+    <result column="updateName" jdbcType="BIGINT" property="updateName" />
+    <collection property="glueA" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula" column="bsFormulaUpdateLongId" select="findFormulaGlueAByLogId"/>
+    <collection property="glueB" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula" column="bsFormulaUpdateLongId" select="findFormulaGlueBByLogId"/>
+    <collection property="tPhosphors" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula" column="bsFormulaUpdateLongId" select="findFormulaPhosphorsByLogId"/>
+    <collection property="antiStarch" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula" column="bsFormulaUpdateLongId" select="findFormulaAntiStarchByLogId"/>
+    <collection property="diffusionPowder" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula" column="bsFormulaUpdateLongId" select="findFormulaDiffusionPowderByLogId"/>
+  </resultMap>
+
+
+  <select id="selectFormulaUpdteLog" parameterType="java.lang.Long" resultMap="FormulaUpdteLongMap">
+    <!--@mbg.generated-->
+    select
+    bful.id as bsFormulaUpdateLongId,
+    tu.username,
+    bful.model_bom_id,
+    bful.update_type,
+    case when bful.update_type = 1 then '系统推荐'
+    when bful.update_type = 2 then '用户编辑'
+    when bful.update_type = 3 then '生产修正'
+    ELSE '用户编辑'
+    end  as updateName,
+    DATE_FORMAT(bful.create_time,'%Y-%m-%d %T') as createTime
+    from bs_formula_update_log bful
+    left join t_user tu  ON tu.id = bful.creator
+    where bful.model_bom_id = #{modelBomId,jdbcType=BIGINT}
+  </select>
+
+
+
+
+
+  <select id="findFormulaGlueAByLogId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- A 胶 -->
+    select
+    model_bom_id, material_id , ratio, material_class,
+    tgd.glue_spec  as spec,tgd.glue_id,tg.ratio_a
+    FROM bs_formula_update_log_dtl bfuld
+    left join  t_glue_dtl tgd ON tgd.id = bfuld.material_id
+    left join t_glue tg  ON tgd.glue_id = tg.id
+    where material_class = 0 and bfuld.formula_update_log_id = #{id,jdbcType=BIGINT}
+
+  </select>
+
+
+  <select id="findFormulaGlueBByLogId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- B 胶 -->
+    select
+    model_bom_id, material_id, ratio, material_class,
+    tgd.glue_spec as spec,tgd.glue_id,tg.ratio_b
+    FROM bs_formula_update_log_dtl bfuld
+    LEFT JOIN   t_glue_dtl tgd ON tgd.id = bfuld.material_id
+    LEFT JOIN   t_glue tg ON tgd.glue_id = tg.id
+    where material_class = 1 and bfuld.formula_update_log_id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="findFormulaPhosphorsByLogId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 荧光粉 -->
+    select
+    model_bom_id, material_id, ratio, material_class,
+    tp.peak_wavelength,
+    tp.density,
+    tp.phosphor_spec as spec
+    FROM bs_formula_update_log_dtl bfuld
+    LEFT JOIN t_phosphor tp on bfuld.material_id = tp.id
+    where material_class = 2 and  bfuld.formula_update_log_id = #{id,jdbcType=BIGINT}
+    order by tp.id
+  </select>
+
+
+  <select id="findFormulaAntiStarchByLogId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 坑沉淀粉 -->
+    select
+    model_bom_id, material_id, ratio, material_class,
+    tas.anti_starch_spec as spec
+
+    FROM bs_formula_update_log_dtl bfuld
+    LEFT JOIN t_anti_starch  tas  ON bfuld.material_id = tas.id
+    where material_class = 3 and bfuld.formula_update_log_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="findFormulaDiffusionPowderByLogId" resultType="com.wiseq.cn.entity.ykAi.TMaterialFormula">
+    <!-- 扩散粉 -->
+    select
+    model_bom_id, material_id, ratio, material_class,tdp.diffusion_powder_spec as spec
+    FROM bs_formula_update_log_dtl bfuld
+    LEFT JOIN  t_diffusion_powder tdp ON bfuld.material_id = tdp.id
+    where material_class = 4 and bfuld.formula_update_log_id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+
+</mapper>

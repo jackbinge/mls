@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wiseq.cn.ykAi.dao.TTypeMachineDefaultSetDao">
+    <insert id="insertDefaultChip">
+        insert into t_type_machine_default_chip (t_type_machine_id,chip_id)
+            values
+                <foreach collection="list" separator="," item="temp">
+                    (#{typeMachineId},#{temp})
+                </foreach>
+    </insert>
+
+    <delete id="deleteDefaultChip">
+        delete from t_type_machine_default_chip where t_type_machine_id = #{typeMachineId}
+    </delete>
+
+    <insert id="insertTypeMachineDefaultOtherMaterial">
+        insert into
+        t_type_machine_default_other_material(  t_type_machine_id ,
+                                                            limit_phosphor_type,
+                                                            default_scaffold_id,
+                                                            default_glue_id,
+                                                            default_diffusion_powder_id,
+                                                            default_anti_starch_id)
+                            values (#{data.typeMachineId},
+                        #{data.limitPhosphorType},
+                        #{data.defaultScaffoldId},
+                        #{data.defaultGlueId},
+                        #{data.defaultDiffusionPowderId},
+                        #{data.defaultAntiStarchId})
+    </insert>
+
+
+    <delete id="deleteTypeMachineDefaultOtherMaterial">
+        delete from t_type_machine_default_other_material where t_type_machine_id = #{typeMachineId}
+    </delete>
+
+    <select id="getLimitPhosphorType" resultType="java.util.Map">
+        select id,name FROM
+        t_phosphor_type tpt,
+        (select limit_phosphor_type from t_type_machine_default_other_material where t_type_machine_id = #{typeMachineId}) a
+        where find_in_set(tpt.id,a.limit_phosphor_type)
+    </select>
+
+    <select id="getDefaultChip" resultType="java.util.Map">
+        select chip_id as chipId,chip_spec as chipSpec
+        FROM t_type_machine_default_chip ttmdc
+        LEFT JOIN t_chip tc  on ttmdc.chip_id = tc.id
+        where t_type_machine_id = #{typeMachineId}
+    </select>
+
+
+    <select id="getOtherDefault" resultType="java.util.Map">
+        select
+        default_scaffold_id as defaultScaffoldId,
+        default_glue_id as defaultGlueId,
+        default_diffusion_powder_id as defaultDiffusionPowderId,
+        default_anti_starch_id as defaultAntiStarchId,
+        aglue.glue_spec as aglueSpec,
+        bglue.glue_spec as bglueSpec,
+        ts.scaffold_spec as defaultScaffoldSpec,
+        ifnull(tas.anti_starch_spec,'') as defaultAntiStarchSpec,
+        ifnull(tdp.diffusion_powder_spec,'') as defaultDiffusionPowderSpec
+        FROM t_type_machine_default_other_material ttmdom
+        LEFT JOIN (select * FROM t_glue_dtl tgd  where tgd.glue_type = 'A胶') aglue ON ttmdom.default_glue_id = aglue.glue_id
+        LEFT JOIN (select * FROM t_glue_dtl tgd  where tgd.glue_type = 'B胶') bglue ON ttmdom.default_glue_id = bglue.glue_id
+        LEFT JOIN t_scaffold ts  ON ts.id = ttmdom.default_scaffold_id
+        LEFT JOIN t_anti_starch tas on tas.id = ttmdom.default_anti_starch_id
+        LEFT JOIN t_diffusion_powder tdp on tdp.id = ttmdom.default_diffusion_powder_id
+        where t_type_machine_id = #{typeMachineId}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.TAntiStarchDao">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.TAntiStarch">
+        <!--@mbg.generated-->
+        <!--@Table t_anti_starch-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="anti_starch_code" jdbcType="VARCHAR" property="antiStarchCode"/>
+        <result column="anti_starch_spec" jdbcType="VARCHAR" property="antiStarchSpec"/>
+        <result column="supplier" jdbcType="VARCHAR" property="supplier"/>
+        <result column="density" jdbcType="DOUBLE" property="density"/>
+        <result column="add_proportion" jdbcType="DOUBLE" property="addProportion"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, anti_starch_code, anti_starch_spec, supplier, density, add_proportion, create_time,
+        is_delete, disabled
+    </sql>
+    <select id="findList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from t_anti_starch
+        where is_delete != true
+        <if test="antiStarchSpec != null and antiStarchSpec != ''">
+            and anti_starch_spec LIKE CONCAT('%',#{antiStarchSpec},'%')
+        </if>
+        <if test="disabled != null">
+            and disabled = #{disabled}
+        </if>
+        order by disabled,create_time DESC
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from t_anti_starch
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="inserts" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TAntiStarch"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_anti_starch (anti_starch_code, anti_starch_spec, supplier,
+        density, add_proportion, create_time,
+        is_delete, disabled)
+        values (#{antiStarchCode,jdbcType=VARCHAR}, #{antiStarchSpec,jdbcType=VARCHAR}, #{supplier,jdbcType=VARCHAR},
+        #{density,jdbcType=DOUBLE}, #{addProportion,jdbcType=DOUBLE}, #{createTime,jdbcType=TIMESTAMP},
+        #{isDelete,jdbcType=INTEGER}, #{disabled,jdbcType=INTEGER})
+    </insert>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.TAntiStarch"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into t_anti_starch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="antiStarchCode != null">
+                anti_starch_code,
+            </if>
+            <if test="antiStarchSpec != null">
+                anti_starch_spec,
+            </if>
+            <if test="supplier != null">
+                supplier,
+            </if>
+            <if test="density != null">
+                density,
+            </if>
+            <if test="addProportion != null">
+                add_proportion,
+            </if>
+                create_time,
+                is_delete,
+                disabled,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="antiStarchCode != null">
+                #{antiStarchCode,jdbcType=VARCHAR},
+            </if>
+            <if test="antiStarchSpec != null">
+                #{antiStarchSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="supplier != null">
+                #{supplier,jdbcType=VARCHAR},
+            </if>
+            <if test="density != null">
+                #{density,jdbcType=DOUBLE},
+            </if>
+            <if test="addProportion != null">
+                #{addProportion,jdbcType=DOUBLE},
+            </if>
+            NOW(),
+            0 ,
+            0,
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.wiseq.cn.entity.ykAi.TAntiStarch">
+        <!--@mbg.generated-->
+        update t_anti_starch
+        <set>
+            <if test="antiStarchCode != null">
+                anti_starch_code = #{antiStarchCode,jdbcType=VARCHAR},
+            </if>
+            <if test="antiStarchSpec != null">
+                anti_starch_spec = #{antiStarchSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="supplier != null">
+                supplier = #{supplier,jdbcType=VARCHAR},
+            </if>
+            <if test="density != null">
+                density = #{density,jdbcType=DOUBLE},
+            </if>
+            <if test="addProportion != null">
+                add_proportion = #{addProportion,jdbcType=DOUBLE},
+            </if>
+            <if test="createTime != null">
+                create_time = NOW(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.TAntiStarch">
+        <!--@mbg.generated-->
+        update t_anti_starch
+        set anti_starch_code = #{antiStarchCode,jdbcType=VARCHAR},
+        anti_starch_spec = #{antiStarchSpec,jdbcType=VARCHAR},
+        supplier = #{supplier,jdbcType=VARCHAR},
+        density = #{density,jdbcType=DOUBLE},
+        add_proportion = #{addProportion,jdbcType=DOUBLE},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        is_delete = #{isDelete,jdbcType=INTEGER},
+        disabled = #{disabled,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="findExistList" resultType="com.wiseq.cn.entity.ykAi.TAntiStarch">
+        select * from t_anti_starch where anti_starch_spec = #{antiStarchSpec} and is_delete != 1
+    </select>
+
+    <delete id="updateDisabled">
+        UPDATE t_anti_starch
+        <set>
+            <if test="disabled != null">
+                disabled = #{disabled,jdbcType=INTEGER}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </delete>
+
+    <delete id="updateDel">
+        UPDATE t_anti_starch
+        <set>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=INTEGER}
+            </if>
+        </set>
+        WHERE id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,81 @@
+#debug配置是否调试模式，如果打包发布的话，需要设置为false。
+debug: true
+#server.port配置的是 Spring Boot 服务的端口
+server:
+  port: 8081
+  servlet:
+    session:
+      timeout: 86400 #单位为s
+#算法接口
+serverIP: http://192.168.18.49:5555
+try_time: 1
+
+
+spring:
+  cloud:
+    consul:
+      host: 192.168.18.47
+      port: 8500
+      discovery:
+        register: true
+        hostname: 192.168.18.48
+        service-name: ${spring.application.name}
+        health-check-path: /actuator/health
+        health-check-interval: 15s
+        tags: urlprefix-/${spring.application.name}
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+  #静态化和外部文件存放配置
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations:  classpath:/META-INF/resources,classpath:/resources/,classpath:/static/,classpath:/public/, file:${web.upload_path}
+
+  #mysql配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.18.50:3306/yk_ai_test?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&allowMultiQueries=true
+    username: root
+    password: Traits1023~
+    type: com.mchange.v2.c3p0.ComboPooledDataSource
+  aop:
+    proxy-target-class: true
+    auto: true
+
+#c3p0配置
+c3p0:
+  driverClass: ${spring.datasource.driver-class-name}
+  url: ${spring.datasource.url}
+  user: ${spring.datasource.username}
+  password: ${spring.datasource.password}
+  maxPoolSize: 30
+  minPoolSize: 10
+  autoCommitOnClose: false
+  checkoutTimeout: 1000
+  acquireIncrement: 2
+  testConnectionOnCheckin: false
+  testConnectionOnCheckout: true
+  initialPoolSize: 10
+  maxIdleTime: 300
+  idleConnectionTestPeriod: 60
+
+#文件路径
+filePath:
+  attachment: C:\root\attachment\
+  mapFilePath: D:\mapfile\
+  aoiMergePath: D:\aoi\
+  fenxuanPath: D:\fenxuan\
+  sortingPath: D:\mupian\
+  binSourcePath: D:\binOutputfiles\
+  binTargetPath: D:\Chip\
+
+#特定用户查询
+role:
+  alnRole: 1539a61545a14fd1985c1498c774fa3a
+  beakRole: 48bbe604d16d438fa681c84780072834
+
+site:
+  cotSiteId: 28
+  residualSiteId: 29
+
+process:
+  cotProcessId: 73

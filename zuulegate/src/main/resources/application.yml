@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: consul #使用开发环境
+    include:
+      # 这里写你的include
+logging.level.org.springframework.boot.autoconfigure: ERROR

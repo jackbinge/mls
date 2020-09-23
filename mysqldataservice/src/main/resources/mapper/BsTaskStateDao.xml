@@ -1,0 +1,1479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsTaskStateDao">
+
+  <select id="getMainTaskStateInfo" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.TaskState">
+    select
+           ttsd.state_name,
+           ttsd.state_flag,
+           task_id,
+           task_df_id,
+           bts.id as taskStateId,
+           bts.model_id,
+           bts.output_require_before_test_rule_id,
+           bts.output_require_nbake_rule_id,
+           tam.output_require_machine_id,
+           tam.type_machine_id,
+           ttm.spec as typeMachineSpec,
+           ttm.process_type,
+           ew.eas_remak,
+           DATE_FORMAT(ew.convert_time,'%Y-%m-%d %H:%i') as convertTime
+
+    FROM bs_task_state bts
+    LEFT JOIN t_task_state_df ttsd on bts.task_df_id = ttsd.id
+    LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+    LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+    LEFT JOIN bs_task bt  on bt.id = bts.task_id
+    LEFT JOIN eas_wo ew on bt.wo_id = ew.id
+    where bts.is_active = true
+    and bts.process_type = 0
+    <!--and bts.task_id = #{taskId,jdbcType=BIGINT}-->
+    and bts.id = #{taskStateId}
+  </select>
+
+
+    <select id="getMainProcessInProductTaskList" resultType="java.util.Map" >
+        SELECT bt.task_code as taskCode,
+               bt.type,
+               ew.eas_productName AS typeMachineName,
+               case when bt.type = 0 THEN '量产工单' when bt.type = 1 THEN '样品工单' END AS typeName,
+               ttm.spec AS typeMachineSpec,
+               ttm.id AS typeMachineId,
+               bt.id as taskId,
+               bs_task_state.id as taskStateId,
+               bs_task_state.task_df_id  AS taskStateDfId,
+               ttsd.state_name as stateName,
+               ttsd.state_flag stateFlag,
+               tg.name as groupName,
+               tg.id as groupId,
+               bs_task_state.process_type as processClass,
+               bs_task_state.process_version as  processVersion
+        FROM bs_task bt
+        LEFT JOIN bs_task_state on bt.id = bs_task_state.task_id
+        LEFT JOIN t_ai_model tam on bs_task_state.model_id = tam.id
+        LEFT JOIN eas_wo ew on bt.wo_id = ew.id
+        LEFT JOIN t_group tg on ew.group_id = tg.id
+        LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+        LEFT JOIN t_task_state_df ttsd on bs_task_state.task_df_id = ttsd.id
+        where bt.state = false and bs_task_state.is_active = true
+        AND bs_task_state.process_type = 0
+        <if test="taskCode != null and taskCode != ''">
+            and bt.task_code LIKE concat('%',#{taskCode,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="groupId != null">
+            and tg.id = #{groupId,jdbcType=BIGINT}
+        </if>
+        <if test="type != null">
+            and bt.type = #{type,jdbcType=TINYINT}
+        </if>
+        <if test="typeMachineSpec != null and typeMachineSpec != ''">
+            and ttm.spec like concat('%',#{typeMachineSpec,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="stateFlag != null">
+            and ttsd.state_flag = #{stateFlag,jdbcType=TINYINT}
+        </if>
+        order by FIELD(bs_task_state.task_df_id,3,5,7,1,2,4,6),bt.id DESC
+    </select>
+
+    <select id="findTaskListByTypeModelId" resultType="com.wiseq.cn.entity.ykAi.BsTaskList" >
+        SELECT bt.task_code,
+        bt.type,
+        ew.eas_productName AS typeMachineName,
+        case when bt.type = 0 THEN '量产工单' when bt.type = 1 THEN '样品工单' END AS typeName,
+        ttm.spec AS typeMachineSpec,
+        ttm.id AS typeMachineId,
+        bt.id as taskId,
+        bts.id as taskStateId,
+        bts.task_df_id  AS taskStateDfId,
+        ttsd.state_name,ttsd.state_flag,
+        tg.name as groupName,
+        tg.id as groupId,
+        ew.eas_remak
+        FROM  (SELECT id,task_id,model_id,task_df_id FROM bs_task_state WHERE id IN(
+        select  MAX(id) FROM bs_task_state where process_type = 0 group by task_id,model_id)) bts
+        LEFT JOIN bs_task bt on bt.id = bts.task_id
+        LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+        LEFT JOIN eas_wo ew on bt.wo_id = ew.id
+        LEFT JOIN t_group tg on ew.group_id = tg.id
+        LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+        LEFT JOIN t_task_state_df ttsd on bts.task_df_id = ttsd.id
+        where bt.state = false
+        and tam.id  = #{modelId,jdbcType=BIGINT}
+        order by bt.id DESC;
+
+    </select>
+   <!-- <select id="test">
+
+    </select>-->
+
+    <!-- 新增 -->
+    <insert id="insertSelectiveNoWithFileIdList" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskState" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into bs_task_state
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="taskDfId != null">
+                task_df_id,
+            </if>
+            <if test="isRetest != null">
+                is_retest,
+            </if>
+            <if test="modelId != null">
+                model_id,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="solutionType != null">
+                solution_type,
+            </if>
+                create_time,
+            <if test="isActive != null">
+                is_active,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="checkUser != null">
+                check_user,
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                output_require_before_test_rule_id,
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                output_require_nbake_rule_id,
+            </if>
+        </trim>
+        SELECT
+        <trim  suffixOverrides=",">
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="taskDfId != null">
+                #{taskDfId,jdbcType=BIGINT},
+            </if>
+            <if test="isRetest != null">
+                #{isRetest,jdbcType=BOOLEAN},
+            </if>
+            <if test="modelId != null">
+                #{modelId,jdbcType=BIGINT},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="solutionType != null">
+                #{solutionType,jdbcType=TINYINT},
+            </if>
+                NOW(),
+            <if test="isActive != null">
+                #{isActive,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=BIGINT},
+            </if>
+            <if test="checkUser != null">
+                #{checkUser,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                #{outputRequireBeforeTestRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                #{outputRequireNbakeRuleId,jdbcType=BIGINT},
+            </if>
+        </trim>
+        FROM dual
+        where not exists(select id  FROM bs_task_state bts where task_id = #{taskId,jdbcType=BIGINT} and is_active = true )
+    </insert>
+
+
+    <!-- 新增 -->
+    <insert id="insertSelectiveNoWithFileIdListForExit" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskState" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into bs_task_state
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="taskDfId != null">
+                task_df_id,
+            </if>
+            <if test="isRetest != null">
+                is_retest,
+            </if>
+            <if test="modelId != null">
+                model_id,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="solutionType != null">
+                solution_type,
+            </if>
+            create_time,
+            <if test="isActive != null">
+                is_active,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="checkUser != null">
+                check_user,
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                output_require_before_test_rule_id,
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                output_require_nbake_rule_id,
+            </if>
+        </trim>
+        SELECT
+        <trim suffixOverrides=",">
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="taskDfId != null">
+                #{taskDfId,jdbcType=BIGINT},
+            </if>
+            <if test="isRetest != null">
+                #{isRetest,jdbcType=BOOLEAN},
+            </if>
+            <if test="modelId != null">
+                #{modelId,jdbcType=BIGINT},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="solutionType != null">
+                #{solutionType,jdbcType=TINYINT},
+            </if>
+            NOW(),
+            <if test="isActive != null">
+                #{isActive,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=BIGINT},
+            </if>
+            <if test="checkUser != null">
+                #{checkUser,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                #{outputRequireBeforeTestRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                #{outputRequireNbakeRuleId,jdbcType=BIGINT},
+            </if>
+        </trim>
+        FROM dual
+        where not exists(select id  FROM bs_task_state bts where task_id = #{taskId,jdbcType=BIGINT} and is_active = true )
+    </insert>
+
+    <!-- 新增 -->
+    <insert id="insetSelectiveWithOlderFileIdList" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.BsTaskState" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into bs_task_state
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">
+                task_id,
+            </if>
+            <if test="taskDfId != null">
+                task_df_id,
+            </if>
+            <if test="isRetest != null">
+                is_retest,
+            </if>
+            <if test="modelId != null">
+                model_id,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="solutionType != null">
+                solution_type,
+            </if>
+            create_time,
+            <if test="isActive != null">
+                is_active,
+            </if>
+            <if test="creator != null">
+                creator,
+            </if>
+            <if test="updateUser != null">
+                update_user,
+            </if>
+            <if test="checkUser != null">
+                check_user,
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                output_require_before_test_rule_id,
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                output_require_nbake_rule_id,
+            </if>
+            <if test="fileidList != null">
+                fileid_list,
+            </if>
+        </trim>
+        SELECT
+        <trim  suffixOverrides=",">
+            <if test="taskId != null">
+                #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="taskDfId != null">
+                #{taskDfId,jdbcType=BIGINT},
+            </if>
+            <if test="isRetest != null">
+                #{isRetest,jdbcType=BOOLEAN},
+            </if>
+            <if test="modelId != null">
+                #{modelId,jdbcType=BIGINT},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="solutionType != null">
+                #{solutionType,jdbcType=TINYINT},
+            </if>
+            NOW(),
+            <if test="isActive != null">
+                #{isActive,jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="updateUser != null">
+                #{updateUser,jdbcType=BIGINT},
+            </if>
+            <if test="checkUser != null">
+                #{checkUser,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                #{outputRequireBeforeTestRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                #{outputRequireNbakeRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="fileidList != null">
+                #{fileidList,jdbcType=VARCHAR}
+            </if>
+        </trim>
+        FROM dual
+        where not exists(select id  FROM bs_task_state bts where task_id = #{taskId,jdbcType=BIGINT} and is_active = true )
+    </insert>
+
+
+    <!-- 获取该工单的最新一条状态数据 -->
+    <select id="findLastestBsTaskState" resultType="com.wiseq.cn.entity.ykAi.BsTaskState">
+        SELECT
+            bts.id,
+            task_id,
+            task_df_id,
+            is_retest,
+            model_id,
+            reason,
+            solution_type,
+            create_time,
+            modify_time,
+            is_active,
+            creator,
+            update_user,
+            check_user,
+            output_require_before_test_rule_id,
+            output_require_nbake_rule_id
+        FROM bs_task_state bts
+        where bts.task_id = #{taskId,jdbcType=BIGINT}
+        and bts.is_active = true
+    </select>
+
+
+    <!-- 修改工单状态表把状态改为重测-->
+    <update id="updateIsRetestByTaskStateId">
+        update bs_task_state   set is_active = false ,is_retest = true,
+        update_user = #{updateUser,jdbcType=BIGINT}
+        ,modify_time = NOW()
+        where id = #{taskStateId,jdbcType=BIGINT}
+    </update>
+
+
+    <!-- 关闭工单 -->
+    <update id="closeTask" parameterType="java.lang.Long">
+        update bs_task set close_time = NOW(),state = true,
+            close_user = #{closeUser}
+        where id = #{taskId,jdbcType=BIGINT}
+    </update>
+
+
+    <update id="updateBsTaskStatesById" parameterType="com.wiseq.cn.entity.ykAi.BsTaskState">
+        update bs_task_state bts
+        <set>
+            <if test="taskId != null">
+                task_id = #{taskId,jdbcType=BIGINT},
+            </if>
+            <if test="taskDfId != null">
+                task_df_id = #{taskDfId,jdbcType=BIGINT},
+            </if>
+            <if test="isRetest != null">
+                is_retest = #{isRetest,jdbcType=BIGINT},
+            </if>
+            <if test="modelId != null">
+                model_id = #{modelId,jdbcType=BIGINT},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="solutionType != null">
+                solution_type = #{solutionType,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+                modify_time = NOW(),
+            <if test="isActive != null">
+                is_active = #{isActive, jdbcType=BOOLEAN},
+            </if>
+            <if test="creator != null">
+                creator = #{creator,jdbcType=BIGINT},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser,jdbcType=BIGINT},
+            </if>
+            <if test="checkUser != null">
+                check_user = #{checkUser,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireBeforeTestRuleId != null">
+                output_require_before_test_rule_id = #{outputRequireBeforeTestRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="outputRequireNbakeRuleId != null">
+                output_require_nbake_rule_id = #{outputRequireNbakeRuleId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id =#{id,jdbcType=BIGINT}
+    </update>
+
+
+    <delete id="deleteBsEqptTaskRuntimeByTaskId">
+        delete from bs_eqpt_task_runtime where task_id = #{taskId,jdbcType=BIGINT}
+    </delete>
+
+
+    <!-- 修改阀体的状态 -->
+    <update id="updateBsEqptValveStateByTaskId">
+        update bs_eqpt_valve_state set eqpt_valve_df_id = #{eqptValveDfId,jdbcType=BIGINT}
+        where task_state_id = #{taskStateId,jdbcType=BIGINT}
+    </update>
+
+
+    <!-- 修改单个阀体的状态 -->
+    <update id="updateOneBsEqptValveStateByTaskId">
+        update bs_eqpt_valve_state
+        set eqpt_valve_df_id = #{eqptValveDfId,jdbcType=BIGINT}
+        where task_state_id = #{taskStateId,jdbcType=BIGINT}
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+    </update>
+
+
+
+    <select id="getActiveTaskStateAllInfo" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.BsTaskState">
+        select
+        id,
+        task_id,
+        task_df_id,
+        is_retest,
+        model_id,
+        reason,
+        solution_type,
+        create_time,
+        modify_time,
+        is_active,
+        creator,
+        update_user,
+        check_user,
+        output_require_before_test_rule_id,
+        output_require_nbake_rule_id
+        FROM bs_task_state where task_id = #{taskId,jdbcType=BIGINT}
+        and is_active = true
+    </select>
+
+
+    <select id="getActiveTaskStateAllInfoWithFileIdList" parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.BsTaskState">
+        select
+        id,
+        task_id,
+        task_df_id,
+        is_retest,
+        model_id,
+        reason,
+        solution_type,
+        create_time,
+        modify_time,
+        is_active,
+        creator,
+        update_user,
+        check_user,
+        output_require_before_test_rule_id,
+        output_require_nbake_rule_id,
+        fileid_list
+        FROM bs_task_state where task_id = #{taskId,jdbcType=BIGINT}
+        and is_active = true
+    </select>
+
+
+
+    <resultMap id="ListOfOptionsEqptValveMap" type="com.wiseq.cn.entity.ykAi.TEqpt">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="eqpt_code" jdbcType="VARCHAR" property="eqptCode"/>
+        <result column="positon" jdbcType="INTEGER" property="positon"/>
+        <result column="group_id" jdbcType="BIGINT" property="groupId"/>
+        <result column="pinhead_num" jdbcType="INTEGER" property="pinheadNum"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <result column="assets_code" jdbcType="VARCHAR" property="assetsCode"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <!-- 获取可供选择的阀体-->
+    <select id="getListOfOptionsEqptValve" resultMap="ListOfOptionsEqptValveMap">
+        select  te.id, te.eqpt_code, te.positon,
+                te.group_id, te.pinhead_num, te.disabled,
+                te.assets_code, te.type, te.create_time,
+                te.is_delete,
+                tg.name
+        FROM t_eqpt te
+        left join t_group tg  ON te.group_id = tg.id
+        LEFT JOIN t_eqpt_valve tev on tg.id = tev.eqpt_id
+        WHERE te.is_delete = false and disabled = false
+        <if test="positon != null">
+            and te.positon =#{positon,jdbcType=INTEGER}
+        </if>
+        group by te.id
+    </select>
+
+
+    <select id="findTeqptValveList"  parameterType="java.lang.Long" resultType="com.wiseq.cn.entity.ykAi.TEqptValve" >
+        <!--@mbg.generated-->
+        select
+        id, eqpt_id, name, remark, is_delete
+        from t_eqpt_valve
+        where is_delete =  false
+        and eqpt_id =#{eqptId,jdbcType=BIGINT}
+    </select>
+
+
+
+    <update id="updateDUploadFile" parameterType="java.lang.Long">
+        update d_upload_file duf
+        <set>
+            <if test="fileState != null">
+            duf.file_state = #{fileState,jdbcType=TINYINT},
+            </if>
+            <if test="isDelete != null">
+                duf.is_delete = #{isDelete,jdbcType=BOOLEAN},
+            </if>
+            <if test="judgeUser != null">
+                duf.judgeUser = #{judgeUser,jdbcType=BIGINT},
+            </if>
+            judgeTime = NOW()
+        </set>
+        <where>
+               1=1
+                <if test="fileId != null">
+                   and  duf.id = #{fileId,jdbcType=BIGINT}
+                </if>
+                <if test="taskStateId!= null">
+                   and duf.task_state_id = #{taskStateId,jdbcType=BIGINT}
+                </if>
+        </where>
+        and duf.is_delete = false and duf.file_state = -1
+    </update>
+
+
+    <select id="getThisTaskLastWithFile_TaskStateId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select  MAX(bs_task_state.id) FROM bs_task_state
+        LEFT JOIN d_upload_file duf on bs_task_state.id = duf.task_state_id
+        where duf.id IS NOT NULL AND bs_task_state.task_id = #{taskId,jdbcType=BIGINT}
+    </select>
+
+
+    <update id="updateDUploadFileEqptValve" >
+        UPDATE d_upload_file
+        set  file_state = #{fileState,jdbcType=TINYINT}
+        WHERE task_state_id IN
+        (select group_concat(id)
+        from bs_task_state
+        where task_id = #{taskId,jdbcType=BIGINT})
+        and is_delete = false and file_state = -1
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+    </update>
+
+
+
+    <update id="updateDUploadFileEqptValveList">
+        UPDATE d_upload_file
+        set  file_state = #{fileState,jdbcType=TINYINT}
+        WHERE task_state_id IN
+        (select group_concat(id)
+        from bs_task_state
+        where task_id = #{taskId,jdbcType=BIGINT})
+        and is_delete = false and file_state = -1
+        <if test="eqptValveIdList != null and eqptValveIdList.size() != 0">
+        and eqpt_valve_id in
+        <foreach collection="eqptValveIdList" item="item"  index="index" open="(" close=")" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        </if>
+    </update>
+
+    <update id="updateUploadFileStateNGToOK">
+        update d_upload_file
+        set file_state = 0
+        where file_state = 1
+            and FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+
+
+        <if test="eqptValveIdList != null and eqptValveIdList.size() != 0">
+        and eqpt_valve_id IN
+        <foreach collection="eqptValveIdList" item="item"  index="index" open="(" close=")" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        </if>
+
+    </update>
+
+    <!-- 把阀体状态为NG的改为生产阶段 -->
+    <update id="updateBsEqptValveListStateNGToProduction">
+        update bs_eqpt_valve_state
+        set eqpt_valve_df_id = #{eqptValveDfId,jdbcType=BIGINT}
+        where task_state_id = #{taskStateId,jdbcType=BIGINT}
+        and eqpt_valve_df_id = 3
+        <if test="eqptValveIdList != null and eqptValveIdList.size() != 0">
+        and eqpt_valve_id IN
+        <foreach collection="eqptValveIdList" item="item" index="index" open="(" close=")" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        </if>
+    </update>
+
+
+    <resultMap id="findAiRecommendModelListMap" type="com.wiseq.cn.entity.ykAi.AiRecommendModelListPage">
+        <result column="model_id" jdbcType="BIGINT" property="modelId"/>
+        <result column="typeMachineName" jdbcType="VARCHAR" property="typeMachineName"/>
+        <result column="typeName" jdbcType="VARCHAR" property="typeName"/>
+        <result column="typeMachineId" jdbcType="BIGINT" property="typeMachineId"/>
+        <result column="chip_wl_rank_id" jdbcType="BIGINT" property="chipWlRankId"/>
+        <result column="wl_min" jdbcType="DOUBLE" property="wlMin"/>
+        <result column="wl_max" jdbcType="DOUBLE" property="wlMax"/>
+        <result column="bom_id" jdbcType="BIGINT" property="bomId"/>
+        <result column="bom_code" jdbcType="VARCHAR" property="bomCode"/>
+        <result column="outputRequireMachineId" jdbcType="BIGINT" property="outputRequireMachineId"/>
+        <result column="tOutputCode" jdbcType="VARCHAR" property="tOutputCode"/>
+        <collection property="tBom"
+                    column="model_id"
+                    ofType="com.wiseq.cn.entity.ykAi.TBom"
+                    select="com.wiseq.cn.ykAi.dao.TAiModelMapper.findBomByModelId"/>
+    </resultMap>
+
+
+
+
+    <select id="findAiRecommendTaskList" resultType="com.wiseq.cn.entity.ykAi.AiRecommendTaskListPage">
+        SELECT
+            tmtid.model_id,
+            tmtid.task_id,
+            bt.task_code,
+            bt.type,
+            ew.eas_productName as typeMachineName,
+            case when bt.type = 0 THEN '量产工单' when bt.type = 1 THEN '样品单' END AS typeName,
+            ttm.spec AS typeMachineSpec,
+            ttm.id AS typeMachineId,
+            ew.eas_remak,
+            tor.code as tOutputCode,
+            tg.name as groupName,
+            ew.group_id
+        FROM (SELECT DISTINCT task_id,model_id FROM t_model_task_id_dtl) tmtid
+                 LEFT JOIN bs_task bt  ON tmtid.task_id = bt.id
+                 LEFT JOIN eas_wo ew on bt.wo_id = ew.id
+                 LEFT JOIN t_group tg on ew.group_id = tg.id
+                 LEFT JOIN t_ai_model tam on tmtid.model_id = tam.id
+                 LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+                 LEFT JOIN t_output_requirements tor on tam.output_require_machine_id = tor.id
+        WHERE 1=1
+        and tmtid.model_id = #{modelId,jdbcType=BIGINT}
+        <if test="taskCode != null and taskCode != ''">
+        and bt.task_code like concat('%',#{taskCode,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="taskType != null">
+        and bt.type = #{taskType,jdbcType=TINYINT}
+        </if>
+        <if test="groupId != null">
+        and tg.id = #{groupId,jdbcType=BIGINT}
+        </if>
+        order by tmtid.task_id DESC
+    </select>
+
+
+
+    <select id="findModelRecommendList" resultMap="findAiRecommendModelListMap">
+        SELECT
+        tmb.model_id,
+        ttm.spec AS typeMachineSpec,
+        ttm.id AS typeMachineId,
+       <!-- tmb.chip_wl_rank_id,-->
+       <!-- tcwr.wl_min,
+        tcwr.wl_max,-->
+        tmb.bom_id,
+        tb.bom_code,
+        tor.code as tOutputCode,
+        tam.output_require_machine_id as outputRequireMachineId
+        FROM t_ai_model tam
+        LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+        LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+        LEFT JOIN t_bom tb on tmb.bom_id = tb.id
+        <!--LEFT JOIN t_chip_wl_rank tcwr on tmb.chip_wl_rank_id = tcwr.id-->
+        LEFT JOIN t_output_requirements tor on tam.output_require_machine_id = tor.id
+        WHERE 1=1
+        <if test="typeMachineSpec != null and typeMachineSpec != ''">
+        and ttm.spec like CONCAT('%',#{typeMachineSpec,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="tOutputCode != null and tOutputCode != ''">
+        and tor.code like concat('%'#{tOutputCode,jdbcType=VARCHAR},,'%')
+        </if>
+        <if test="bomCode != null and bomCode != ''">
+        and tb.bom_code like concat('%',#{bomCode,jdbcType=VARCHAR},'%')
+        </if>
+        and tmb.model_id IN
+        <foreach collection="modelIdList" index="index" item="item" open="(" close=")" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        ORDER BY
+        FIELD
+        (tmb.model_id,
+        <foreach collection="modelIdList" item="item" index="index" separator=",">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+        )
+    </select>
+
+    <!-- 除去待生产阶段 -->
+    <select id="findMainProcessISReset" resultType="java.lang.Integer">
+        select  IFNULL(count(1),0)
+            FROM bs_task_state bts
+        where  task_id = #{taskId,jdbcType=BIGINT}
+            and process_type = 0
+        and  task_df_id != 1
+    </select>
+
+
+    <select id="isNOJudgeFile" resultType="java.lang.Integer">
+        select IFNULL(count(1),0) FROM d_upload_file duf
+        LEFT JOIN  bs_task_state bts on duf.task_state_id = bts.id
+        where 1=1
+        and duf.file_state != -1
+        and duf.is_delete = false
+        and
+        bts.task_id = #{taskId,jdbcType=BIGINT}
+        <if test="eqptValveId != null">
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+    <update id="updateFileToOKWithList">
+        update d_upload_file set file_state = 0
+        where file_state = 1 and is_delete = false
+        and
+        FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+    </update>
+
+    <select id="findNoJudgeNum" resultType="java.lang.Integer">
+        select IFNULL(count(1),0) FROM
+            d_upload_file
+        where FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+        and file_state = -1 and is_delete = false
+        <if test="eqptValveId != null">
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+    <select id="findTaskFormulaByFileId" resultType="com.wiseq.cn.entity.ykAi.TModelFormulaForTables">
+        select
+        btfd. material_id,
+        btfd.ratio,
+        btfd.material_class,
+        tmb.id as modelBomId
+        from d_upload_file duf
+        LEFT JOIN bs_task_state bts on duf.task_state_id = bts.id
+        LEFT JOIN bs_task_formula btf on bts.id = btf.task_state_id
+        LEFT JOIN bs_task_formula_dtl btfd on btf.id = btfd.task_formula_id
+        LEFT JOIN t_ai_model tam on bts.model_id = tam.id
+        LEFT JOIN t_model_bom tmb on tam.id = tmb.model_id
+        where duf.id = #{fileId,jdbcType=BIGINT}
+        and tmb.bom_id = btf.task_bom_id
+    </select>
+
+
+
+    <select id="findFileEuclidean_distance_xAndEuclidean_distance_y" resultType="java.lang.Integer">
+        select
+            case  when euclidean_distance_x &lt; 0.003 and
+            euclidean_distance_y &lt; 0.03 then 1
+            else 0 end
+        FROM
+            d_file_summary
+        where file_id = #{fileId,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="getBomMaxLength" resultType="java.lang.Integer">
+        select IFNULL(max(a.num),0) FROM(
+        select count(1) num,tb.id FROM t_bom_Phosphor tbP
+        left join t_bom tb  on tb.id = tbP.bom_id
+        where tb.is_delete = false
+        and tb.id = #{bomId,jdbcType=BIGINT}
+        group by tb.id) a
+    </select>
+
+
+    <select id="getLastFileList" resultType="java.lang.String">
+        select fileid_list FROM bs_task_state where fileid_list IS NOT NULL
+        ORDER BY id DESC limit 1
+    </select>
+
+
+
+    <select id="getJudageSynchronizationFileId" resultType="java.lang.Long">
+        SELECT
+        id
+        FROM d_upload_file duf
+        where duf.is_delete = false
+        and FIND_IN_SET(duf.id,#{fildList})
+        ORDER BY classType ASC,id DESC
+        Limit 1
+    </select>
+
+
+    <update id="updateFileNoJudgeToOKWithList">
+        update d_upload_file set file_state = 0,
+        judgeUser = #{judgeUser,jdbcType=BIGINT},
+        judgeTime = NOW()
+        where file_state = -1 and is_delete = false
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+        and
+        FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+    </update>
+
+
+    <update id="updateFileJudageTypeNOJudge">
+        update d_upload_file set judge_type = #{judgeType}
+        where is_delete = false
+          and (file_state = -1 or file_state is null )
+          and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+          and
+            FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+    </update>
+
+    <update id="updateFileJudageTypeWithEqptValveIdList">
+        update d_upload_file set judge_type = #{judgeType}
+        where is_delete = false
+          and file_state = #{fileState}
+          and eqpt_valve_id IN
+        <foreach collection="eqptValveIdList" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+          and
+            FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+    </update>
+
+    <!-- 如果有ID则删除单个阀体 -->
+    <update id="updateFileNoJudgeToDelete">
+        update d_upload_file set is_delete = true,
+        judgeUser = #{judgeUser,jdbcType=BIGINT},
+        judgeTime = NOW()
+        where file_state = -1 and is_delete = false
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+        and
+        FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+        <if test="fileId != null">
+        and id = #{fileId,jdbcType=BIGINT}
+        </if>
+    </update>
+
+
+    <update id="updateFileNoJudgeToNg">
+        update d_upload_file set file_state = 1,
+        judgeUser = #{judgeUser,jdbcType=BIGINT},
+        judgeTime = NOW()
+        where file_state = -1 and is_delete = false
+        and eqpt_valve_id = #{eqptValveId,jdbcType=BIGINT}
+        and FIND_IN_SET(id,#{fileIdList,jdbcType=VARCHAR})
+    </update>
+
+    <update id="updateBsTaskRaR9Require">
+     <!--update bs_task set rar9Type = #{state} where id = #{taskId}-->
+        update bs_task_state set rar9_type = #{state} where id = #{taskStateId}
+    </update>
+
+
+    <select id="getGlueARatio" resultType="java.lang.Double">
+        select tg.ratio_a FROM t_glue_dtl tgd
+        LEFT JOIN t_glue tg on tgd.glue_id = tg.id
+        where tgd.id = #{glueAId,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="getGlueBRatio" resultType="java.lang.Double">
+        select tg.ratio_b FROM t_glue_dtl tgd
+        LEFT JOIN t_glue tg on tgd.glue_id = tg.id
+        where tgd.id = #{glueBId,jdbcType=BIGINT}
+    </select>
+
+    <select id="diffusionPowderRaito" resultType="java.lang.Double">
+        select  add_proportion from t_diffusion_powder tdp
+        where tdp.id =#{diffusioId,jdbcType=BIGINT}
+    </select>
+
+    <select id="antiStarchMaterialRatio" resultType="java.lang.Double">
+        select add_proportion FROM t_anti_starch tas
+        where tas.id = #{antiStarchId,jdbcType=BIGINT}
+    </select>
+
+
+    <select id="getNGEqptValveId" resultType="java.lang.Long">
+        select eqpt_valve_id  FROM bs_eqpt_valve_state bevs
+        where  bevs.eqpt_valve_df_id = 3
+        and task_state_id = #{taskStateId,jdbcType=BIGINT}
+    </select>
+
+    <select id="getRuntimeEqptValveId" resultType="java.lang.Long">
+        select eqpt_valve_id FROM bs_eqpt_task_runtime where task_id = #{taskId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectNoJudegeAndNoDeleteFileIdList" resultType="java.lang.Long">
+        select  id FROM d_upload_file duf
+        where find_in_set(duf.id,#{fileIdList})
+        and eqpt_valve_id = #{eqptValveId}
+        and file_state = -1
+        and is_delete = false
+    </select>
+
+
+    <insert id="batchInsterFileJudgementResult">
+        insert into
+        d_upload_file_judgement_result
+        (file_id, color_coordinates, lightness, ra, r9)
+        values
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item},#{resultColorCoordinates}, #{resultLightness}, #{resultRa}, #{resultR9}
+        </foreach>
+        where not EXISTS(select file_id from d_upload_file_judgement_result where file_id) IN
+        <foreach collection="list" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </insert>
+    
+    <insert id="insetFileJudgementResult">
+        insert into
+        d_upload_file_judgement_result
+        (file_id, color_coordinates, lightness, ra, r9)
+        SELECT #{fileId},#{resultColorCoordinates}, #{resultLightness}, #{resultRa}, #{resultR9}
+            FROM dual
+        where not EXISTS(select file_id from d_upload_file_judgement_result where file_id = #{fileId})
+    </insert>
+
+    <select id="getBsTaskTableById" resultType="com.wiseq.cn.entity.ykAi.BsTaskTable">
+        select
+        id, task_code, type, wo_id, state, create_time, close_time, rar9Type
+        FROM bs_task where id = #{taskId}
+    </select>
+
+
+    <select id="getCurrentTaskStateDataBy_taskId_processType_processVersion" resultType="java.lang.String">
+        SELECT
+            id,
+            task_id,
+            task_df_id,
+            is_retest,
+            model_id,
+            create_time,
+            is_active,
+            model_create_time,
+            ratio_create_time,
+            process_type,
+            process_create_time,
+            process_version,
+            process_initiator,
+            initiate_reason,
+            model_version,
+            ratio_version,
+            model_creator,
+            ratio_creator,
+            rar9_type,
+            ratio_source,
+            output_require_before_test_rule_id,
+            output_require_nbake_rule_id,
+            fileid_list
+        FROM bs_task_state
+        where
+            process_type = #{processType}
+        and process_version = #{processVersion}
+        and task_id = #{taskId}
+    </select>
+
+    <select id="getTaskStateFileList" resultType="java.lang.String">
+        select fileid_list FROM bs_task_state where id = #{taskStateId}
+    </select>
+
+
+    <select id="getTaskState" resultType="com.wiseq.cn.entity.ykAi.TaskStateForDatabase">
+        SELECT
+            id,
+            task_id,
+            task_df_id,
+            model_id,
+            create_time,
+            is_active,
+            model_create_time,
+            ratio_create_time,
+            process_type,
+            process_create_time,
+            process_version,
+            process_initiator,
+            initiate_reason,
+            model_version,
+            ratio_version,
+            model_creator,
+            ratio_creator,
+            rar9_type,
+            ratio_source,
+            output_require_before_test_rule_id,
+            output_require_nbake_rule_id,
+            fileid_list
+        FROM bs_task_state
+        where
+          id = #{taskStateId}
+    </select>
+
+    <insert id="addTaskState" parameterType="com.wiseq.cn.entity.ykAi.TaskStateForDatabase" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            bs_task_state
+            ( task_id
+            , task_df_id
+            , model_id
+            , create_time
+            , is_active
+            , model_create_time
+            , ratio_create_time
+            , process_type
+            , process_create_time
+            , process_version
+            , process_initiator
+            , initiate_reason
+            , model_version
+            , ratio_version
+            , model_creator
+            , ratio_creator
+            , rar9_type
+            , ratio_source
+            , output_require_before_test_rule_id
+            , output_require_nbake_rule_id
+            , fileid_list)
+            values
+            (#{taskId},
+            #{taskDfId},
+            #{modelId},
+            now(),
+            #{isActive},
+            #{modelCreateTime},
+            #{ratioCreateTime},
+            #{processType},
+            #{processCreateTime},
+            #{processVersion},
+            #{processInitiator},
+            #{initiateReason},
+            #{modelVersion},
+            #{ratioVersion},
+            #{modelCreator},
+            #{ratioCreator},
+            #{rar9Type},
+            #{ratioSource},
+            #{outputRequireBeforeTestRuleId},
+            #{outputRequireNbakeRuleId},
+            #{fileidList})
+    </insert>
+
+    <update id="updateTaskStateToNotActive">
+        update bs_task_state set is_active = false where id = #{taskStateId}
+    </update>
+
+
+    <update id="updateTaskRatioInfo">
+        update bs_task_state set ratio_version = #{ratioVersion},
+                                 ratio_creator = #{ratioCreator},
+                                 ratio_source = #{ratioSource},
+                                 ratio_create_time = now()
+            where id = #{taskStateId}
+    </update>
+
+
+    <select id="getTaskStateRunEqptValveList" resultType="java.lang.Long">
+        select distinct eqpt_valve_id from bs_eqpt_valve_state
+            LEFT JOIN t_eqpt_valve_state_df tevsd on bs_eqpt_valve_state.eqpt_valve_df_id = tevsd.id
+        where
+            tevsd.state_flag != 4
+            and task_state_id = #{taskStateId}
+
+    </select>
+
+
+    <select id="getMainProcessBatchTask" resultType="java.util.Map">
+        select
+        bt.task_code taskCode,
+        bts.id as taskStateId
+        from
+        bs_task_state bts ,
+        t_task_state_df ttsd,
+        bs_task bt
+        where bts.task_df_id = ttsd.id
+        and bts.task_id = bt.id
+        and bts.is_active = true
+        and bts.process_type = 0
+        and bts.task_df_id IN (6,7)
+        <if test="taskCode != null and taskCode != ''">
+            and bt.task_code like concat('%',#{taskCode},'%')
+        </if>
+        ORDER BY taskStateId DESC
+    </select>
+
+
+    <select id="getSampleMaxProcessVersion" resultType="java.lang.Integer">
+        select
+            IFNULL(MAX(process_version),0)
+        from bs_task_state  where task_id = #{taskId}
+        and process_type = 1
+    </select>
+
+
+    <select id="getSampleProcessInProductTaskList" resultType="com.wiseq.cn.entity.ykAi.TaskSampleProcess">
+        SELECT
+            a.taskCode, taskStateId, taskId, stateName, stateFlag, reason, DATE_FORMAT(initiateTime,'%Y-%m-%d %H:%i') as initiateTime, groupName, groupId, typeMachineId, typeMachineSpec,processClass,processVersion
+        FROM (
+                 select bt.task_code            as taskCode,
+                        bts.id                  as taskStateId,
+                        bts.task_id             as taskId,
+                        case when state_flag = 1 Then '待生产'
+                             when state_flag = 2 then '前测中'
+                             when state_flag = 3 then '前测NG'
+                             when state_flag = 4 then '前测通过'
+                             when state_flag = 5 then '品质测试NG'
+                             when state_flag = 9 then '打样通过'
+                             when state_flag = 10 then '打样失败'
+                             end                as stateName,
+                        ttsd.state_flag         as stateFlag,
+                        bts.initiate_reason     as reason,
+                        bts.process_create_time as initiateTime,
+                        tg.name                 as groupName,
+                        tg.id                   as groupId,
+                        tam.type_machine_id     as typeMachineId,
+                        ttm.spec                as typeMachineSpec,
+                        bts.process_type        as processClass,
+                        bts.process_version     as processVersion
+                 from bs_task_state bts,
+                      bs_task bt,
+                      eas_wo ew,
+                      t_group tg,
+                      t_ai_model tam,
+                      t_type_machine ttm,
+                      t_task_state_df ttsd
+                 where bts.task_id = bt.id
+                   and bt.wo_id = ew.id
+                   and ew.group_id = tg.id
+                   and bts.model_id = tam.id
+                   and tam.type_machine_id = ttm.id
+                   and bts.task_df_id = ttsd.id
+                   and ttsd.id = bts.task_df_id
+
+                   and bts.is_active = true
+                   and bts.process_type = 1
+                   and bts.task_df_id IN (1,2,3,4,5)
+             ) a
+        where 1 = 1
+        <if test="taskCode != null and taskCode != ''">
+            and a.taskCode LIKE concat('%',#{taskCode,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="groupId != null">
+            and groupId = #{groupId,jdbcType=BIGINT}
+        </if>
+        <if test="typeMachineSpec != null and typeMachineSpec != ''">
+            and typeMachineSpec like concat('%',#{typeMachineSpec,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="stateFlag != null">
+            and stateFlag = #{stateFlag,jdbcType=TINYINT}
+        </if>
+        order by FIELD(a.stateFlag,3,5,1,2,4),a.initiateTime DESC
+    </select>
+
+
+    <select id="getTaskMainProcessTaskState" resultType="com.wiseq.cn.entity.ykAi.TaskStateForDatabase">
+        SELECT
+            id,
+            task_id,
+            task_df_id,
+            model_id,
+            create_time,
+            is_active,
+            model_create_time,
+            ratio_create_time,
+            process_type,
+            process_create_time,
+            process_version,
+            process_initiator,
+            initiate_reason,
+            model_version,
+            ratio_version,
+            model_creator,
+            ratio_creator,
+            rar9_type,
+            ratio_source,
+            output_require_before_test_rule_id,
+            output_require_nbake_rule_id,
+            fileid_list
+        FROM bs_task_state
+        where
+            process_type = 0
+            and is_active = true
+           and task_id = #{taskId}
+    </select>
+
+
+
+    <select id="getCloseAndUnsuccessfulSampleProcessTask"
+            resultType="com.wiseq.cn.entity.ykAi.TaskSampleProcessClose">
+        SELECT
+        a.taskCode, taskStateId, taskId, stateName, stateFlag, reason, DATE_FORMAT(closeTime,'%Y-%m-%d %H:%i') as closeTime, groupName, groupId, typeMachineId, typeMachineSpec,processVersion,processClass
+        FROM (
+        select bt.task_code     as taskCode,
+        bts.id                  as taskStateId,
+        bts.task_id             as taskId,
+        case when state_flag = 1 Then '待生产'
+        when state_flag = 2 then '前测中'
+        when state_flag = 3 then '前测NG'
+        when state_flag = 4 then '前测通过'
+        when state_flag = 5 then '品质测试NG'
+        when state_flag = 9 then '打样通过'
+        when state_flag = 10 then '打样失败'
+        end                as stateName,
+        ttsd.state_flag         as stateFlag,
+        bts.initiate_reason     as reason,
+        bts.create_time         as closeTime,
+        tg.name                 as groupName,
+        tg.id                   as groupId,
+        tam.type_machine_id     as typeMachineId,
+        ttm.spec                as typeMachineSpec,
+        bts.process_type        as processClass,
+        bts.process_version     as processVersion
+        from bs_task_state bts,
+        bs_task bt,
+        eas_wo ew,
+        t_group tg,
+        t_ai_model tam,
+        t_type_machine ttm,
+        t_task_state_df ttsd
+        where bts.task_id = bt.id
+        and bt.wo_id = ew.id
+        and ew.group_id = tg.id
+        and bts.model_id = tam.id
+        and tam.type_machine_id = ttm.id
+        and bts.task_df_id = ttsd.id
+        and ttsd.id = bts.task_df_id
+
+        and bts.is_active = true
+        and bts.process_type = 1
+        and bts.task_df_id IN (9,10)
+        ) a
+        where 1 = 1
+        <if test="taskCode != null and taskCode != ''">
+            and a.taskCode LIKE concat('%',#{taskCode,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="groupId != null">
+            and groupId = #{groupId,jdbcType=BIGINT}
+        </if>
+        <if test="typeMachineSpec != null and typeMachineSpec != ''">
+            and typeMachineSpec like concat('%',#{typeMachineSpec,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="stateFlag != null">
+            and stateFlag = #{stateFlag,jdbcType=TINYINT}
+        </if>
+        order by a.closeTime DESC
+    </select>
+
+
+    <select id="getCloseMainProcessTask" resultType="com.wiseq.cn.entity.ykAi.TaskMainProcessClose">
+        SELECT
+        a.taskCode,
+        type,
+        typeMachineName,
+        typeName,
+        typeMachineSpec,
+        typeMachineId,
+        taskId,
+        taskStateId,
+        taskStateDfId,
+        a.eas_remak as remark,
+        stateName, stateFlag, groupName, groupId, DATE_FORMAT(closeTime,'%Y-%m-%d %H:%i') as closeTime,
+        processClass,processVersion
+        FROM (
+            SELECT
+            bt.task_code taskCode,
+            bt.type,
+            ew.eas_productName AS typeMachineName,
+            case when bt.type = 0 THEN '量产工单' when bt.type = 1 THEN '样品工单' END AS typeName,
+            ttm.spec AS typeMachineSpec,
+            ttm.id AS typeMachineId,
+            bt.id as taskId,
+            bs_task_state.id as taskStateId,
+            bs_task_state.task_df_id AS taskStateDfId,
+            ttsd.state_name stateName,
+            ttsd.state_flag stateFlag,
+            tg.name as groupName,
+            tg.id as groupId,
+            bt.close_time as closeTime,
+            ew.eas_remak,
+            bs_task_state.process_version as processVersion,
+            bs_task_state.process_type as processClass
+            FROM bs_task bt
+            LEFT JOIN bs_task_state on bt.id = bs_task_state.task_id
+            LEFT JOIN t_ai_model tam on bs_task_state.model_id = tam.id
+            LEFT JOIN eas_wo ew on bt.wo_id = ew.id
+            LEFT JOIN t_group tg on ew.group_id = tg.id
+            LEFT JOIN t_type_machine ttm on tam.type_machine_id = ttm.id
+            LEFT JOIN t_task_state_df ttsd on bs_task_state.task_df_id = ttsd.id
+            where bs_task_state.is_active = true
+            AND bs_task_state.process_type = 0
+            AND bs_task_state.task_df_id = 8
+            AND bt.state = true
+            <if test="taskCode != null and taskCode != ''">
+                and bt.task_code LIKE concat('%',#{taskCode,jdbcType=VARCHAR},'%')
+            </if>
+            <if test="groupId != null">
+                and tg.id = #{groupId,jdbcType=BIGINT}
+            </if>
+            <if test="type != null">
+                and bt.type = #{type,jdbcType=TINYINT}
+            </if>
+            <if test="typeMachineSpec != null and typeMachineSpec != ''">
+                and ttm.spec like concat('%',#{typeMachineSpec,jdbcType=VARCHAR},'%')
+            </if>
+        ) a order by a.closeTime DESC
+    </select>
+
+    <select id="getNewestTaskStateId" resultType="java.lang.Long">
+        select Max(id) from bs_task_state bts
+        where bts.process_version = #{processVersion}
+        and bts.process_type = #{processType}
+        and bts.task_id = #{taskId}
+        and is_active = true
+    </select>
+
+
+    <select id="getTypeMachineId" resultType="java.lang.Long">
+        select type_machine_id from t_ai_model tam  where tam.id = #{modelId}
+    </select>
+
+
+    <select id="getBomIdList" resultType="java.lang.Long">
+        select DISTINCT tmb.bom_id from t_ai_model tam ,t_model_bom tmb
+        where tam.id = tmb.id
+        and type_machine_id = #{typeMachineId}
+    </select>
+
+    <select id="getBomChipList" resultType="com.wiseq.cn.entity.ykAi.ChipIdAndNum">
+        SELECT
+            chip_id as chipId ,
+            count(*) as  chipNum
+        FROM (select chip_id from t_bom_chip where bom_id = #{bomId})a group by a.chip_id
+    </select>
+
+    <select id="getBomList" resultType="com.wiseq.cn.entity.ykAi.TBom">
+        select
+        a.id,
+        a.bom_code,
+        a.bom_type,
+        a.is_temp,
+        <!--  a.chip_id,
+          b.chip_spec,-->
+        a.scaffold_id,
+        ts.scaffold_spec,
+        a.glue_id,
+        guleA.glue_spec aguleSpec,
+        guleB.glue_spec bguleSpec,
+        a.diffusion_powder_id,
+        tdp.diffusion_powder_spec,
+        a.anti_starch_id,
+        tas.anti_starch_spec,
+        a.bom_source as bomSource
+        FROM t_bom a
+        <!--LEFT JOIN t_chip b ON a.chip_id = b.id-->
+        LEFT JOIN t_scaffold ts on a.scaffold_id = ts.id
+        LEFT JOIN t_glue tg on a.glue_id = tg.id
+        LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='A') guleA ON a.glue_id = guleA.glue_id
+        LEFT JOIN (select glue_spec,glue_id from t_glue_dtl where glue_type='B') guleB ON a.glue_id = guleB.glue_id
+        LEFT JOIN t_diffusion_powder tdp on a.diffusion_powder_id = tdp.id
+        LEFT JOIN t_anti_starch tas on a.anti_starch_id = tas.id
+        where
+        a.is_delete=false
+        AND a.id IN
+       <foreach collection="bomIdList" item="item" open="(" separator="," close=")">
+            #{item}
+       </foreach>
+        ORDER BY  a.create_time DESC
+    </select>
+
+    <select id="getjudagementTypeByFileId" resultType="java.util.Map">
+        select
+            IF(ra_target IS NULL , 0 , 1) ra,
+            IF(r9 IS NULL, 0 ,1) r9,
+            1 ColorCoordinates,
+            1 lm
+        from d_file_summary
+        where file_id = #{fileId}
+    </select>
+
+    <select id="getTAlgorithmModel" resultType="com.wiseq.cn.entity.ykAi.TAlgorithmModel">
+        SELECT DISTINCT ts.id as scaffoldId,ts.scaffold_spec as scaffoldName,ts.param1,ts.param2,ts.param3,ts.param4,ts.param5,ttmgh.gule_hight_lsl as scaffoldRe,tcwr.chip_id,tc.chip_spec as chipName,tcwr.wl_min as wl_min,tcwr.wl_max as wl_max,ttm.ct
+          ,duf.path as fileName,dfs.cie_x,dfs.cie_y,dfs.ra_max,dfs.ra_min,dfs.ra_mean,dfs.cri9_max as r9Max,dfs.cri9_min as r9Min,dfs.cri9_mean as r9Mean,dfs.lm_max,dfs.lm_min,dfs.lm_mean
+        FROM bs_task_formula btf
+        INNER JOIN t_bom tb ON tb.id = btf.task_bom_id
+        INNER JOIN t_scaffold ts ON ts.id = tb.scaffold_id
+        INNER JOIN t_type_machine ttm ON ttm.id = tb.type_machine_id
+        INNER JOIN t_type_machine_gule_high ttmgh ON ttmgh.type_machine_id = tb.type_machine_id
+        INNER JOIN t_bom_chip tbc ON  tbc.bom_id = tb.id
+        INNER JOIN t_model_bom_chip_wl_rank tmcwr ON tmcwr.model_bom_id = tb.id
+        INNER JOIN t_chip_wl_rank tcwr ON tcwr.chip_id = tbc.chip_id AND tcwr.id = tmcwr.chip_wl_rank_id
+        INNER JOIN t_chip tc ON tc.id = tcwr.chip_id
+        INNER JOIN t_model_formula tmf ON tmf.model_bom_id = tb.id
+        INNER JOIN d_upload_file duf ON duf.task_state_id = btf.task_state_id
+        INNER JOIN d_file_summary dfs ON dfs.file_id = duf.id
+        where duf.id in (
+         SELECT max(id)
+         FROM d_upload_file
+          where task_state_id = #{taskStateId}
+        )
+    </select>
+
+
+</mapper>

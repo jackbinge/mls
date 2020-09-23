@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.BsFormulaUpdateLogDtlDao">
+  <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.BsFormulaUpdateLogDtl">
+    <!--@mbg.generated-->
+    <!--@Table bs_formula_update_log_dtl-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="formula_update_log_id" jdbcType="BIGINT" property="formulaUpdateLogId" />
+    <result column="model_bom_id" jdbcType="BIGINT" property="modelBomId" />
+    <result column="material_id" jdbcType="BIGINT" property="materialId" />
+    <result column="ratio" jdbcType="DOUBLE" property="ratio" />
+    <result column="material_class" jdbcType="TINYINT" property="materialClass" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, formula_update_log_id, model_bom_id, material_id, ratio, material_class, create_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from bs_formula_update_log_dtl
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <insert id="batchInsert" keyColumn="id" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into bs_formula_update_log_dtl
+    (formula_update_log_id, model_bom_id, material_id, ratio, material_class, create_time
+      )
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.formulaUpdateLogId,jdbcType=BIGINT}, #{item.modelBomId,jdbcType=BIGINT}, 
+        #{item.materialId,jdbcType=BIGINT}, #{item.ratio,jdbcType=DOUBLE}, #{item.materialClass,jdbcType=TINYINT}, 
+        NOW())
+    </foreach>
+  </insert>
+
+  <insert id="insertTargetParameter">
+    insert into bs_formula_update_log_target_parameter
+    (ra_target, ra_max, ra_min, r9, ct, lumen_lsl, lumen_usl, wl_lsl, wl_usl, bs_formula_update_log_id)
+      values
+    (#{raTarget},
+    #{raMax},
+    #{raMin},
+    #{r9},
+    #{ct},
+    #{lumenLsl},
+    #{lumenUsl},
+    #{wlLsl},#{wlUsl},#{bsFormulaUpdateLogId})
+  </insert>
+
+
+  <select id="selectTypeMachineTargetParameterByModelBomId" resultType="com.wiseq.cn.entity.ykAi.BsFormulaTargetParameter">
+    select
+    ra_target   as  raTarget,
+    ra_max     as  raMax,
+    ra_min     as  raMin,
+    r9          as  r9,
+    ct           as ct,
+    lumen_lsl   as  lumenLsl,
+    lumen_usl   as  lumenUsl,
+    wl_lsl      as wlLsl ,
+    wl_usl    as    wlUsl
+    FROM t_type_machine ttm,
+    t_ai_model tam,
+    t_model_bom tmb
+    where  ttm.id = tam.type_machine_id
+    and tmb.model_id = tam.id
+    and tmb.id = #{modelBomId}
+  </select>
+
+
+  <select id="selectRatioTargetParameter" resultType="com.wiseq.cn.entity.ykAi.BsFormulaTargetParameter">
+    select
+      ra_target   as  raTarget,
+      ra_max     as  raMax,
+      ra_min     as  raMin,
+      r9          as  r9,
+      ct           as ct,
+      lumen_lsl   as  lumenLsl,
+      lumen_usl   as  lumenUsl,
+      wl_lsl      as wlLsl ,
+      wl_usl    as    wlUsl,
+      bs_formula_update_log_id as bsFormulaUpdateLogId
+      FROM
+    bs_formula_update_log_target_parameter
+    where bs_formula_update_log_id = #{bsFormulaUpdateLogId}
+  </select>
+
+  <select id="selectTypeMachineTargetParameterByModelId"
+          resultType="com.wiseq.cn.entity.ykAi.BsFormulaTargetParameter">
+    select
+      ra_target   as  raTarget,
+      ra_max     as  raMax,
+      ra_min     as  raMin,
+      r9          as  r9,
+      ct           as ct,
+      lumen_lsl   as  lumenLsl,
+      lumen_usl   as  lumenUsl,
+      wl_lsl      as wlLsl ,
+      wl_usl    as    wlUsl
+    FROM t_type_machine ttm,
+         t_ai_model tam,
+         t_model_bom tmb
+    where  ttm.id = tam.type_machine_id
+      and tmb.model_id = tam.id
+      and tam.id = #{modelId}
+  </select>
+
+
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wiseq.cn.ykAi.dao.MaterialTypeMapMapper">
+    <resultMap id="BaseResultMap" type="com.wiseq.cn.entity.ykAi.MaterialTypeMap">
+        <!--@mbg.generated-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="materal_type" jdbcType="TINYINT" property="materalType"/>
+        <result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+        <result column="map_rule" jdbcType="VARCHAR" property="mapRule"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="disabled" jdbcType="BOOLEAN" property="disabled"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, materal_type, type_name, map_rule, remark, disabled, is_delete
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from material_type_map
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from material_type_map
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wiseq.cn.entity.ykAi.MaterialTypeMap"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into material_type_map
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materalType != null">
+                materal_type,
+            </if>
+            <if test="typeName != null">
+                type_name,
+            </if>
+            <if test="mapRule != null">
+                map_rule,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="disabled != null">
+                disabled,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materalType != null">
+                #{materalType,jdbcType=TINYINT},
+            </if>
+            <if test="typeName != null">
+                #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="mapRule != null">
+                #{mapRule,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="disabled != null">
+                #{disabled,jdbcType=BOOLEAN},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BOOLEAN},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateDel" parameterType="com.wiseq.cn.entity.ykAi.MaterialTypeMap">
+        <!--@mbg.generated-->
+        update material_type_map
+
+               set is_delete = true
+
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+
+    <update id="updateByPrimaryKey" parameterType="com.wiseq.cn.entity.ykAi.MaterialTypeMap">
+        <!--@mbg.generated-->
+        update material_type_map
+        set materal_type = #{materalType,jdbcType=TINYINT},
+        type_name = #{typeName,jdbcType=VARCHAR},
+        map_rule = #{mapRule,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        disabled = #{disabled,jdbcType=BOOLEAN},
+        is_delete = #{isDelete,jdbcType=BOOLEAN}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findExist" resultMap="BaseResultMap">
+        select * from
+        material_type_map
+        where map_rule = #{mapRule} and is_delete = false
+        <if test="id != null">
+        and id !=#{id,jdbcType=BIGINT}
+        </if>
+    </select>
+
+
+    <update id="update" parameterType="com.wiseq.cn.entity.ykAi.MaterialTypeMap">
+        <!--@mbg.generated-->
+        update material_type_map
+        <set>
+            <if test="materalType != null">
+                materal_type = #{materalType,jdbcType=TINYINT},
+            </if>
+            <if test="typeName != null">
+                type_name = #{typeName,jdbcType=VARCHAR},
+            </if>
+            <if test="mapRule != null">
+                map_rule = #{mapRule,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <resultMap id="findListForPageMap" type="com.wiseq.cn.entity.ykAi.MaterialTypeMapForPage">
+        <result column="materal_type" jdbcType="TINYINT" property="materalType"/>
+        <result column="type_name" jdbcType="VARCHAR" property="typeName"/>
+    </resultMap>
+
+    <select id="findList" resultMap="findListForPageMap">
+    select DISTINCT
+      a.materal_type
+      ,a.type_name
+     from material_type_map a
+     where is_delete = false
+    <if test="materalType != null">
+    and a.materal_type = #{materalType}
+    </if>
+    order by a.materal_type
+  </select>
+
+    <select id="findRuleToType" resultType="com.wiseq.cn.entity.ykAi.MaterialTypeRule">
+        select id, map_rule, remark, disabled, is_delete FROM material_type_map mtm
+        where 1 = 1
+        <if test="mapRule != null and mapRule != ''">
+        and  map_rule like CONCAT('%',#{mapRule},'%')
+        </if>
+        and mtm.materal_type = #{materalType,jdbcType=TINYINT}
+        and is_delete = false
+    </select>
+
+</mapper>
