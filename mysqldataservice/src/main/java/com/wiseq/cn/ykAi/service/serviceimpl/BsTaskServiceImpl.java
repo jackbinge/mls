@@ -404,11 +404,14 @@ public class BsTaskServiceImpl implements BsTaskService {
 
                 Byte isCircular ;
                 //if(tt.getScaffold() != null && "".equals(tt.getScaffold())){
+                if(tt.getScaffold() == null || "".equals(tt.getScaffold())){
+                    return ResultUtils.error(1,"支架id为null");
+                }
                 if(tt.getScaffold().getIsCircular() != null && !"".equals(tt.getScaffold().getIsCircular())){
                     isCircular = tt.getScaffold().getIsCircular();
                 }else{
                     isCircular = 2;
-                    ResultUtils.error(-1,"请确认配比");
+                    return ResultUtils.error(-1,"请确认配比");
                 }
                 //}else{
                 //    isCircular = 2;

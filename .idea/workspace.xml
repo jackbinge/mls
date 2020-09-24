@@ -33,22 +33,88 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="BsTaskController.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/controller/BsTaskController.java">
+      <file leaf-file-name="BsTaskServiceImpl.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/BsTaskServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2910">
-              <caret line="411" column="27" lean-forward="false" selection-start-line="411" selection-start-column="14" selection-end-line="411" selection-end-column="27" />
+            <state relative-caret-position="-5488">
+              <caret line="948" column="11" lean-forward="false" selection-start-line="948" selection-start-column="9" selection-end-line="948" selection-end-column="11" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.yml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application.yml">
+      <file leaf-file-name="TAiModelMapper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TAiModelMapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="2" column="18" lean-forward="false" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+            <state relative-caret-position="176">
+              <caret line="89" column="48" lean-forward="false" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="48" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TAiModelMapper.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TAiModelMapper.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="327">
+              <caret line="413" column="42" lean-forward="false" selection-start-line="413" selection-start-column="14" selection-end-line="413" selection-end-column="42" />
+              <folding>
+                <marker date="1600858576051" expanded="true" signature="1246:1351" ph="select from t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="1462:1538" ph="update t_ai_... " />
+                <marker date="1600858576051" expanded="true" signature="1651:1730" ph="select count... bs_task_state" />
+                <marker date="1600858576051" expanded="true" signature="3384:3453" ph="insert into t_model_bom... " />
+                <marker date="1600858576051" expanded="true" signature="3544:4751" ph="select ttm.i... t_type_machine" />
+                <marker date="1600858576051" expanded="true" signature="3818:4002" ph="select count... t_type_machine" />
+                <marker date="1600858576051" expanded="true" signature="4054:4256" ph="select count... t_type_machine" />
+                <marker date="1600858576051" expanded="true" signature="4309:4415" ph="select count... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="6703:6943" ph="SELECT tmb.i... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="7275:7557" ph="SELECT ttmgh... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="7687:7911" ph="SELECT ts.is... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="8060:8331" ph="select tgd.i... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="8477:8762" ph="select tgd.i... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="8915:9145" ph="select tas.a... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="9302:9543" ph="select tdp.d... t_bom" />
+                <marker date="1600858576051" expanded="true" signature="9679:10025" ph="select tmf.i... t_model_formula" />
+                <marker date="1600858576051" expanded="true" signature="10162:10509" ph="select tmf.i... t_model_formula" />
+                <marker date="1600858576051" expanded="true" signature="10648:10941" ph="select tmf.i... t_model_formula" />
+                <marker date="1600858576051" expanded="true" signature="11083:11369" ph="select tmf.i... t_model_formula" />
+                <marker date="1600858576051" expanded="true" signature="11515:11804" ph="select tmf.i... t_model_formula" />
+                <marker date="1600858576051" expanded="true" signature="13697:14924" ph="select a.id,... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="14419:14482" ph="select glue_... t_glue_dtl" />
+                <marker date="1600858576051" expanded="true" signature="14530:14593" ph="select glue_... t_glue_dtl" />
+                <marker date="1600858576051" expanded="true" signature="15026:16235" ph="select a.id,... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="15730:15793" ph="select glue_... t_glue_dtl" />
+                <marker date="1600858576051" expanded="true" signature="15841:15904" ph="select glue_... t_glue_dtl" />
+                <marker date="1600858576051" expanded="true" signature="16347:16731" ph="select bom_i... t_bom_Phosphor" />
+                <marker date="1600858576051" expanded="true" signature="16836:17018" ph="select bom_i... t_bom_Phosphor" />
+                <marker date="1600858576051" expanded="true" signature="17136:17339" ph="select bom_i... t_bom_Phosphor" />
+                <marker date="1600858576051" expanded="true" signature="17442:19647" ph="select tam.i... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="18044:18174" ph="select MAX(t... t_output_requirements_dtl" />
+                <marker date="1600858576051" expanded="true" signature="18267:18348" ph="select Max(c... bs_task_state" />
+                <marker date="1600858576051" expanded="true" signature="18410:18564" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="18643:18796" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="18873:19025" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="19779:21286" ph="select tam.i... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="20290:20420" ph="select MAX(t... t_output_requirements_dtl" />
+                <marker date="1600858576051" expanded="true" signature="20506:20587" ph="select Max(c... bs_task_state" />
+                <marker date="1600858576051" expanded="true" signature="20635:20780" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="20845:20990" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="21053:21197" ph="select tmb.m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="21439:22889" ph="select * FRO... id" />
+                <marker date="1600858576051" expanded="true" signature="21462:22167" ph="select tcrd.... t_output_requirements_dtl" />
+                <marker date="1600858576051" expanded="true" signature="22186:22783" ph="select tcrd.... t_output_requirements" />
+                <marker date="1600858576051" expanded="true" signature="24583:24820" ph="update t_mod... " />
+                <marker date="1600858576051" expanded="true" signature="24905:25235" ph="select tam.i... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="25373:25462" ph="SELECT id, m... t_model_bom" />
+                <marker date="1600858576051" expanded="true" signature="25605:26095" ph="select t_ai_... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="26193:26371" ph="select IFNUL... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="26430:26603" ph="update t_out... " />
+                <marker date="1600858576051" expanded="true" signature="26714:26957" ph="select IFNUL... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="27076:27247" ph="select tmbcw... t_model_bom_chip_wl_rank" />
+                <marker date="1600858576051" expanded="true" signature="27380:27796" ph="select ra_ta... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="27933:28262" ph="select tp.ph... t_ai_model" />
+                <marker date="1600858576051" expanded="true" signature="28349:28659" ph="SELECT tmb.i... t_model_bom" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -67,15 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>spAd</find>
-      <find>getMixPowderWeightBYtIdAndtsId</find>
-      <find>updateMixPowderWeight</find>
-      <find>setN</find>
-      <find>sav</find>
-      <find>deleteByORidAndCRid</find>
-      <find>scaffold_id</find>
-      <find>chip_id</find>
-      <find>色温</find>
       <find>findFormulaPhosphorsByModelBomId</find>
       <find>getOneMoldeByModelId</find>
       <find>findTModelFormula</find>
@@ -89,14 +146,23 @@
       <find>testO</find>
       <find>test</find>
       <find>getOn</find>
-      <find>getOne</find>
       <find>update</find>
       <find>testOk</find>
       <find>insert</find>
       <find>judge</find>
-      <find>findGuleHigeByBomId</find>
       <find>add</find>
       <find>updateByPrimaryKeySelective</find>
+      <find>findScaffoldByBomId</find>
+      <find>outputRequiremendtlsByOutRequireId</find>
+      <find>aiModelC</find>
+      <find>getone</find>
+      <find>findGuleHigeByBomId</find>
+      <find>findFormulaGlueAByModelBomId</find>
+      <find>findFormulaAntiStarchByModelBomId</find>
+      <find>getOne</find>
+      <find>设备</find>
+      <find>g</find>
+      <find>selectPhosphorByBomIdOrderBy</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -107,8 +173,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/BsTaskStateService.java" />
-        <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/controller/BsTaskStateController.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/BsZConsumptionDao.xml.fxml" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/BsFormulaUpdateLogDtlMapper.xml" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/TAiModelServiceImpl.java" />
@@ -139,7 +203,6 @@
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/BsZConsumptionDao.xml" />
         <option value="$PROJECT_DIR$/entity/src/main/java/com/wiseq/cn/entity/ykAi/TTypeMachineGuleHigh.java" />
         <option value="$PROJECT_DIR$/zuulegate/src/main/resources/application.yml" />
-        <option value="$PROJECT_DIR$/webviewserver/src/main/resources/application.yml" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TAlgorithmModel.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/BsTaskStateDao.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TAlgorithmModelDao.java" />
@@ -147,7 +210,6 @@
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TAlgorithmModel.xml" />
         <option value="$PROJECT_DIR$/entity/src/main/java/com/wiseq/cn/entity/ykAi/TAlgorithmModel.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/test/java/com/wiseq/cn/TmallApplicationTests.java" />
-        <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/BsTaskServiceImpl.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/application-consul.yml" />
         <option value="$PROJECT_DIR$/webviewserver/src/main/java/com/wiseq/cn/ykAi/controller/TTypeMachineController.java" />
         <option value="$PROJECT_DIR$/webviewserver/src/main/java/com/wiseq/cn/ykAi/service/TTypeMachineService.java" />
@@ -157,6 +219,10 @@
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TTypeMachineDao.java" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TTypeMachineDao.xml" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/TTypeMachineServiceImpl.java" />
+        <option value="$PROJECT_DIR$/webviewserver/src/main/resources/application.yml" />
+        <option value="$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/BsTaskServiceImpl.java" />
+        <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TAiModelMapper.xml" />
+        <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/application-pro.yml" />
         <option value="$PROJECT_DIR$/mysqldataservice/src/main/resources/application.yml" />
       </list>
     </option>
@@ -179,11 +245,30 @@
   </component>
   <component name="MavenProjectNavigator">
     <treeState>
-      <expand />
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="mysqldataservice" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="mysqldataservice" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="webviewserver" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="webviewserver" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+      </expand>
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-48" />
     <option name="y" value="352" />
     <option name="width" value="1036" />
@@ -274,16 +359,34 @@
               <item name="mysqldataservice" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="com" type="462c0819:PsiDirectoryNode" />
-              <item name="wiseq" type="462c0819:PsiDirectoryNode" />
-              <item name="cn" type="462c0819:PsiDirectoryNode" />
-              <item name="ykAi" type="462c0819:PsiDirectoryNode" />
-              <item name="controller" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ykAi" type="b2602c69:ProjectViewProjectNode" />
               <item name="mysqldataservice" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="mapper" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ykAi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="webviewserver" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ykAi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="webviewserver" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ykAi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="webviewserver" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ykAi" type="b2602c69:ProjectViewProjectNode" />
+              <item name="webviewserver" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
@@ -541,7 +644,7 @@
       <workItem from="1599874533702" duration="23823000" />
       <workItem from="1599961161752" duration="14589000" />
       <workItem from="1600045612250" duration="84709000" />
-      <workItem from="1600657873708" duration="50937000" />
+      <workItem from="1600657873708" duration="69682000" />
     </task>
     <servers />
   </component>
@@ -578,7 +681,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="643092000" />
+    <option name="totallyTimeSpent" value="661837000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -590,7 +693,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
@@ -599,9 +703,9 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19680198" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21268657" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.092750534" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21956521" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13369565" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Spring" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2788145" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -614,7 +718,7 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24893162" sideWeight="0.29056603" order="5" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25434783" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28369564" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -667,25 +771,11 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="1148" />
+      <option name="time" value="1170" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/controller/TGroupController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="59" column="36" lean-forward="true" selection-start-line="59" selection-start-column="36" selection-end-line="59" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/TGroupService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="29" column="21" lean-forward="false" selection-start-line="29" selection-start-column="21" selection-end-line="29" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/TGroupServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
@@ -858,13 +948,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/sql/MLS_2020.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="625" column="16" lean-forward="false" selection-start-line="625" selection-start-column="14" selection-end-line="625" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webviewserver/src/main/resources/application-newtest1.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-180">
@@ -875,20 +958,6 @@
     <entry file="file://$PROJECT_DIR$/webviewserver/src/main/resources/application-dev.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webviewserver/src/main/resources/application-pro.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-360">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application-pro.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-630">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
@@ -1088,106 +1157,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/entity/src/main/java/com/wiseq/cn/entity/ykAi/TModelFormula.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-878">
-          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TAiModelMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="64" column="41" lean-forward="false" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TAiModelMapper.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="191" column="35" lean-forward="false" selection-start-line="191" selection-start-column="16" selection-end-line="191" selection-end-column="35" />
-          <folding>
-            <marker date="1599027763394" expanded="true" signature="1246:1351" ph="select from t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="1462:1538" ph="update t_ai_... " />
-            <marker date="1599027763394" expanded="true" signature="1651:1730" ph="select count... bs_task_state" />
-            <marker date="1599027763394" expanded="true" signature="3384:3453" ph="insert into t_model_bom... " />
-            <marker date="1599027763394" expanded="true" signature="3544:4751" ph="select ttm.i... t_type_machine" />
-            <marker date="1599027763394" expanded="true" signature="3818:4002" ph="select count... t_type_machine" />
-            <marker date="1599027763394" expanded="true" signature="4054:4256" ph="select count... t_type_machine" />
-            <marker date="1599027763394" expanded="true" signature="4309:4415" ph="select count... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="6695:6935" ph="SELECT tmb.i... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="7267:7549" ph="SELECT ttmgh... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="7679:7903" ph="SELECT ts.is... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="8052:8323" ph="select tgd.i... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="8469:8754" ph="select tgd.i... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="8907:9137" ph="select tas.a... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="9294:9535" ph="select tdp.d... t_bom" />
-            <marker date="1599027763394" expanded="true" signature="9671:10017" ph="select tmf.i... t_model_formula" />
-            <marker date="1599027763394" expanded="true" signature="10154:10501" ph="select tmf.i... t_model_formula" />
-            <marker date="1599027763394" expanded="true" signature="10640:10933" ph="select tmf.i... t_model_formula" />
-            <marker date="1599027763394" expanded="true" signature="11075:11361" ph="select tmf.i... t_model_formula" />
-            <marker date="1599027763394" expanded="true" signature="11507:11796" ph="select tmf.i... t_model_formula" />
-            <marker date="1599027763394" expanded="true" signature="13689:14916" ph="select a.id,... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="14411:14474" ph="select glue_... t_glue_dtl" />
-            <marker date="1599027763394" expanded="true" signature="14522:14585" ph="select glue_... t_glue_dtl" />
-            <marker date="1599027763394" expanded="true" signature="15018:16227" ph="select a.id,... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="15722:15785" ph="select glue_... t_glue_dtl" />
-            <marker date="1599027763394" expanded="true" signature="15833:15896" ph="select glue_... t_glue_dtl" />
-            <marker date="1599027763394" expanded="true" signature="16339:16723" ph="select bom_i... t_bom_Phosphor" />
-            <marker date="1599027763394" expanded="true" signature="16828:17010" ph="select bom_i... t_bom_Phosphor" />
-            <marker date="1599027763394" expanded="true" signature="17128:17331" ph="select bom_i... t_bom_Phosphor" />
-            <marker date="1599027763394" expanded="true" signature="17434:19639" ph="select tam.i... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="18036:18166" ph="select MAX(t... t_output_requirements_dtl" />
-            <marker date="1599027763394" expanded="true" signature="18259:18340" ph="select Max(c... bs_task_state" />
-            <marker date="1599027763394" expanded="true" signature="18402:18556" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="18635:18788" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="18865:19017" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="19771:21278" ph="select tam.i... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="20282:20412" ph="select MAX(t... t_output_requirements_dtl" />
-            <marker date="1599027763394" expanded="true" signature="20498:20579" ph="select Max(c... bs_task_state" />
-            <marker date="1599027763394" expanded="true" signature="20627:20772" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="20837:20982" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="21045:21189" ph="select tmb.m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="21431:22881" ph="select * FRO... id" />
-            <marker date="1599027763394" expanded="true" signature="21454:22159" ph="select tcrd.... t_output_requirements_dtl" />
-            <marker date="1599027763394" expanded="true" signature="22178:22775" ph="select tcrd.... t_output_requirements" />
-            <marker date="1599027763394" expanded="true" signature="24575:24812" ph="update t_mod... " />
-            <marker date="1599027763394" expanded="true" signature="24897:25227" ph="select tam.i... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="25365:25454" ph="SELECT id, m... t_model_bom" />
-            <marker date="1599027763394" expanded="true" signature="25597:26087" ph="select t_ai_... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="26185:26363" ph="select IFNUL... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="26422:26595" ph="update t_out... " />
-            <marker date="1599027763394" expanded="true" signature="26706:26949" ph="select IFNUL... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="27068:27239" ph="select tmbcw... t_model_bom_chip_wl_rank" />
-            <marker date="1599027763394" expanded="true" signature="27372:27788" ph="select ra_ta... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="27925:28254" ph="select tp.ph... t_ai_model" />
-            <marker date="1599027763394" expanded="true" signature="28341:28651" ph="SELECT tmb.i... t_model_bom" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/BsTaskService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="163">
           <caret line="70" column="19" lean-forward="true" selection-start-line="70" selection-start-column="19" selection-end-line="70" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/BsTaskServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="881" column="18" lean-forward="false" selection-start-line="881" selection-start-column="18" selection-end-line="881" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application-consul.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="879">
-          <caret line="38" column="47" lean-forward="false" selection-start-line="38" selection-start-column="47" selection-end-line="38" selection-end-column="47" />
           <folding />
         </state>
       </provider>
@@ -1300,6 +1273,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webviewserver/src/main/resources/application-pro.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application-consul.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1140">
+          <caret line="38" column="47" lean-forward="false" selection-start-line="38" selection-start-column="47" selection-end-line="38" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/entity/src/main/java/com/wiseq/cn/entity/ykAi/TScaffold.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/entity/src/main/java/com/wiseq/cn/entity/ykAi/TModelFormula.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-835">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application-pro.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/sql/MLS_2020.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="111" column="39" lean-forward="false" selection-start-line="111" selection-start-column="37" selection-end-line="111" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webviewserver/src/main/resources/application.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -1311,15 +1332,103 @@
     <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="2" column="18" lean-forward="false" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+          <caret line="2" column="16" lean-forward="false" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/application-test.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-810">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/controller/BsTaskController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2910">
-          <caret line="411" column="27" lean-forward="false" selection-start-line="411" selection-start-column="14" selection-end-line="411" selection-end-column="27" />
+        <state relative-caret-position="147">
+          <caret line="424" column="6" lean-forward="false" selection-start-line="424" selection-start-column="5" selection-end-line="424" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/dao/TAiModelMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="89" column="48" lean-forward="false" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/resources/mapper/TAiModelMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="413" column="42" lean-forward="false" selection-start-line="413" selection-start-column="14" selection-end-line="413" selection-end-column="42" />
+          <folding>
+            <marker date="1600858576051" expanded="true" signature="1246:1351" ph="select from t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="1462:1538" ph="update t_ai_... " />
+            <marker date="1600858576051" expanded="true" signature="1651:1730" ph="select count... bs_task_state" />
+            <marker date="1600858576051" expanded="true" signature="3384:3453" ph="insert into t_model_bom... " />
+            <marker date="1600858576051" expanded="true" signature="3544:4751" ph="select ttm.i... t_type_machine" />
+            <marker date="1600858576051" expanded="true" signature="3818:4002" ph="select count... t_type_machine" />
+            <marker date="1600858576051" expanded="true" signature="4054:4256" ph="select count... t_type_machine" />
+            <marker date="1600858576051" expanded="true" signature="4309:4415" ph="select count... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="6703:6943" ph="SELECT tmb.i... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="7275:7557" ph="SELECT ttmgh... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="7687:7911" ph="SELECT ts.is... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="8060:8331" ph="select tgd.i... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="8477:8762" ph="select tgd.i... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="8915:9145" ph="select tas.a... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="9302:9543" ph="select tdp.d... t_bom" />
+            <marker date="1600858576051" expanded="true" signature="9679:10025" ph="select tmf.i... t_model_formula" />
+            <marker date="1600858576051" expanded="true" signature="10162:10509" ph="select tmf.i... t_model_formula" />
+            <marker date="1600858576051" expanded="true" signature="10648:10941" ph="select tmf.i... t_model_formula" />
+            <marker date="1600858576051" expanded="true" signature="11083:11369" ph="select tmf.i... t_model_formula" />
+            <marker date="1600858576051" expanded="true" signature="11515:11804" ph="select tmf.i... t_model_formula" />
+            <marker date="1600858576051" expanded="true" signature="13697:14924" ph="select a.id,... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="14419:14482" ph="select glue_... t_glue_dtl" />
+            <marker date="1600858576051" expanded="true" signature="14530:14593" ph="select glue_... t_glue_dtl" />
+            <marker date="1600858576051" expanded="true" signature="15026:16235" ph="select a.id,... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="15730:15793" ph="select glue_... t_glue_dtl" />
+            <marker date="1600858576051" expanded="true" signature="15841:15904" ph="select glue_... t_glue_dtl" />
+            <marker date="1600858576051" expanded="true" signature="16347:16731" ph="select bom_i... t_bom_Phosphor" />
+            <marker date="1600858576051" expanded="true" signature="16836:17018" ph="select bom_i... t_bom_Phosphor" />
+            <marker date="1600858576051" expanded="true" signature="17136:17339" ph="select bom_i... t_bom_Phosphor" />
+            <marker date="1600858576051" expanded="true" signature="17442:19647" ph="select tam.i... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="18044:18174" ph="select MAX(t... t_output_requirements_dtl" />
+            <marker date="1600858576051" expanded="true" signature="18267:18348" ph="select Max(c... bs_task_state" />
+            <marker date="1600858576051" expanded="true" signature="18410:18564" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="18643:18796" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="18873:19025" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="19779:21286" ph="select tam.i... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="20290:20420" ph="select MAX(t... t_output_requirements_dtl" />
+            <marker date="1600858576051" expanded="true" signature="20506:20587" ph="select Max(c... bs_task_state" />
+            <marker date="1600858576051" expanded="true" signature="20635:20780" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="20845:20990" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="21053:21197" ph="select tmb.m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="21439:22889" ph="select * FRO... id" />
+            <marker date="1600858576051" expanded="true" signature="21462:22167" ph="select tcrd.... t_output_requirements_dtl" />
+            <marker date="1600858576051" expanded="true" signature="22186:22783" ph="select tcrd.... t_output_requirements" />
+            <marker date="1600858576051" expanded="true" signature="24583:24820" ph="update t_mod... " />
+            <marker date="1600858576051" expanded="true" signature="24905:25235" ph="select tam.i... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="25373:25462" ph="SELECT id, m... t_model_bom" />
+            <marker date="1600858576051" expanded="true" signature="25605:26095" ph="select t_ai_... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="26193:26371" ph="select IFNUL... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="26430:26603" ph="update t_out... " />
+            <marker date="1600858576051" expanded="true" signature="26714:26957" ph="select IFNUL... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="27076:27247" ph="select tmbcw... t_model_bom_chip_wl_rank" />
+            <marker date="1600858576051" expanded="true" signature="27380:27796" ph="select ra_ta... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="27933:28262" ph="select tp.ph... t_ai_model" />
+            <marker date="1600858576051" expanded="true" signature="28349:28659" ph="SELECT tmb.i... t_model_bom" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysqldataservice/src/main/java/com/wiseq/cn/ykAi/service/serviceimpl/BsTaskServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5488">
+          <caret line="948" column="11" lean-forward="false" selection-start-line="948" selection-start-column="9" selection-end-line="948" selection-end-column="11" />
           <folding />
         </state>
       </provider>

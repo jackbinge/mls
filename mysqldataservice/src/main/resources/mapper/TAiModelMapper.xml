@@ -159,8 +159,8 @@
     <result column="model_id" jdbcType="BIGINT" property="modelId" />
     <result column="bom_type" jdbcType="TINYINT" property="bomType" />
     <result column="bom_id" jdbcType="BIGINT" property="bomId" />
-    <collection property="scaffold" ofType="com.wiseq.cn.entity.ykAi.TScaffold"  select="findScaffoldByBomId" column="id"/>
-    <collection property="guleHigh" ofType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh"  select="findGuleHigeByBomId" column="id"/>
+    <collection property="scaffold" ofType="com.wiseq.cn.entity.ykAi.TScaffold"  select="findScaffoldByBomId" column="bom_id"/>
+    <collection property="guleHigh" ofType="com.wiseq.cn.entity.ykAi.TTypeMachineGuleHigh"  select="findGuleHigeByBomId" column="bom_id"/>
     <collection property="glueAMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaGlueAByModelBomId" column="id"/>
     <collection property="glueBMaterial" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaGlueBByModelBomId" column="id"/>
     <collection property="tPhosphors" ofType="com.wiseq.cn.entity.ykAi.TMaterialFormula"  select="findFormulaPhosphorsByModelBomId" column="id"/>
